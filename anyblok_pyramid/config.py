@@ -1,9 +1,12 @@
 from pyramid.config import Configurator
 from anyblok.blok import BlokManager
+from anyblok import Declarations
 from os.path import join
-from .controllers import (pyramid_config,
-                          pyramid_jsonrpc_config,
-                          pyramid_xmlrpc_config)
+from .handler import HandlerHTTP, HandlerRPC
+from .controllers import Pyramid, PyramidHTTP, PyramidJsonRPC, PyramidXmlRPC
+
+
+PyramidException = Declarations.Exception.PyramidException
 
 
 def make_config():
@@ -31,3 +34,47 @@ def declare_static(config):
 
         for p in paths:
             config.add_static_view(join(blok, p), join(blok_path, p))
+
+
+def pyramid_config(config):
+    for route in Pyramid.routes:
+        config.add_route(*route)
+
+    for function, properties in Pyramid.views:
+        config.add_view(function, **properties)
+
+
+def pyramid_http_config(config):
+    for route in PyramidHTTP.routes:
+        config.add_route(*route)
+
+    for hargs, properties in PyramidHTTP.views.items():
+        config.add_view(HandlerHTTP(*hargs).wrap_view, **properties)
+
+
+def _pyramid_rpc_config(cls, add_endpoint, add_method):
+    for route in cls.routes:
+        add_endpoint(*route)
+
+    endpoints = [x[0] for x in cls.routes]
+    for namespace in cls.methods:
+        if namespace not in endpoints:
+            raise PyramidException(
+                "One or more %s controller has been declared but no route have"
+                " declared" % namespace)
+        for method in cls.methods[namespace]:
+            rpc_method = cls.methods[namespace][method]
+            function = rpc_method.pop('function')
+            add_method(HandlerRPC(namespace, method, function).wrap_view,
+                       route_name=namespace,
+                       **rpc_method)
+
+
+def pyramid_jsonrpc_config(config):
+    _pyramid_rpc_config(
+        PyramidJsonRPC, config.add_jsonrpc_endpoint, config.add_jsonrpc_method)
+
+
+def pyramid_xmlrpc_config(config):
+    _pyramid_rpc_config(
+        PyramidXmlRPC, config.add_xmlrpc_endpoint, config.add_xmlrpc_method)

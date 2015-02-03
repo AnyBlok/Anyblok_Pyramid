@@ -5,12 +5,18 @@ from pyramid_rpc.mapper import MapplyViewMapper
 from anyblok.mixin import MixinType
 
 
+# Monkey patch the method which check the good args and kwargs of the callback
+# method of pyramid_rpc because the Handler have not the good parameter
+# and can not have the good parameters for eache declarated view
 def mapply(self, ob, positional, keyword):
     return ob(*positional, **keyword)
 
 MapplyViewMapper.mapply = mapply
 
 
+# Declara new Core only for Pyramid Types
+RegistryManager.declare_core('PyramidBase')
+RegistryManager.declare_core('PyramidBaseHTTP')
 RegistryManager.declare_core('PyramidBaseRPC')
 RegistryManager.declare_core('PyramidBaseJsonRPC')
 RegistryManager.declare_core('PyramidBaseXmlRPC')
@@ -65,7 +71,7 @@ class Pyramid:
         return wraper
 
 
-class PyramidRPC:
+class PyramidBase:
 
     @classmethod
     def register(cls, parent, name, cls_, **kwargs):
@@ -87,30 +93,8 @@ class PyramidRPC:
         if parent is Declarations:
             return
 
-        if _registryname not in cls.methods:
-            cls.methods[_registryname] = {}
-
-        rpc_methods = RegistryManager.get_entry_properties_in_register(
-            cls.__name__, _registryname).get('rpc_methods', {})
-
-        for attr in dir(cls_):
-            if hasattr(getattr(cls_, attr), 'rpc_method'):
-                rpc_method = getattr(cls_, attr).rpc_method
-                method = rpc_method['method']
-                if method not in cls.methods[_registryname]:
-                    cls.methods[_registryname][method] = {}
-
-                cls.methods[_registryname][method].update(rpc_method)
-
-                if method not in rpc_methods:
-                    rpc_methods[method] = {}
-
-                rpc_methods[method].update(rpc_method)
-
-        kwargs.update({
-            '__registry_name__': _registryname,
-            'rpc_methods': rpc_methods,
-        })
+        kwargs.update({'__registry_name__': _registryname})
+        kwargs.update(cls.hook_view_from_decorators(_registryname, cls_))
 
         RegistryManager.add_entry_in_register(
             cls.__name__, _registryname, cls_, **kwargs)
@@ -127,19 +111,8 @@ class PyramidRPC:
 
     @classmethod
     def hook_insert_in_bases(cls, registry, bases):
-        pass
-
-    @classmethod
-    def rpc_method(cls, **kwargs):
-        def wraper(function):
-            kwargs['function'] = function.__name__
-            if 'method'not in kwargs:
-                kwargs['method'] = function.__name__
-
-            function.rpc_method = kwargs
-            return function
-
-        return wraper
+        bases.extend(registry.loaded_cores['PyramidBase'])
+        bases.append(registry.registry_base)
 
     @classmethod
     def transform_base(cls, registry, namespace, base, properties):
@@ -187,8 +160,6 @@ class PyramidRPC:
 
         if namespace in registry.loaded_registries[cls.__name__ + '_names']:
             cls.hook_insert_in_bases(registry, bases)
-            bases.extend(registry.loaded_cores['PyramidBaseRPC'])
-            bases.append(registry.registry_base)
             base = type(namespace, tuple(bases), properties)
             registry.loaded_controllers[namespace] = base
             bases = [base]
@@ -210,6 +181,89 @@ class PyramidRPC:
             cls.routes.append(key)
 
 
+class PyramidHTTP(PyramidBase):
+
+    routes = []
+    views = {}
+
+    @classmethod
+    def hook_view_from_decorators(cls, registryname, cls_):
+        views = RegistryManager.get_entry_properties_in_register(
+            cls.__name__, registryname).get('views', [])
+
+        for attr in dir(cls_):
+            if hasattr(getattr(cls_, attr), 'view'):
+                view = getattr(cls_, attr).view
+                key = (registryname, view['function'])
+                if key not in cls.views:
+                    cls.views[key] = {}
+
+                cls.views[key].update(view)
+
+                if key not in views:
+                    views.append(key)
+
+        return {'views': view}
+
+    @classmethod
+    def hook_insert_in_bases(cls, registry, bases):
+        bases.extend(registry.loaded_cores['PyramidBaseHTTP'])
+        super(PyramidRPC, cls).hook_insert_in_bases(registry, bases)
+
+    @classmethod
+    def view(cls, **kwargs):
+        def wraper(function):
+            kwargs['function'] = function.__name__
+            function.view = kwargs
+            return function
+
+        return wraper
+
+
+class PyramidRPC(PyramidBase):
+
+    @classmethod
+    def hook_view_from_decorators(cls, registryname, cls_):
+        if registryname not in cls.methods:
+            cls.methods[registryname] = {}
+
+        rpc_methods = RegistryManager.get_entry_properties_in_register(
+            cls.__name__, registryname).get('rpc_methods', {})
+
+        for attr in dir(cls_):
+            if hasattr(getattr(cls_, attr), 'rpc_method'):
+                rpc_method = getattr(cls_, attr).rpc_method
+                method = rpc_method['method']
+                if method not in cls.methods[registryname]:
+                    cls.methods[registryname][method] = {}
+
+                cls.methods[registryname][method].update(rpc_method)
+
+                if method not in rpc_methods:
+                    rpc_methods[method] = {}
+
+                rpc_methods[method].update(rpc_method)
+
+        return {'rpc_methods': rpc_methods}
+
+    @classmethod
+    def hook_insert_in_bases(cls, registry, bases):
+        bases.extend(registry.loaded_cores['PyramidBaseRPC'])
+        super(PyramidRPC, cls).hook_insert_in_bases(registry, bases)
+
+    @classmethod
+    def rpc_method(cls, **kwargs):
+        def wraper(function):
+            kwargs['function'] = function.__name__
+            if 'method'not in kwargs:
+                kwargs['method'] = function.__name__
+
+            function.rpc_method = kwargs
+            return function
+
+        return wraper
+
+
 @Declarations.add_declaration_type(isAnEntry=True,
                                    assemble='assemble_callback')
 class PyramidJsonRPC(PyramidRPC):
@@ -222,6 +276,7 @@ class PyramidJsonRPC(PyramidRPC):
     @classmethod
     def hook_insert_in_bases(cls, registry, bases):
         bases.extend(registry.loaded_cores['PyramidBaseJsonRPC'])
+        super(PyramidJsonRPC, cls).hook_insert_in_bases(registry, bases)
 
 
 @Declarations.add_declaration_type(isAnEntry=True,
@@ -236,51 +291,4 @@ class PyramidXmlRPC(PyramidRPC):
     @classmethod
     def hook_insert_in_bases(cls, registry, bases):
         bases.extend(registry.loaded_cores['PyramidBaseXmlRPC'])
-
-
-class Handler:
-    def __init__(self, namespace, method, function):
-        self.namespace = namespace
-        self.method = method
-        self.function = function
-
-    def wrap_view(self, request, *args, **kwargs):
-        registry = RegistryManager.get(request.session['database'])
-        return getattr(registry.loaded_controllers[self.namespace](),
-                       self.function)(*args, **kwargs)
-
-
-def pyramid_config(config):
-    for route in Pyramid.routes:
-        config.add_route(*route)
-
-    for function, properties in Pyramid.views:
-        config.add_view(function, **properties)
-
-
-def _pyramid_rpc_config(cls, add_endpoint, add_method):
-    for route in cls.routes:
-        add_endpoint(*route)
-
-    endpoints = [x[0] for x in cls.routes]
-    for namespace in cls.methods:
-        if namespace not in endpoints:
-            raise PyramidException(
-                "One or more %s controller has been declared but no route have"
-                " declared" % namespace)
-        for method in cls.methods[namespace]:
-            rpc_method = cls.methods[namespace][method]
-            function = rpc_method.pop('function')
-            add_method(Handler(namespace, method, function).wrap_view,
-                       route_name=namespace,
-                       **rpc_method)
-
-
-def pyramid_jsonrpc_config(config):
-    _pyramid_rpc_config(
-        PyramidJsonRPC, config.add_jsonrpc_endpoint, config.add_jsonrpc_method)
-
-
-def pyramid_xmlrpc_config(config):
-    _pyramid_rpc_config(
-        PyramidXmlRPC, config.add_xmlrpc_endpoint, config.add_xmlrpc_method)
+        super(PyramidXmlRPC, cls).hook_insert_in_bases(registry, bases)
