@@ -1,4 +1,5 @@
 from anyblok._argsparse import ArgsParseManager
+from anyblok.registry import RegistryManager
 from anyblok.tests.testcase import DBTestCase, BlokTestCase
 from webtest import TestApp
 from anyblok_pyramid.config import make_config
@@ -8,6 +9,16 @@ from pyramid_rpc.compat import xmlrpclib
 
 
 class PyramidTestCase:
+
+    @classmethod
+    def setUpClass(cls):
+        super(PyramidTestCase, cls).setUpClass()
+        RegistryManager.add_needed_bloks('pyramid')
+
+    def http(self, path, params=None, method='post'):
+        resp = getattr(self.webserver, method)(path, params)
+        self.assertEqual(resp.status_int, 200)
+        return resp
 
     def jsonrpc(self, path, method, params=None):
         body = {
@@ -51,6 +62,8 @@ class PyramidDBTestCase(PyramidTestCase, DBTestCase):
         from anyblok import Declarations
         pyramid_routes = [] + Declarations.Pyramid.routes
         pyramid_views = [] + Declarations.Pyramid.views
+        pyramid_http_routes = [] + Declarations.PyramidHTTP.routes
+        pyramid_http_views = Declarations.PyramidHTTP.views.copy()
         pyramid_jsonrpc_routes = [] + Declarations.PyramidJsonRPC.routes
         pyramid_jsonrpc_methods = Declarations.PyramidJsonRPC.methods.copy()
         pyramid_xmlrpc_routes = [] + Declarations.PyramidXmlRPC.routes
@@ -75,6 +88,8 @@ class PyramidDBTestCase(PyramidTestCase, DBTestCase):
         finally:
             Declarations.Pyramid.routes = pyramid_routes
             Declarations.Pyramid.views = pyramid_views
+            Declarations.PyramidHTTP.routes = pyramid_http_routes
+            Declarations.PyramidHTTP.views = pyramid_http_views
             Declarations.PyramidJsonRPC.routes = pyramid_jsonrpc_routes
             Declarations.PyramidJsonRPC.methods = pyramid_jsonrpc_methods
             Declarations.PyramidXmlRPC.routes = pyramid_xmlrpc_routes

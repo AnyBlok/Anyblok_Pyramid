@@ -13,6 +13,7 @@ def anyblok_wsgi(description, version, argsparse_groups, parts_to_load):
                           argsparse_groups=argsparse_groups,
                           parts_to_load=parts_to_load)
     ArgsParseManager.init_logger()
+    RegistryManager.add_needed_bloks('pyramid')
     config = make_config()
     wsgi_host = ArgsParseManager.get('wsgi_host', 'localhost')
     wsgi_port = int(ArgsParseManager.get('wsgi_port', '5000'))

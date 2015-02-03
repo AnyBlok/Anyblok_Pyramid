@@ -15,6 +15,7 @@ def make_config():
     config.include('pyramid_rpc.jsonrpc')
     config.include('pyramid_rpc.xmlrpc')
     config.include(pyramid_config)
+    config.include(pyramid_http_config)
     config.include(pyramid_jsonrpc_config)
     config.include(pyramid_xmlrpc_config)
     config.include(declare_static)
@@ -48,7 +49,13 @@ def pyramid_http_config(config):
     for route in PyramidHTTP.routes:
         config.add_route(*route)
 
+    endpoints = [x[0] for x in PyramidHTTP.routes]
     for hargs, properties in PyramidHTTP.views.items():
+        endpoint = '%s.%s' % hargs
+        if endpoint not in endpoints:
+            raise PyramidException(
+                "One or more %s controller has been declared but no route have"
+                " declared" % endpoint)
         config.add_view(HandlerHTTP(*hargs).wrap_view, **properties)
 
 
@@ -64,8 +71,8 @@ def _pyramid_rpc_config(cls, add_endpoint, add_method):
                 " declared" % namespace)
         for method in cls.methods[namespace]:
             rpc_method = cls.methods[namespace][method]
-            function = rpc_method.pop('function')
-            add_method(HandlerRPC(namespace, method, function).wrap_view,
+            rpc_method.pop('function')
+            add_method(HandlerRPC(namespace, method).wrap_view,
                        route_name=namespace,
                        **rpc_method)
 

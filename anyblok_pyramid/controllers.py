@@ -148,8 +148,12 @@ class PyramidBase:
             for b_ns in b.__anyblok_bases__:
                 brn = b_ns.__registry_name__
                 if brn in registry.loaded_registries['PyramidMixin_names']:
-                    bases.extend(cls.load_namespace(
-                        registry, brn, realregistryname=namespace))
+                    if realregistryname:
+                        bases.extend(cls.load_namespace(
+                            registry, brn, realregistryname=realregistryname))
+                    else:
+                        bases.extend(cls.load_namespace(
+                            registry, brn, realregistryname=namespace))
                 elif brn in registry.loaded_registries[cls.__name__ + '_names']:
                     bases.extend(cls.load_namespace(registry, brn))
                 else:
@@ -181,6 +185,8 @@ class PyramidBase:
             cls.routes.append(key)
 
 
+@Declarations.add_declaration_type(isAnEntry=True,
+                                   assemble='assemble_callback')
 class PyramidHTTP(PyramidBase):
 
     routes = []
@@ -194,21 +200,23 @@ class PyramidHTTP(PyramidBase):
         for attr in dir(cls_):
             if hasattr(getattr(cls_, attr), 'view'):
                 view = getattr(cls_, attr).view
-                key = (registryname, view['function'])
+                function = view.pop('function')
+                key = (registryname, function)
+                view['route_name'] = '%s.%s' % (registryname, function)
                 if key not in cls.views:
                     cls.views[key] = {}
 
                 cls.views[key].update(view)
 
                 if key not in views:
-                    views.append(key)
+                    views.append(function)
 
-        return {'views': view}
+        return {'views': views}
 
     @classmethod
     def hook_insert_in_bases(cls, registry, bases):
         bases.extend(registry.loaded_cores['PyramidBaseHTTP'])
-        super(PyramidRPC, cls).hook_insert_in_bases(registry, bases)
+        super(PyramidHTTP, cls).hook_insert_in_bases(registry, bases)
 
     @classmethod
     def view(cls, **kwargs):
@@ -218,6 +226,13 @@ class PyramidHTTP(PyramidBase):
             return function
 
         return wraper
+
+    @classmethod
+    def add_route(cls, path, registryname, function_name):
+        route_name = '%s.%s' % (registryname.__registry_name__, function_name)
+        key = (route_name, path)
+        if key not in cls.routes:
+            cls.routes.append(key)
 
 
 class PyramidRPC(PyramidBase):

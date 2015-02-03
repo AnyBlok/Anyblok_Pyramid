@@ -32,6 +32,10 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'License :: OSI Approved :: Mozilla Public License v2',
     ],
-    entry_points={},
+    entry_points={
+        'AnyBlok': [
+            'pyramid=anyblok_pyramid.bloks.pyramid:Pyramid',
+        ],
+    },
     extras_require={},
 )
