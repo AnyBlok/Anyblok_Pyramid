@@ -178,12 +178,6 @@ class PyramidBase:
         for namespace in registry.loaded_registries[cls.__name__ + '_names']:
             cls.load_namespace(registry, namespace)
 
-    @classmethod
-    def add_route(cls, path, registryname):
-        key = (registryname.__registry_name__, path)
-        if key not in cls.routes:
-            cls.routes.append(key)
-
 
 @Declarations.add_declaration_type(isAnEntry=True,
                                    assemble='assemble_callback')
@@ -195,21 +189,20 @@ class PyramidHTTP(PyramidBase):
     @classmethod
     def hook_view_from_decorators(cls, registryname, cls_):
         views = RegistryManager.get_entry_properties_in_register(
-            cls.__name__, registryname).get('views', [])
+            cls.__name__, registryname).get('views', {})
 
         for attr in dir(cls_):
             if hasattr(getattr(cls_, attr), 'view'):
                 view = getattr(cls_, attr).view
-                function = view.pop('function')
-                key = (registryname, function)
-                view['route_name'] = '%s.%s' % (registryname, function)
+                rn = view['route_name']
+                key = (registryname, rn)
                 if key not in cls.views:
                     cls.views[key] = {}
 
                 cls.views[key].update(view)
 
                 if key not in views:
-                    views.append(function)
+                    views[rn] = attr
 
         return {'views': views}
 
@@ -221,15 +214,16 @@ class PyramidHTTP(PyramidBase):
     @classmethod
     def view(cls, **kwargs):
         def wraper(function):
-            kwargs['function'] = function.__name__
+            if 'route_name' not in kwargs:
+                kwargs['route_name'] = function.__name__
+
             function.view = kwargs
             return function
 
         return wraper
 
     @classmethod
-    def add_route(cls, path, registryname, function_name):
-        route_name = '%s.%s' % (registryname.__registry_name__, function_name)
+    def add_route(cls, path, route_name):
         key = (route_name, path)
         if key not in cls.routes:
             cls.routes.append(key)
@@ -255,9 +249,7 @@ class PyramidRPC(PyramidBase):
                 cls.methods[registryname][method].update(rpc_method)
 
                 if method not in rpc_methods:
-                    rpc_methods[method] = {}
-
-                rpc_methods[method].update(rpc_method)
+                    rpc_methods[method] = attr
 
         return {'rpc_methods': rpc_methods}
 
@@ -269,7 +261,6 @@ class PyramidRPC(PyramidBase):
     @classmethod
     def rpc_method(cls, **kwargs):
         def wraper(function):
-            kwargs['function'] = function.__name__
             if 'method'not in kwargs:
                 kwargs['method'] = function.__name__
 
@@ -277,6 +268,12 @@ class PyramidRPC(PyramidBase):
             return function
 
         return wraper
+
+    @classmethod
+    def add_route(cls, path, registryname):
+        key = (registryname.__registry_name__, path)
+        if key not in cls.routes:
+            cls.routes.append(key)
 
 
 @Declarations.add_declaration_type(isAnEntry=True,

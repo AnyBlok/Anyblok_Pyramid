@@ -1,25 +1,54 @@
 from anyblok import Declarations
+register = Declarations.register
+Core = Declarations.Core
+PyramidException = Declarations.Exception.PyramidException
 
 
-@Declarations.register(Declarations.Core)
+@register(PyramidException)
+class PyramidInvalidFunction(PyramidException):
+    """ Sub class of Pyramid Exception """
+
+
+@register(PyramidException)
+class PyramidInvalidView(PyramidException):
+    """ Sub class of Pyramid Exception """
+
+
+@register(PyramidException)
+class PyramidInvalidMethod(PyramidException):
+    """ Sub class of Pyramid Exception """
+
+
+@register(Core)
 class PyramidBase:
 
     def __init__(self, request):
         self.request = request
         self.session = request.session
 
+    def check_function(self, function):
+        if not hasattr(self, function):
+            raise PyramidInvalidFunction("%s has no %s function" % (
+                self.__registry_name__, function))
+
 
 @Declarations.register(Declarations.Core)
 class PyramidBaseHTTP:
 
-    def check_function(self, function):
-        if not hasattr(self, function):
-            raise Declarations.Exception.PyramidException(
-                "%s has not %s function" % (self.__registry_name__, function))
+    def get_function_from_view(self, view):
+        if view not in self.views:
+            raise PyramidInvalidView('%s has no %s view' % (
+                self.__registry_name__, view))
+
+        return self.views[view]
 
 
 @Declarations.register(Declarations.Core)
 class PyramidBaseRPC:
 
-    def check_method(self, function):
-        pass
+    def get_function_from_method(self, method):
+        if method not in self.rpc_methods:
+            raise PyramidInvalidMethod('%s has no %s method' % (
+                self.__registry_name__, method))
+
+        return self.rpc_methods[method]

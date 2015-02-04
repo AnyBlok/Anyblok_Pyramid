@@ -15,6 +15,14 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
         res = self.http('/test/methodB', params={'a': 2, 'b': 3})
         self.assertEqual(eval(res.body), {'a': 6, 'b': 9})
 
+    def add_routes(self):
+        PyramidHTTP.add_route('/test/methodA', 'methodA')
+        PyramidHTTP.add_route('/test/methodB', 'method_B')
+
+    def add_routes2(self):
+        PyramidHTTP.add_route('/test2/methodA', 'test2methodA')
+        PyramidHTTP.add_route('/test2/methodB', 'test2methodB')
+
     def test_http(self):
         def add_http_contoller():
 
@@ -31,10 +39,7 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
                     return Response(str({x: int(y) * 3
                                          for x, y in kwargs.items()}))
 
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodA', Declarations.PyramidHTTP.Test, 'methodA')
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodB', Declarations.PyramidHTTP.Test, 'method_B')
+            self.add_routes()
 
         self.init_registry(add_http_contoller)
         self.check_controller()
@@ -77,10 +82,7 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
                     return Response(str({x: int(y) * 3
                                          for x, y in kwargs.items()}))
 
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodA', Declarations.PyramidHTTP.Test, 'methodA')
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodB', Declarations.PyramidHTTP.Test, 'method_B')
+            self.add_routes()
 
         self.init_registry(add_http_contoller)
         self.check_controller()
@@ -106,10 +108,7 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
                     return Response(str({x: int(y) * 3
                                          for x, y in kwargs.items()}))
 
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodA', Declarations.PyramidHTTP.Test, 'methodA')
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodB', Declarations.PyramidHTTP.Test, 'method_B')
+            self.add_routes()
 
         self.init_registry(add_http_contoller)
         self.check_controller()
@@ -135,10 +134,7 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
                     return Response(str({x: int(y) * 3
                                          for x, y in kwargs.items()}))
 
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodA', Declarations.PyramidHTTP.Test, 'methodA')
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodB', Declarations.PyramidHTTP.Test, 'method_B')
+            self.add_routes()
 
         self.init_registry(add_http_contoller)
         self.check_controller()
@@ -167,16 +163,12 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
             @register(PyramidHTTP)
             class Test2(PyramidMixin.PyMixin):
 
-                @PyramidHTTP.view()
+                @PyramidHTTP.view(route_name='test2methodA')
                 def methodA(self, **kwargs):
                     return Response(str(super(Test2, self).methodA(**kwargs)))
 
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodA', Declarations.PyramidHTTP.Test, 'methodA')
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodB', Declarations.PyramidHTTP.Test, 'method_B')
-            Declarations.PyramidHTTP.add_route(
-                '/test2/methodA', Declarations.PyramidHTTP.Test2, 'methodA')
+            self.add_routes()
+            self.add_routes2()
 
         self.init_registry(add_http_contoller)
         self.check_controller()
@@ -212,10 +204,7 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
 
             inherit_Test()
 
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodA', Declarations.PyramidHTTP.Test, 'methodA')
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodB', Declarations.PyramidHTTP.Test, 'method_B')
+            self.add_routes()
 
         self.init_registry(add_http_contoller)
         self.check_controller()
@@ -244,10 +233,7 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
                 def methodA(self, **kwargs):
                     return Response(str(super(Test, self).methodA(**kwargs)))
 
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodA', Declarations.PyramidHTTP.Test, 'methodA')
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodB', Declarations.PyramidHTTP.Test, 'method_B')
+            self.add_routes()
 
         self.init_registry(add_http_contoller)
         self.check_controller()
@@ -287,10 +273,7 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
 
             inherit_Test()
 
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodA', Declarations.PyramidHTTP.Test, 'methodA')
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodB', Declarations.PyramidHTTP.Test, 'method_B')
+            self.add_routes()
 
         self.init_registry(add_http_contoller)
         self.check_controller()
@@ -325,10 +308,7 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
                 def methodA(self, **kwargs):
                     return {x: int(y) * 2 for x, y in kwargs.items()}
 
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodA', Declarations.PyramidHTTP.Test, 'methodA')
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodB', Declarations.PyramidHTTP.Test, 'method_B')
+            self.add_routes()
 
         self.init_registry(add_http_contoller)
         self.check_controller()
@@ -339,12 +319,12 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
             @register(PyramidHTTP)
             class Test2:
 
-                @PyramidHTTP.view()
+                @PyramidHTTP.view(route_name='test2methodA')
                 def methodA(self, **kwargs):
                     return Response(str({x: int(y) * 2
                                          for x, y in kwargs.items()}))
 
-                @PyramidHTTP.view()
+                @PyramidHTTP.view(route_name='test2methodB')
                 def method_B(self, **kwargs):
                     return Response(str({x: int(y) * 3
                                          for x, y in kwargs.items()}))
@@ -360,14 +340,8 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
                 def method_B(self, **kwargs):
                     return super(Test, self).method_B(**kwargs)
 
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodA', Declarations.PyramidHTTP.Test, 'methodA')
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodB', Declarations.PyramidHTTP.Test, 'method_B')
-            Declarations.PyramidHTTP.add_route(
-                '/test2/methodA', Declarations.PyramidHTTP.Test2, 'methodA')
-            Declarations.PyramidHTTP.add_route(
-                '/test2/methodB', Declarations.PyramidHTTP.Test2, 'method_B')
+            self.add_routes()
+            self.add_routes2()
 
         self.init_registry(add_http_contoller)
         self.check_controller()
@@ -378,7 +352,7 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
             @register(PyramidHTTP)
             class Test2:
 
-                @PyramidHTTP.view()
+                @PyramidHTTP.view(route_name='test2methodB')
                 def method_B(self, **kwargs):
                     return Response(str({x: int(y) * 3
                                          for x, y in kwargs.items()}))
@@ -397,19 +371,13 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
             @register(PyramidHTTP)  # noqa
             class Test2:
 
-                @PyramidHTTP.view()
+                @PyramidHTTP.view(route_name='test2methodA')
                 def methodA(self, **kwargs):
                     return Response(str({x: int(y) * 2
                                          for x, y in kwargs.items()}))
 
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodA', Declarations.PyramidHTTP.Test, 'methodA')
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodB', Declarations.PyramidHTTP.Test, 'method_B')
-            Declarations.PyramidHTTP.add_route(
-                '/test2/methodA', Declarations.PyramidHTTP.Test2, 'methodA')
-            Declarations.PyramidHTTP.add_route(
-                '/test2/methodB', Declarations.PyramidHTTP.Test2, 'method_B')
+            self.add_routes()
+            self.add_routes2()
 
         self.init_registry(add_http_contoller)
         self.check_controller()
@@ -441,10 +409,7 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
                     return Response(str({x: int(y) * 3
                                          for x, y in kwargs.items()}))
 
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodA', Declarations.PyramidHTTP.Test, 'methodA')
-            Declarations.PyramidHTTP.add_route(
-                '/test/methodB', Declarations.PyramidHTTP.Test, 'method_B')
+            self.add_routes()
 
         self.init_registry(add_http_contoller)
         self.check_controller()

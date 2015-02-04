@@ -51,11 +51,10 @@ def pyramid_http_config(config):
 
     endpoints = [x[0] for x in PyramidHTTP.routes]
     for hargs, properties in PyramidHTTP.views.items():
-        endpoint = '%s.%s' % hargs
-        if endpoint not in endpoints:
+        if hargs[1] not in endpoints:
             raise PyramidException(
                 "One or more %s controller has been declared but no route have"
-                " declared" % endpoint)
+                " declared" % hargs[1])
         config.add_view(HandlerHTTP(*hargs).wrap_view, **properties)
 
 
@@ -71,7 +70,6 @@ def _pyramid_rpc_config(cls, add_endpoint, add_method):
                 " declared" % namespace)
         for method in cls.methods[namespace]:
             rpc_method = cls.methods[namespace][method]
-            rpc_method.pop('function')
             add_method(HandlerRPC(namespace, method).wrap_view,
                        route_name=namespace,
                        **rpc_method)

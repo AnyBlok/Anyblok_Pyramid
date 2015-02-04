@@ -19,9 +19,9 @@ class Handler:
 
 class HandlerHTTP(Handler):
 
-    def __init__(self, namespace, function):
+    def __init__(self, namespace, view):
         self.namespace = namespace
-        self.function = function
+        self.view = view
 
     def wrap_view(self, request):
         self.init_controller(request)
@@ -33,6 +33,7 @@ class HandlerHTTP(Handler):
         else:
             args.extend(list(request.params))
 
+        self.function = self.controller.get_function_from_view(self.view)
         self.controller.check_function(self.function)
         return self.call_controller(*args, **kwargs)
 
@@ -45,6 +46,6 @@ class HandlerRPC(Handler):
 
     def wrap_view(self, request, *args, **kwargs):
         self.init_controller(request)
-        self.function = self.controller.check_method(
-            self.function, self.method)
+        self.function = self.controller.get_function_from_method(self.method)
+        self.controller.check_function(self.function)
         return self.call_controller(*args, **kwargs)
