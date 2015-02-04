@@ -4,6 +4,7 @@ from pyramid.response import Response
 register = Declarations.register
 PyramidHTTP = Declarations.PyramidHTTP
 PyramidMixin = Declarations.PyramidMixin
+PyramidException = Declarations.Exception.PyramidException
 Core = Declarations.Core
 
 
@@ -62,6 +63,51 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
 
         with self.assertRaises(Declarations.Exception.PyramidException):
             self.init_registry(add_http_contoller)
+
+    def test_authentificated(self):
+        def add_http_contoller():
+
+            @register(PyramidHTTP)
+            class Test:
+
+                @PyramidHTTP.view()
+                @PyramidHTTP.authentificated()
+                def methodA(self, *args, **kwargs):
+                    return Response(str({x: int(y) * 2
+                                         for x, y in kwargs.items()}))
+
+                @PyramidHTTP.view()
+                def method_B(self, **kwargs):
+                    return Response(str({x: int(y) * 3
+                                         for x, y in kwargs.items()}))
+
+            self.add_routes()
+
+        self.init_registry(add_http_contoller)
+        self.check_controller()
+
+    def test_unknown_property(self):
+        def add_http_contoller():
+
+            @register(PyramidHTTP)
+            class Test:
+
+                @PyramidHTTP.view()
+                @PyramidHTTP.check_properties(unknown_property=True)
+                def methodA(self, *args, **kwargs):
+                    return Response(str({x: int(y) * 2
+                                         for x, y in kwargs.items()}))
+
+                @PyramidHTTP.view()
+                def method_B(self, **kwargs):
+                    return Response(str({x: int(y) * 3
+                                         for x, y in kwargs.items()}))
+
+            self.add_routes()
+
+        self.init_registry(add_http_contoller)
+        with self.assertRaises(PyramidException.PyramidInvalidProperty):
+            self.check_controller()
 
     def test_simple_subclass_controller(self):
         def add_http_contoller():

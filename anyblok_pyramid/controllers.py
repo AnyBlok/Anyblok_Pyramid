@@ -95,6 +95,7 @@ class PyramidBase:
 
         kwargs.update({'__registry_name__': _registryname})
         kwargs.update(cls.hook_view_from_decorators(_registryname, cls_))
+        kwargs.update(cls.properties_from_decorators(_registryname, cls_))
 
         RegistryManager.add_entry_in_register(
             cls.__name__, _registryname, cls_, **kwargs)
@@ -108,6 +109,20 @@ class PyramidBase:
         :param cls_: Class Interface to remove in registry
         """
         RegistryManager.remove_in_register(cls_)
+
+    @classmethod
+    def properties_from_decorators(cls, registryname, cls_):
+        properties = RegistryManager.get_entry_properties_in_register(
+            cls.__name__, registryname).get('properties', {})
+
+        for attr in dir(cls_):
+            if hasattr(getattr(cls_, attr), 'properties'):
+                if attr not in properties:
+                    properties[attr] = {}
+
+                properties[attr].update(getattr(cls_, attr).properties)
+
+        return {'properties': properties}
 
     @classmethod
     def hook_insert_in_bases(cls, registry, bases):
@@ -178,6 +193,22 @@ class PyramidBase:
         for namespace in registry.loaded_registries[cls.__name__ + '_names']:
             cls.load_namespace(registry, namespace)
 
+    @classmethod
+    def check_properties(cls, **kwargs):
+        def wraper(function):
+            function.properties = kwargs
+            return function
+
+        return wraper
+
+    @classmethod
+    def authentificated(cls):
+        def wraper(function):
+            function.properties = {'authentificated': True}
+            return function
+
+        return wraper
+
 
 @Declarations.add_declaration_type(isAnEntry=True,
                                    assemble='assemble_callback')
@@ -200,9 +231,7 @@ class PyramidHTTP(PyramidBase):
                     cls.views[key] = {}
 
                 cls.views[key].update(view)
-
-                if key not in views:
-                    views[rn] = attr
+                views[rn] = attr
 
         return {'views': views}
 
@@ -247,9 +276,7 @@ class PyramidRPC(PyramidBase):
                     cls.methods[registryname][method] = {}
 
                 cls.methods[registryname][method].update(rpc_method)
-
-                if method not in rpc_methods:
-                    rpc_methods[method] = attr
+                rpc_methods[method] = attr
 
         return {'rpc_methods': rpc_methods}
 
