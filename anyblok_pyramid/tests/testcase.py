@@ -71,7 +71,7 @@ class PyramidDBTestCase(PyramidTestCase, DBTestCase):
 
         def wrap_fnct(**wfkwargs):
             Declarations.Pyramid.add_route(
-                '/pyramid/testcase/database', 'pyramidtestcasedatabase')
+                'pyramidtestcasedatabase', '/pyramid/testcase/database')
 
             @Declarations.Pyramid.add_view('pyramidtestcasedatabase',
                                            request_method='POST')

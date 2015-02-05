@@ -12,7 +12,7 @@ class TestDeclarationPyramid(PyramidDBTestCase):
         def my_view(request, **kwargs):
             return Response(str(kwargs))
 
-        Pyramid.add_route(path, 'MyView')
+        Pyramid.add_route('MyView', pattern=path)
 
     def test_add_view(self):
         path = '/test/add/view'
@@ -42,7 +42,7 @@ class TestDeclarationPyramid(PyramidDBTestCase):
         def my_view(request):
             return Response(request_method)
 
-        Pyramid.add_route(path, 'MyView')
+        Pyramid.add_route('MyView', path)
 
     def test_REst_get(self):
         path = '/test/rest/get'

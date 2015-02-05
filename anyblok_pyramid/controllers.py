@@ -1,3 +1,10 @@
+# This file is a part of the AnyBlok / Pyramid project
+#
+#    Copyright (C) 2015 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
+#
+# This Source Code Form is subject to the terms of the Mozilla Public License,
+# v. 2.0. If a copy of the MPL was not distributed with this file,You can
+# obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok import Declarations
 from anyblok.common import TypeList, apply_cache
 from anyblok.registry import RegistryManager
@@ -29,34 +36,156 @@ class PyramidException(Exception):
 
 @Declarations.add_declaration_type(isAnEntry=True)
 class PyramidMixin(MixinType):
-    pass
+    """ The PyramidMixin class are used to define a behaviours on models:
+
+    * Add new mixin class::
+
+        @Declarations.register(Declarations.PyramidMixin)
+        class MyMixinclass:
+            pass
+
+    * Remove a mixin class::
+
+        Declarations.unregister(Declarations.PyramidMixin.MyMixinclass,
+                                MyMixinclass)
+    """
 
 
 # Not depend of the registry
 @Declarations.add_declaration_type()
 class Pyramid:
+    """ The Pyramid controller is a simple wrapper of the Pyramid controller
+
+    Pyramid can scan easily the ``view`` declarations to add them in the
+    configuration. But the ``route`` have to add directlly in the
+    configuration. This controller do all of them. The ``route`` and ``view``
+    are saved in the controller and the controller add them in the
+    configuration at the start of the wsgi server
+
+    .. warning::
+
+        This case is only use by the script ``anyblok_wsgi``, if you use an
+        another script, you must include the includem ``pyramid_config``
+        or use the function ``make_config`` to get all the configuration
+
+    This ``Type`` is not an entry, no class are assembled in the registry.
+    You must not add any class of this ``Type``, the methods ``register`` and
+    ``unregister`` raise an exception.
+
+    Add a view::
+
+        from anyblok import Declarations
+
+
+        @Declarations.Pyramid.add_view('route name')
+        def myview(request):
+            ...
+
+    .. note::
+
+        The decorator ``add_view`` is just a wrapper of `add_view
+        <http://docs.pylonsproject.org/docs/pyramid/en/latest/api/
+        config.html#pyramid.config.Configurator.add_view>`_
+
+        the args already filled by the wraper are:
+
+        * view: is the decorated function
+        * name: is the **route name**
+
+    Add a route::
+
+        from anyblok import Declarations
+
+
+        Declarations.Pyramid.add_route('route name', '/my/path')
+
+    .. note::
+
+        The function ``add_route`` is just a wrapper of `add_route
+        <http://docs.pylonsproject.org/docs/pyramid/en/latest/api/
+        config.html#pyramid.config.Configurator.add_route>`_
+
+        The args already filled by the wraper are:
+
+        * name: is the **route name**
+        * pattern: is the path
+
+    """
 
     routes = []
     views = []
 
     @classmethod
-    def register(cls, parent, name, cls_, **kwargs):
+    def register(cls, parent, name, cls_):
+        """ **Forbidden method**, this method always raise when calls
+
+        :param parent: Existing global registry
+        :param name: Name of the new registry to add it
+        :param cls_: Class Interface to add in registry
+        :exception: PyramidException
+        """
         raise Declarations.Exception.PyramidException(
             'Register declaration of one Pyramid type is forbidden')
 
     @classmethod
     def unregister(cls, child, cls_):
+        """ **Forbidden method**, this method always raise when calls
+
+        :param entry: entry declaration of the model where the ``cls_``
+            must be removed
+        :param cls_: Class Interface to remove in registry
+        :exception: PyramidException
+        """
         raise Declarations.Exception.PyramidException(
             'Unregister declaration of one Pyramid type is forbidden')
 
     @classmethod
-    def add_route(cls, path, endpoint):
-        key = (endpoint, path)
-        if key not in cls.routes:
-            cls.routes.append(key)
+    def add_route(cls, *args, **kwargs):
+        """ Declare a route to add it in the configuration of ``Pyramid``::
+
+            from anyblok import Declarations
+
+
+            Declarations.Pyramid.add_route('route name', '/my/path')
+
+        .. note::
+
+            The function ``add_route`` is just a wrapper of `add_route
+            <http://docs.pylonsproject.org/docs/pyramid/en/latest/api/
+            config.html#pyramid.config.Configurator.add_route>`_
+
+            The args already filled by the wraper are:
+
+            * name: is the **route name**
+            * pattern: is the path
+
+        """
+        key = (args, kwargs)
+        cls.routes.append(key)
 
     @classmethod
     def add_view(cls, endpoint, **kwargs):
+        """ Declare a view to add it in the configuration of ``Pyramid``::
+
+            from anyblok import Declarations
+
+
+            @Declarations.Pyramid.add_view('route name')
+            def myview(request):
+                ...
+
+        .. note::
+
+            The decorator ``add_view`` is just a wrapper of `add_view
+            <http://docs.pylonsproject.org/docs/pyramid/en/latest/api/
+            config.html#pyramid.config.Configurator.add_view>`_
+
+            the args already filled by the wraper are:
+
+            * view: is the decorated function
+            * name: is the **route name**
+
+        """
         def wraper(function):
             def wraper_function(request):
                 request_kwargs = request.matchdict

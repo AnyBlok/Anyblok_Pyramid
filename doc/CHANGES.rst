@@ -1,0 +1,24 @@
+.. This file is a part of the AnyBlok / Pyramid project
+..
+..    Copyright (C) 2015 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
+..
+.. This Source Code Form is subject to the terms of the Mozilla Public License,
+.. v. 2.0. If a copy of the MPL was not distributed with this file,You can
+.. obtain one at http://mozilla.org/MPL/2.0/.
+
+CHANGELOG
+=========
+
+
+0.1.0
+-----
+
+Main version of AnyBlok / Pyramid. You can with this version
+
+* Declare Views / Routes for application
+* Declare controller (Views / Routes) which depend of the installation of bloks
+    * XHR
+    * JsonRPC
+    * XmlRPC
+* Possibility to check some property as authentification
+* Possibility to define properties check

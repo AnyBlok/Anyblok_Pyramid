@@ -1,8 +1,9 @@
 from anyblok.blok import Blok
+from anyblok_pyramid.release import version
 
 
 class Pyramid(Blok):
-    version = '1.0.0'
+    version = version
 
     required = [
         'anyblok-core',
