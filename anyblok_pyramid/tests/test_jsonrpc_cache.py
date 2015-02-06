@@ -26,7 +26,7 @@ class TestSimpleCache(PyramidDBTestCase):
             def get_method_cached(self):
                 return self.method_cached()
 
-        PyramidJsonRPC.add_route('/test', PyramidJsonRPC.Test)
+        PyramidJsonRPC.add_route(PyramidJsonRPC.Test, '/test')
 
     def test_model(self):
         def add_model_with_method_cached():
@@ -217,7 +217,7 @@ class TestInheritedCache(PyramidDBTestCase):
                 res = self.method_cached()
                 return res
 
-        PyramidJsonRPC.add_route('/test', PyramidJsonRPC.Test)
+        PyramidJsonRPC.add_route(PyramidJsonRPC.Test, '/test')
 
     def add_model_with_method_cached(self, inheritcache=False):
 

@@ -27,7 +27,7 @@ class TestSimpleCache(PyramidDBTestCase):
             def get_method_cached(self):
                 return Response(str(self.method_cached()))
 
-        PyramidHTTP.add_route('/test', 'get_method_cached')
+        PyramidHTTP.add_route('get_method_cached', '/test')
 
     def test_model(self):
         def add_model_with_method_cached():
@@ -217,7 +217,7 @@ class TestInheritedCache(PyramidDBTestCase):
             def get_method_cached(self):
                 return Response(str(self.method_cached()))
 
-        PyramidHTTP.add_route('/test', 'get_method_cached')
+        PyramidHTTP.add_route('get_method_cached', '/test')
 
     def add_model_with_method_cached(self, inheritcache=False):
 

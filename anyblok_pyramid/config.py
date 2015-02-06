@@ -69,10 +69,10 @@ def pyramid_http_config(config):
     :param config: the pyramid configuration
     :exception: PyramidException
     """
-    for route in PyramidHTTP.routes:
-        config.add_route(*route)
+    for args, kwargs in PyramidHTTP.routes:
+        config.add_route(*args, **kwargs)
 
-    endpoints = [x[0] for x in PyramidHTTP.routes]
+    endpoints = [x[0][0] for x in PyramidHTTP.routes]
     for hargs, properties in PyramidHTTP.views.items():
         if hargs[1] not in endpoints:
             raise PyramidException(
@@ -89,10 +89,10 @@ def _pyramid_rpc_config(cls, add_endpoint, add_method):
     :param add_method: function to add rpc_method in configuration
     :exception: PyramidException
     """
-    for route in cls.routes:
-        add_endpoint(*route)
+    for args, kwargs in cls.routes:
+        add_endpoint(*args, **kwargs)
 
-    endpoints = [x[0] for x in cls.routes]
+    endpoints = [x[0][0] for x in cls.routes]
     for namespace in cls.methods:
         if namespace not in endpoints:
             raise PyramidException(

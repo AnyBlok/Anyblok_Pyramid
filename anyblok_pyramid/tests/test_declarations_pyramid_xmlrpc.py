@@ -28,7 +28,7 @@ class TestDeclarationPyramidXmlRPC(PyramidDBTestCase):
                     return [x * 3 for x in args]
 
             Declarations.PyramidXmlRPC.add_route(
-                '/test', Declarations.PyramidXmlRPC.Test)
+                Declarations.PyramidXmlRPC.Test, '/test')
 
         self.init_registry(add_xmlrpc_contoller)
         self.check_controller()
@@ -68,7 +68,7 @@ class TestDeclarationPyramidXmlRPC(PyramidDBTestCase):
                     return [x * 3 for x in args]
 
             Declarations.PyramidXmlRPC.add_route(
-                '/test', Declarations.PyramidXmlRPC.Test)
+                Declarations.PyramidXmlRPC.Test, '/test')
 
         self.init_registry(add_xmlrpc_contoller)
         self.check_controller()
@@ -94,7 +94,7 @@ class TestDeclarationPyramidXmlRPC(PyramidDBTestCase):
                     return [x * 3 for x in args]
 
             Declarations.PyramidXmlRPC.add_route(
-                '/test', Declarations.PyramidXmlRPC.Test)
+                Declarations.PyramidXmlRPC.Test, '/test')
 
         self.init_registry(add_xmlrpc_contoller)
         self.check_controller()
@@ -120,7 +120,7 @@ class TestDeclarationPyramidXmlRPC(PyramidDBTestCase):
                     return [x * 3 for x in args]
 
             Declarations.PyramidXmlRPC.add_route(
-                '/test', Declarations.PyramidXmlRPC.Test)
+                Declarations.PyramidXmlRPC.Test, '/test')
 
         self.init_registry(add_xmlrpc_contoller)
         self.check_controller()
@@ -146,7 +146,7 @@ class TestDeclarationPyramidXmlRPC(PyramidDBTestCase):
                     return [x * 3 for x in args]
 
             Declarations.PyramidXmlRPC.add_route(
-                '/test', Declarations.PyramidXmlRPC.Test)
+                Declarations.PyramidXmlRPC.Test, '/test')
 
         self.init_registry(add_xmlrpc_contoller)
         self.check_controller()
@@ -179,9 +179,9 @@ class TestDeclarationPyramidXmlRPC(PyramidDBTestCase):
                     return super(Test2, self).methodA(*args)
 
             Declarations.PyramidXmlRPC.add_route(
-                '/test', Declarations.PyramidXmlRPC.Test)
+                Declarations.PyramidXmlRPC.Test, '/test')
             Declarations.PyramidXmlRPC.add_route(
-                '/test2', Declarations.PyramidXmlRPC.Test2)
+                Declarations.PyramidXmlRPC.Test2, '/test2')
 
         self.init_registry(add_xmlrpc_contoller)
         self.check_controller()
@@ -217,7 +217,7 @@ class TestDeclarationPyramidXmlRPC(PyramidDBTestCase):
             inherit_Test()
 
             Declarations.PyramidXmlRPC.add_route(
-                '/test', Declarations.PyramidXmlRPC.Test)
+                Declarations.PyramidXmlRPC.Test, '/test')
 
         self.init_registry(add_xmlrpc_contoller)
         self.check_controller()
@@ -246,7 +246,7 @@ class TestDeclarationPyramidXmlRPC(PyramidDBTestCase):
                     return super(Test, self).methodA(*args)
 
             Declarations.PyramidXmlRPC.add_route(
-                '/test', Declarations.PyramidXmlRPC.Test)
+                Declarations.PyramidXmlRPC.Test, '/test')
 
         self.init_registry(add_xmlrpc_contoller)
         self.check_controller()
@@ -286,7 +286,7 @@ class TestDeclarationPyramidXmlRPC(PyramidDBTestCase):
             inherit_Test()
 
             Declarations.PyramidXmlRPC.add_route(
-                '/test', Declarations.PyramidXmlRPC.Test)
+                Declarations.PyramidXmlRPC.Test, '/test')
 
         self.init_registry(add_xmlrpc_contoller)
         self.check_controller()
@@ -321,7 +321,7 @@ class TestDeclarationPyramidXmlRPC(PyramidDBTestCase):
                     return [x * 2 for x in args]
 
             Declarations.PyramidXmlRPC.add_route(
-                '/test', Declarations.PyramidXmlRPC.Test)
+                Declarations.PyramidXmlRPC.Test, '/test')
 
         self.init_registry(add_xmlrpc_contoller)
         self.check_controller()
@@ -352,9 +352,9 @@ class TestDeclarationPyramidXmlRPC(PyramidDBTestCase):
                     return super(Test, self).method_B(*args)
 
             Declarations.PyramidXmlRPC.add_route(
-                '/test', Declarations.PyramidXmlRPC.Test)
+                Declarations.PyramidXmlRPC.Test, '/test')
             Declarations.PyramidXmlRPC.add_route(
-                '/test2', Declarations.PyramidXmlRPC.Test2)
+                Declarations.PyramidXmlRPC.Test2, '/test2')
 
         self.init_registry(add_xmlrpc_contoller)
         self.check_controller()
@@ -388,9 +388,9 @@ class TestDeclarationPyramidXmlRPC(PyramidDBTestCase):
                     return [x * 2 for x in args]
 
             Declarations.PyramidXmlRPC.add_route(
-                '/test', Declarations.PyramidXmlRPC.Test)
+                Declarations.PyramidXmlRPC.Test, '/test')
             Declarations.PyramidXmlRPC.add_route(
-                '/test2', Declarations.PyramidXmlRPC.Test2)
+                Declarations.PyramidXmlRPC.Test2, '/test2')
 
         self.init_registry(add_xmlrpc_contoller)
         self.check_controller()
@@ -422,7 +422,7 @@ class TestDeclarationPyramidXmlRPC(PyramidDBTestCase):
                     return [x * 3 for x in args]
 
             Declarations.PyramidXmlRPC.add_route(
-                '/test', Declarations.PyramidXmlRPC.Test)
+                Declarations.PyramidXmlRPC.Test, '/test')
 
         self.init_registry(add_xmlrpc_contoller)
         self.check_controller()

@@ -113,7 +113,9 @@ class Pyramid:
     """
 
     routes = []
+    """Route properties to add in pyramid configuration"""
     views = []
+    """View properties to add in pyramid configuration"""
 
     @classmethod
     def register(cls, parent, name, cls_):
@@ -201,6 +203,18 @@ class Pyramid:
 
 
 class PyramidBase:
+    """
+    .. warning::
+
+        This class is not a controller, but base of HTTP and RPC controller
+
+    .. warning::
+
+        This class is not the ``Core.PyramidBase``.
+
+    The declarations of HTTP and RPC controller is not the same, but they are
+    few difference.
+    """
 
     @classmethod
     def register(cls, parent, name, cls_, **kwargs):
@@ -241,6 +255,13 @@ class PyramidBase:
 
     @classmethod
     def properties_from_decorators(cls, registryname, cls_):
+        """ Properties is  used to make some check before  call the
+        view. This method get the view which are need this verification
+
+        :param registryname: the registry name
+        :param cls_: a class of the registry name to take the properties
+        :rtype: dict to save in the registry
+        """
         properties = RegistryManager.get_entry_properties_in_register(
             cls.__name__, registryname).get('properties', {})
 
@@ -255,6 +276,15 @@ class PyramidBase:
 
     @classmethod
     def hook_insert_in_bases(cls, registry, bases):
+        """ The difference between HTTP and RPC controller are the Core used
+        by them. all of them must inherit of:
+
+        * Core.PyramidBase
+        * registry_base
+
+        :param registry: the current registry for the controller
+        :param bases: bases list which define the controller
+        """
         bases.extend(registry.loaded_cores['PyramidBase'])
         bases.append(registry.registry_base)
 
@@ -273,6 +303,15 @@ class PyramidBase:
 
     @classmethod
     def load_namespace(cls, registry, namespace, realregistryname=None):
+        """ Return the bases and the properties of the namespace
+
+        :param registry: the current registry
+        :param namespace: the namespace of the model
+        :param realregistryname: the name of the model if the namespace is a
+            mixin
+        :rtype: the list od the bases and the properties
+        :exception: PyramidException
+        """
         if namespace in registry.loaded_namespaces:
             return [registry.loaded_controllers[namespace]]
 
@@ -316,6 +355,11 @@ class PyramidBase:
 
     @classmethod
     def assemble_callback(cls, registry):
+        """ Assemble callback is called to assemble all the controllers
+        from the installed bloks
+
+        :param registry: registry to update
+        """
         if not hasattr(registry, 'loaded_controllers'):
             registry.loaded_controllers = {}
 
@@ -324,6 +368,10 @@ class PyramidBase:
 
     @classmethod
     def check_properties(cls, **kwargs):
+        """ decorator which add the properties to check
+
+        :paraù \*\*kwargs: dict property: value to check
+        """
         def wraper(function):
             function.properties = kwargs
             return function
@@ -332,6 +380,9 @@ class PyramidBase:
 
     @classmethod
     def authentificated(cls):
+        """ Decorator which add the property ``authentificated`` with the value
+        ``True``
+        """
         def wraper(function):
             function.properties = {'authentificated': True}
             return function
@@ -342,12 +393,89 @@ class PyramidBase:
 @Declarations.add_declaration_type(isAnEntry=True,
                                    assemble='assemble_callback')
 class PyramidHTTP(PyramidBase):
+    """ The PyramidHTTP controller is a simple wrapper of the Pyramid
+    controller
+
+    At the start of the pyramid server, all routes and all the views must be
+    known. But the routes and views are declared on the bloks. Then the
+    declaration of the routes and the views must be done also if the bloks
+    are not installed. When the controller is called then the view must be
+    validated by the controller to be called
+
+    .. warning::
+
+        This case is only use by the script ``anyblok_wsgi``, if you use an
+        another script, you must include the includem ``pyramid_http_config``
+        or use the function ``make_config`` to get all the configuration
+
+    Add a view::
+
+        from anyblok import Declarations
+
+
+        @Declarations.register(Declaration.PyramidHTTP)
+        class My controller:
+
+            @Declaration.PyramidHTTP.view()
+            def myview(request):
+                # route name == myview
+                ...
+
+            @Declaration.PyramidHTTP.view('myroute')
+            def myotherview(request):
+                # route name == myroute
+                ...
+
+    .. note::
+
+        The decorator ``view`` is just a wrapper of `add_view
+        <http://docs.pylonsproject.org/docs/pyramid/en/latest/api/
+        config.html#pyramid.config.Configurator.add_view>`_
+
+        the args already filled by the wraper are:
+
+        * view: is the decorated function
+        * name: the default value is the name of the method or the first args
+
+    Add a route::
+
+        from anyblok import Declarations
+
+
+        Declarations.PyramidHTTP.add_route('route name', '/my/path')
+
+    .. note::
+
+        The function ``add_route`` is just a wrapper of `add_route
+        <http://docs.pylonsproject.org/docs/pyramid/en/latest/api/
+        config.html#pyramid.config.Configurator.add_route>`_
+
+        The args already filled by the wraper are:
+
+        * name: is the **route name**
+        * pattern: is the path
+
+    .. warning::
+
+        It 's important to use the add_route of PyramidHTTP, because
+        when the view are add in configuration, this view check is the
+        **route name** exist in the routes.
+
+    """
 
     routes = []
+    """Route properties to add in pyramid configuration"""
     views = {}
+    """View properties to add in pyramid configuration"""
 
     @classmethod
     def hook_view_from_decorators(cls, registryname, cls_):
+        """ Save the decorated method by view
+
+        :param registryname: registry name of the controller
+        :param cls\_: the cls of the registry name
+        :rtype: dict {'views': {route name: function} }
+        """
         views = RegistryManager.get_entry_properties_in_register(
             cls.__name__, registryname).get('views', {})
 
@@ -366,11 +494,49 @@ class PyramidHTTP(PyramidBase):
 
     @classmethod
     def hook_insert_in_bases(cls, registry, bases):
+        """ Define the Core class inherited by PyramidHTTP controllers
+
+        * Core.PyramidBaseHTTP
+        * super()
+
+        :param registry: the current registry for the controller
+        :param bases: bases list which define the controller
+        """
         bases.extend(registry.loaded_cores['PyramidBaseHTTP'])
         super(PyramidHTTP, cls).hook_insert_in_bases(registry, bases)
 
     @classmethod
     def view(cls, **kwargs):
+        """ Declare a view to add it in the configuration of ``Pyramid``::
+
+            from anyblok import Declarations
+
+
+            @Declarations.register(Declaration.PyramidHTTP)
+            class My controller:
+
+                @Declaration.PyramidHTTP.view()
+                def myview(request):
+                    # route name == myview
+                    ...
+
+                @Declaration.PyramidHTTP.view('myroute')
+                def myotherview(request):
+                    # route name == myroute
+                    ...
+
+        .. note::
+
+            The decorator ``view`` is just a wrapper of `add_view
+            <http://docs.pylonsproject.org/docs/pyramid/en/latest/api/
+            config.html#pyramid.config.Configurator.add_view>`_
+
+            the args already filled by the wraper are:
+
+            * view: is the decorated function
+            * name: the default value is the name of the method or the first args
+
+        """
         def wraper(function):
             if 'route_name' not in kwargs:
                 kwargs['route_name'] = function.__name__
@@ -381,16 +547,39 @@ class PyramidHTTP(PyramidBase):
         return wraper
 
     @classmethod
-    def add_route(cls, path, route_name):
-        key = (route_name, path)
-        if key not in cls.routes:
-            cls.routes.append(key)
+    def add_route(cls, *args, **kwargs):
+        """ Declare a route to add it in the configuration of ``Pyramid``::
+
+            from anyblok import Declarations
+
+
+            Declarations.PyramidHTTP.add_route('route name', '/my/path')
+
+        .. note::
+
+            The function ``add_route`` is just a wrapper of `add_route
+            <http://docs.pylonsproject.org/docs/pyramid/en/latest/api/
+            config.html#pyramid.config.Configurator.add_route>`_
+
+            The args already filled by the wraper are:
+
+            * name: is the **route name**
+            * pattern: is the path
+
+        """
+        cls.routes.append((args, kwargs))
 
 
 class PyramidRPC(PyramidBase):
 
     @classmethod
     def hook_view_from_decorators(cls, registryname, cls_):
+        """ Save the decorated method by rpc method
+
+        :param registryname: registry name of the controller
+        :param cls\_: the cls of the registry name
+        :rtype: dict {'views': {route name: function} }
+        """
         if registryname not in cls.methods:
             cls.methods[registryname] = {}
 
@@ -411,11 +600,21 @@ class PyramidRPC(PyramidBase):
 
     @classmethod
     def hook_insert_in_bases(cls, registry, bases):
+        """ Define the Core class inherited by Pyramid RPC controllers
+
+        * Core.PyramidBaseRPC
+        * super()
+
+        :param registry: the current registry for the controller
+        :param bases: bases list which define the controller
+        """
         bases.extend(registry.loaded_cores['PyramidBaseRPC'])
         super(PyramidRPC, cls).hook_insert_in_bases(registry, bases)
 
     @classmethod
     def rpc_method(cls, **kwargs):
+        """ Declare a rpc method to add it in the configuration of
+        ``Pyramid RPC``"""
         def wraper(function):
             if 'method'not in kwargs:
                 kwargs['method'] = function.__name__
@@ -426,23 +625,111 @@ class PyramidRPC(PyramidBase):
         return wraper
 
     @classmethod
-    def add_route(cls, path, registryname):
-        key = (registryname.__registry_name__, path)
-        if key not in cls.routes:
-            cls.routes.append(key)
+    def add_route(cls, *args, **kwargs):
+        """ Declare a route to add it in the configuration of ``Pyramid``"""
+        if len(args) == 1:
+            args = (args[0].__registry_name__,)
+        elif args:
+            args = list(args)
+            args = tuple([args[0].__registry_name__] + args[1:])
+        elif 'endpoint' in kwargs:
+            kwargs['endpoint'] = kwargs['endpoint'].__registry_name__
+        elif 'route_name' in kwargs:
+            kwargs['route_name'] = kwargs['route_name'].__registry_name__
+        cls.routes.append((args, kwargs))
 
 
 @Declarations.add_declaration_type(isAnEntry=True,
                                    assemble='assemble_callback')
 class PyramidJsonRPC(PyramidRPC):
-    """
+    """ The PyramidJsonRPC controller is a simple wrapper of the Pyramid
+    JSON-RPC controller
+
+    At the start of the pyramid server, all routes and all the rpc methods
+    must be known. But the routes and rpc methods are declared on the bloks.
+    Then  the declaration of the routes and the rpc methods must be done also
+    if the bloks are not installed. When the controller is called then the rpc
+    method must be validated by the controller to be called
+
+    .. warning::
+
+        This case is only use by the script ``anyblok_wsgi``, if you use an
+        another script, you must include the includem
+        ``pyramid_jsonrpc_config`` or use the function ``make_config``
+        to get all the configuration
+
+    Add a rpc method::
+
+        from anyblok import Declarations
+
+
+        @Declarations.register(Declaration.PyramidJsonRPC)
+        class MyController:
+
+            @Declaration.PyramidJsonRPC.rpc_method()
+            def mymethod(request):
+                # method name == mymethod
+                ...
+
+            @Declaration.PyramidJsonRPC.rpc_method('myroute')
+            def myothermethod(request):
+                # method name == myroute
+                ...
+
+    .. note::
+
+        The decorator ``rpc_method`` is just a wrapper of `add_jsonrpc_method
+        <http://docs.pylonsproject.org/projects/pyramid-rpc/en/latest/
+        jsonrpc.html#pyramid_rpc.jsonrpc.add_jsonrpc_method>`_
+
+        the args already filled by the wraper are:
+
+        * view: is the decorated method
+        * endpoint: the default value is the name of the method or the first
+            args
+
+    Add a route::
+
+        from anyblok import Declarations
+
+
+        Declarations.PyramidJsonRPC.add_route(
+            Declarations.PyramidJsonRPC.MyController, '/my/path')
+
+    .. note::
+
+        The function ``add_route`` is just a wrapper of `add_jsonrpc_endpoint
+        <http://docs.pylonsproject.org/projects/pyramid-rpc/en/latest/
+        jsonrpc.html#pyramid_rpc.jsonrpc.add_jsonrpc_endpoint>`_
+
+        The args already filled by the wraper are:
+
+        * name: is the **route name**
+        * pattern: is the path
+
+    .. warning::
+
+        It 's important to use the add_route of PyramidJsonRPC, because
+        when the view are add in configuration, this view check is the
+        **rpc method** exist in the routes.
+
     """
 
-    methods = {}
     routes = []
+    """Route properties to add in pyramid configuration"""
+    methods = {}
+    """RPC method properties to add in pyramid configuration"""
 
     @classmethod
     def hook_insert_in_bases(cls, registry, bases):
+        """ Define the Core class inherited by PyramidJsonRPC controllers
+
+        * Core.PyramidBaseJsonRPC
+        * super()
+
+        :param registry: the current registry for the controller
+        :param bases: bases list which define the controller
+        """
         bases.extend(registry.loaded_cores['PyramidBaseJsonRPC'])
         super(PyramidJsonRPC, cls).hook_insert_in_bases(registry, bases)
 
@@ -450,13 +737,93 @@ class PyramidJsonRPC(PyramidRPC):
 @Declarations.add_declaration_type(isAnEntry=True,
                                    assemble='assemble_callback')
 class PyramidXmlRPC(PyramidRPC):
-    """
+    """ The PyramidXmlRPC controller is a simple wrapper of the Pyramid
+    XML-RPC controller
+
+    At the start of the pyramid server, all routes and all the rpc methods
+    must be known. But the routes and rpc methods are declared on the bloks.
+    Then  the declaration of the routes and the rpc methods must be done also
+    if the bloks are not installed. When the controller is called then the rpc
+    method must be validated by the controller to be called
+
+    .. warning::
+
+        This case is only use by the script ``anyblok_wsgi``, if you use an
+        another script, you must include the includem
+        ``pyramid_xmlrpc_config`` or use the function ``make_config``
+        to get all the configuration
+
+    Add a rpc method::
+
+        from anyblok import Declarations
+
+
+        @Declarations.register(Declaration.PyramidXmlRPC)
+        class MyController:
+
+            @Declaration.PyramidXmlRPC.rpc_method()
+            def mymethod(request):
+                # method name == mymethod
+                ...
+
+            @Declaration.PyramidXmlRPC.rpc_method('myroute')
+            def myothermethod(request):
+                # method name == myroute
+                ...
+
+    .. note::
+
+        The decorator ``rpc_method`` is just a wrapper of `add_xmlrpc_method
+        <http://docs.pylonsproject.org/projects/pyramid-rpc/en/latest/
+        xmlrpc.html#pyramid_rpc.xmlrpc.add_xmlrpc_method>`_
+
+        the args already filled by the wraper are:
+
+        * view: is the decorated method
+        * endpoint: the default value is the name of the method or the first
+            args
+
+    Add a route::
+
+        from anyblok import Declarations
+
+
+        Declarations.PyramidXmlRPC.add_route(
+            Declarations.PyramidXmlRPC.MyController, '/my/path')
+
+    .. note::
+
+        The function ``add_route`` is just a wrapper of `add_xmlrpc_endpoint
+        <http://docs.pylonsproject.org/projects/pyramid-rpc/en/latest/
+        xmlrpc.html#pyramid_rpc.xmlrpc.add_xmlrpc_endpoint>`_
+
+        The args already filled by the wraper are:
+
+        * name: is the **route name**
+        * pattern: is the path
+
+    .. warning::
+
+        It 's important to use the add_route of PyramidXmlRPC, because
+        when the view are add in configuration, this view check is the
+        **rpc method** exist in the routes.
+
     """
 
-    methods = {}
     routes = []
+    """Route properties to add in pyramid configuration"""
+    methods = {}
+    """RPC method properties to add in pyramid configuration"""
 
     @classmethod
     def hook_insert_in_bases(cls, registry, bases):
+        """ Define the Core class inherited by PyramidXmlRPC controllers
+
+        * Core.PyramidBaseXmlRPC
+        * super()
+
+        :param registry: the current registry for the controller
+        :param bases: bases list which define the controller
+        """
         bases.extend(registry.loaded_cores['PyramidBaseXmlRPC'])
         super(PyramidXmlRPC, cls).hook_insert_in_bases(registry, bases)

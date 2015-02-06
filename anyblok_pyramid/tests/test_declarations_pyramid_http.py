@@ -17,12 +17,12 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
         self.assertEqual(eval(res.body), {'a': 6, 'b': 9})
 
     def add_routes(self):
-        PyramidHTTP.add_route('/test/methodA', 'methodA')
-        PyramidHTTP.add_route('/test/methodB', 'method_B')
+        PyramidHTTP.add_route('methodA', '/test/methodA')
+        PyramidHTTP.add_route('method_B', '/test/methodB')
 
     def add_routes2(self):
-        PyramidHTTP.add_route('/test2/methodA', 'test2methodA')
-        PyramidHTTP.add_route('/test2/methodB', 'test2methodB')
+        PyramidHTTP.add_route('test2methodA', '/test2/methodA')
+        PyramidHTTP.add_route('test2methodB', '/test2/methodB')
 
     def test_http(self):
         def add_http_contoller():

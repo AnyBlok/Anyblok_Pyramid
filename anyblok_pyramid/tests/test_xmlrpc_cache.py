@@ -26,7 +26,7 @@ class TestSimpleCache(PyramidDBTestCase):
             def get_method_cached(self):
                 return self.method_cached()
 
-        PyramidXmlRPC.add_route('/test', PyramidXmlRPC.Test)
+        PyramidXmlRPC.add_route(PyramidXmlRPC.Test, '/test')
 
     def test_model(self):
         def add_model_with_method_cached():
@@ -216,7 +216,7 @@ class TestInheritedCache(PyramidDBTestCase):
             def get_method_cached(self):
                 return self.method_cached()
 
-        PyramidXmlRPC.add_route('/test', PyramidXmlRPC.Test)
+        PyramidXmlRPC.add_route(PyramidXmlRPC.Test, '/test')
 
     def add_model_with_method_cached(self, inheritcache=False):
 

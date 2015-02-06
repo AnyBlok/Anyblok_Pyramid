@@ -29,7 +29,7 @@ class TestDeclarationPyramidJsonRPC(PyramidDBTestCase):
                     return {x: y * 3 for x, y in kwargs.items()}
 
             Declarations.PyramidJsonRPC.add_route(
-                '/test', Declarations.PyramidJsonRPC.Test)
+                Declarations.PyramidJsonRPC.Test, '/test')
 
         self.init_registry(add_jsonrpc_contoller)
         self.check_controller()
@@ -69,7 +69,7 @@ class TestDeclarationPyramidJsonRPC(PyramidDBTestCase):
                     return {x: y * 3 for x, y in kwargs.items()}
 
             Declarations.PyramidJsonRPC.add_route(
-                '/test', Declarations.PyramidJsonRPC.Test)
+                Declarations.PyramidJsonRPC.Test, '/test')
 
         self.init_registry(add_jsonrpc_contoller)
         self.check_controller()
@@ -95,7 +95,7 @@ class TestDeclarationPyramidJsonRPC(PyramidDBTestCase):
                     return {x: y * 3 for x, y in kwargs.items()}
 
             Declarations.PyramidJsonRPC.add_route(
-                '/test', Declarations.PyramidJsonRPC.Test)
+                Declarations.PyramidJsonRPC.Test, '/test')
 
         self.init_registry(add_jsonrpc_contoller)
         self.check_controller()
@@ -121,7 +121,7 @@ class TestDeclarationPyramidJsonRPC(PyramidDBTestCase):
                     return {x: y * 3 for x, y in kwargs.items()}
 
             Declarations.PyramidJsonRPC.add_route(
-                '/test', Declarations.PyramidJsonRPC.Test)
+                Declarations.PyramidJsonRPC.Test, '/test')
 
         self.init_registry(add_jsonrpc_contoller)
         self.check_controller()
@@ -147,7 +147,7 @@ class TestDeclarationPyramidJsonRPC(PyramidDBTestCase):
                     return {x: y * 3 for x, y in kwargs.items()}
 
             Declarations.PyramidJsonRPC.add_route(
-                '/test', Declarations.PyramidJsonRPC.Test)
+                Declarations.PyramidJsonRPC.Test, '/test')
 
         self.init_registry(add_jsonrpc_contoller)
         self.check_controller()
@@ -180,9 +180,9 @@ class TestDeclarationPyramidJsonRPC(PyramidDBTestCase):
                     return super(Test2, self).methodA(**kwargs)
 
             Declarations.PyramidJsonRPC.add_route(
-                '/test', Declarations.PyramidJsonRPC.Test)
+                Declarations.PyramidJsonRPC.Test, '/test')
             Declarations.PyramidJsonRPC.add_route(
-                '/test2', Declarations.PyramidJsonRPC.Test2)
+                Declarations.PyramidJsonRPC.Test2, '/test2')
 
         self.init_registry(add_jsonrpc_contoller)
         self.check_controller()
@@ -218,7 +218,7 @@ class TestDeclarationPyramidJsonRPC(PyramidDBTestCase):
             inherit_Test()
 
             Declarations.PyramidJsonRPC.add_route(
-                '/test', Declarations.PyramidJsonRPC.Test)
+                Declarations.PyramidJsonRPC.Test, '/test')
 
         self.init_registry(add_jsonrpc_contoller)
         self.check_controller()
@@ -247,7 +247,7 @@ class TestDeclarationPyramidJsonRPC(PyramidDBTestCase):
                     return super(Test, self).methodA(**kwargs)
 
             Declarations.PyramidJsonRPC.add_route(
-                '/test', Declarations.PyramidJsonRPC.Test)
+                Declarations.PyramidJsonRPC.Test, '/test')
 
         self.init_registry(add_jsonrpc_contoller)
         self.check_controller()
@@ -287,7 +287,7 @@ class TestDeclarationPyramidJsonRPC(PyramidDBTestCase):
             inherit_Test()
 
             Declarations.PyramidJsonRPC.add_route(
-                '/test', Declarations.PyramidJsonRPC.Test)
+                Declarations.PyramidJsonRPC.Test, '/test')
 
         self.init_registry(add_jsonrpc_contoller)
         self.check_controller()
@@ -322,7 +322,7 @@ class TestDeclarationPyramidJsonRPC(PyramidDBTestCase):
                     return {x: y * 2 for x, y in kwargs.items()}
 
             Declarations.PyramidJsonRPC.add_route(
-                '/test', Declarations.PyramidJsonRPC.Test)
+                Declarations.PyramidJsonRPC.Test, '/test')
 
         self.init_registry(add_jsonrpc_contoller)
         self.check_controller()
@@ -353,9 +353,9 @@ class TestDeclarationPyramidJsonRPC(PyramidDBTestCase):
                     return super(Test, self).method_B(**kwargs)
 
             Declarations.PyramidJsonRPC.add_route(
-                '/test', Declarations.PyramidJsonRPC.Test)
+                Declarations.PyramidJsonRPC.Test, '/test')
             Declarations.PyramidJsonRPC.add_route(
-                '/test2', Declarations.PyramidJsonRPC.Test2)
+                Declarations.PyramidJsonRPC.Test2, '/test2')
 
         self.init_registry(add_jsonrpc_contoller)
         self.check_controller()
@@ -389,9 +389,9 @@ class TestDeclarationPyramidJsonRPC(PyramidDBTestCase):
                     return {x: y * 2 for x, y in kwargs.items()}
 
             Declarations.PyramidJsonRPC.add_route(
-                '/test', Declarations.PyramidJsonRPC.Test)
+                Declarations.PyramidJsonRPC.Test, '/test')
             Declarations.PyramidJsonRPC.add_route(
-                '/test2', Declarations.PyramidJsonRPC.Test2)
+                Declarations.PyramidJsonRPC.Test2, '/test2')
 
         self.init_registry(add_jsonrpc_contoller)
         self.check_controller()
@@ -423,7 +423,7 @@ class TestDeclarationPyramidJsonRPC(PyramidDBTestCase):
                     return {x: y * 3 for x, y in kwargs.items()}
 
             Declarations.PyramidJsonRPC.add_route(
-                '/test', Declarations.PyramidJsonRPC.Test)
+                Declarations.PyramidJsonRPC.Test, '/test')
 
         self.init_registry(add_jsonrpc_contoller)
         self.check_controller()
