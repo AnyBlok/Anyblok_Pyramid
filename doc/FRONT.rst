@@ -20,11 +20,11 @@ AnyBlok is hosted on `Bitbucket <http://bitbucket.org>`_ - the main project
 page is at https://bitbucket.org/jssuzanne/anyblok_pyramid. Source code is
 tracked here using `Mercurial <http://mercurial.selenic.com>`_.
 
-.. Releases and project status are available on Pypi at
-.. http://pypi.python.org/pypi/anyblok_pyramid.
+Releases and project status are available on Pypi at
+http://pypi.python.org/pypi/anyblok_pyramid.
 
-.. The most recent published version of this documentation should be at
-.. http://doc.anyblok_pyramid.anyblok.org.
+The most recent published version of this documentation should be at
+http://doc.pyramid.anyblok.org.
 
 Project Status
 --------------
@@ -38,10 +38,10 @@ the latest master is always available at http://bitbucket.org/jssuzanne/anyblok_
 Installation
 ------------
 
-.. Install released versions of AnyBlok from the Python package index with
-.. `pip <http://pypi.python.org/pypi/pip>`_ or a similar tool::
-..
-..     pip install anyblok_pyramid
+Install released versions of AnyBlok from the Python package index with
+`pip <http://pypi.python.org/pypi/pip>`_ or a similar tool::
+
+    pip install anyblok_pyramid
 
 Installation via source distribution is via the ``setup.py`` script::
 

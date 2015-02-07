@@ -1,4 +1,12 @@
+# This file is a part of the AnyBlok / Pyramid project
+#
+#    Copyright (C) 2015 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
+#
+# This Source Code Form is subject to the terms of the Mozilla Public License,
+# v. 2.0. If a copy of the MPL was not distributed with this file,You can
+# obtain one at http://mozilla.org/MPL/2.0/.
 from setuptools import setup, find_packages
+import os
 version = '0.1.0'
 
 requires = [
@@ -8,6 +16,10 @@ requires = [
     'pyramid_rpc',
 ]
 
+here = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(here, 'README.rst')) as readme:
+    README = readme.read()
+
 setup(
     name="Anyblok Pyramid",
     version=version,
@@ -16,7 +28,7 @@ setup(
     description="Web Server Pyramid for AnyBlok",
     license="MPL2",
     long_description='',
-    url="https://bitbucket.org/jsuzanne/anyblok.pyramid",
+    url="https://bitbucket.org/jsuzanne/anyblok_pyramid",
     packages=find_packages(),
     zip_safe=False,
     include_package_data=True,
