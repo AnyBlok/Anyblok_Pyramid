@@ -12,6 +12,7 @@ Contents:
    :maxdepth: 2
 
    FRONT.rst
+   MEMENTO.rst
    CODE.rst
    BLOKS.rst
    UNITTEST.rst

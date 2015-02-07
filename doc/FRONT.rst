@@ -17,17 +17,14 @@ Project Homepage
 ----------------
 
 AnyBlok is hosted on `Bitbucket <http://bitbucket.org>`_ - the main project
-page is at https://bitbucket.org/jssuzanne/anyblok_pyramid. Source code is 
+page is at https://bitbucket.org/jssuzanne/anyblok_pyramid. Source code is
 tracked here using `Mercurial <http://mercurial.selenic.com>`_.
 
-.. Releases and project status are available on Pypi at 
+.. Releases and project status are available on Pypi at
 .. http://pypi.python.org/pypi/anyblok_pyramid.
 
 .. The most recent published version of this documentation should be at
 .. http://doc.anyblok_pyramid.anyblok.org.
-.. 
-.. The latest stable documentation is for the release 0.1.0
-.. at http://docs.anyblok_pyramid.anyblok.org/0.0.1
 
 Project Status
 --------------
@@ -41,9 +38,9 @@ the latest master is always available at http://bitbucket.org/jssuzanne/anyblok_
 Installation
 ------------
 
-.. Install released versions of AnyBlok from the Python package index with 
+.. Install released versions of AnyBlok from the Python package index with
 .. `pip <http://pypi.python.org/pypi/pip>`_ or a similar tool::
-.. 
+..
 ..     pip install anyblok_pyramid
 
 Installation via source distribution is via the ``setup.py`` script::
@@ -58,21 +55,21 @@ Unit Test
 Run the test with ``nose``::
 
     pip install nose
-    nosetests anyblok_pyramid/tests 
+    nosetests anyblok_pyramid/tests
 
 Dependencies
 ------------
 
-AnyBlok works with **Python 3.2** and later. The install process will 
-ensure that `AnyBlok <http://doc.anyblok.org>`_, 
-`Pyramid <http://pyramid.readthedocs.org/>`_ are installed, in addition to 
+AnyBlok works with **Python 3.2** and later. The install process will
+ensure that `AnyBlok <http://doc.anyblok.org>`_,
+`Pyramid <http://pyramid.readthedocs.org/>`_ are installed, in addition to
 other dependencies. The latest version of them is strongly recommended.
 
 
 Contributing (hackers needed!)
 ------------------------------
 
-Anyblok / Pyramid is at a very early stage, feel free to fork, talk with core 
+Anyblok / Pyramid is at a very early stage, feel free to fork, talk with core
 dev, and spread the word!
 
 Author
@@ -98,5 +95,5 @@ Contributors
 Bugs
 ----
 
-Bugs and feature enhancements to AnyBlok should be reported on the `Issue 
+Bugs and feature enhancements to AnyBlok should be reported on the `Issue
 tracker <https://bitbucket.org/jssuzanne/anyblok_pyramid/issues>`_.

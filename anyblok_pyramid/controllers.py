@@ -110,6 +110,12 @@ class Pyramid:
         * name: is the **route name**
         * pattern: is the path
 
+    .. warning::
+
+        It 's important to use the add_route of Pyramid, because
+        when the view are add in configuration, this view check is the
+        **route name** exist in the routes.
+
     """
 
     routes = []
@@ -370,7 +376,7 @@ class PyramidBase:
     def check_properties(cls, **kwargs):
         """ decorator which add the properties to check
 
-        :paraù \*\*kwargs: dict property: value to check
+        :param \*\*kwargs: dict property: value to check
         """
         def wraper(function):
             function.properties = kwargs
@@ -414,7 +420,7 @@ class PyramidHTTP(PyramidBase):
 
 
         @Declarations.register(Declaration.PyramidHTTP)
-        class My controller:
+        class MyController:
 
             @Declaration.PyramidHTTP.view()
             def myview(request):
