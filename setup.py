@@ -21,7 +21,7 @@ with open(os.path.join(here, 'README.rst')) as readme:
     README = readme.read()
 
 setup(
-    name="Anyblok Pyramid",
+    name="anyblok_pyramid",
     version=version,
     author="ean-Sébastien Suzanne",
     author_email="jssuzanne@anybox.fr",
