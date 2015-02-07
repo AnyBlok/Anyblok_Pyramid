@@ -25,6 +25,7 @@ class Handler:
         :exception: HandlerException
         """
         registry = RegistryManager.get(request.session['database'])
+        registry.System.Cache.clear_invalidate_cache()
         if self.namespace not in registry.loaded_controllers:
             raise Declarations.Exception.HandlerException(
                 "Unknow controller %r" % self.namespace)

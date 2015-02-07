@@ -364,7 +364,31 @@ Declare a cache on a ``Core``::
     class MyController:
         ...
 
+.. warning::
+
+    The instance of controller are not the same for each call. Then use
+    ``Declarations.cache`` to cache in only one request else use
+    ``Declarations.classmethod_cache`` to cache a method for all the request
+
 Properties
 ~~~~~~~~~~
 
-TODO
+the decorator ``*Controller*.check_properties`` allow to define an property
+to check before the ``view`` or ``rpc_method`` be called.
+
+This property check if the *user* is authentificated::
+
+    @register(PyramidHTTP)
+    class MyController:
+
+        def check_property_myproperty(self, value):
+            """If the value property is not good the this method must raise"""
+
+        @check_properties(myproperty=OneValue)
+        @PyramidHTTP.view()
+        def myview(self):
+            ...
+
+You can add your property but the property must be associated at a check
+method on the controller. This method can be in a ``Mixin`` or in a ``Core``.
+This method can be overload.
