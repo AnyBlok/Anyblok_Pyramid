@@ -13,13 +13,15 @@ from anyblok._argsparse import ArgsParseManager
 from .config import make_config
 
 
-def anyblok_wsgi(description, version, argsparse_groups, parts_to_load):
+def anyblok_wsgi(description, version, argsparse_groups, parts_to_load,
+                 Configurator=make_config):
     """
 
     :param description: description of argsparse
     :param version: version of script for argparse
     :param argsparse_groups: list argsparse groupe to load
     :param parts_to_load: group of blok to load
+    :param Configurator: callable which return a config instance
     """
     format_argsparse(argsparse_groups, 'wsgi', 'beaker', 'logging')
     BlokManager.load(*parts_to_load)
@@ -28,7 +30,7 @@ def anyblok_wsgi(description, version, argsparse_groups, parts_to_load):
                           parts_to_load=parts_to_load)
     ArgsParseManager.init_logger()
     RegistryManager.add_needed_bloks('pyramid')
-    config = make_config()
+    config = Configurator()
     wsgi_host = ArgsParseManager.get('wsgi_host', 'localhost')
     wsgi_port = int(ArgsParseManager.get('wsgi_port', '5000'))
 

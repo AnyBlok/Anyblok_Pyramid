@@ -46,7 +46,7 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: HTTP Servers',
         'Topic :: Internet :: WWW/HTTP :: Session',
         'Topic :: Internet :: WWW/HTTP :: WSGI :: Server',
-        'License :: OSI Approved :: Mozilla Public License v2',
+        'License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)',
     ],
     entry_points={
         'AnyBlok': [
