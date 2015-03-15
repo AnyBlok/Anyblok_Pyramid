@@ -8,3 +8,12 @@ class Pyramid(Blok):
     required = [
         'anyblok-core',
     ]
+
+    @classmethod
+    def import_declaration_module(cls):
+        from . import base  # noqa
+
+    @classmethod
+    def reload_declaration_module(cls, reload):
+        from . import base
+        reload(base)
