@@ -14,6 +14,9 @@ CHANGELOG
 Future
 ------
 
+0.2.0
+-----
+
 * [ADD] configurator callable
 * [REF] Adapt the import of python module of the blok, cause of the change in
   AnyBlok version 0.2.2
