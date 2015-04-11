@@ -49,6 +49,9 @@ setup(
         'License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)',
     ],
     entry_points={
+        'console_scripts': [
+            'anyblok_pyramid=anyblok_pyramid.scripts:wsgi',
+        ],
         'AnyBlok': [
             'pyramid=anyblok_pyramid.bloks.pyramid:Pyramid',
         ],

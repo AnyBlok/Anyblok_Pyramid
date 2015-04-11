@@ -31,7 +31,7 @@ def anyblok_wsgi(description, version, argsparse_groups, parts_to_load,
     ArgsParseManager.init_logger()
     RegistryManager.add_needed_bloks('pyramid')
     config = Configurator()
-    wsgi_host = ArgsParseManager.get('wsgi_host', '0.0.0.0')
+    wsgi_host = ArgsParseManager.get('wsgi_host', 'localhost')
     wsgi_port = int(ArgsParseManager.get('wsgi_port', '5000'))
 
     app = config.make_wsgi_app()
@@ -47,3 +47,9 @@ def anyblok_wsgi(description, version, argsparse_groups, parts_to_load,
         RegistryManager.get(dbname)
 
     server.serve_forever()
+
+
+def wsgi():
+    anyblok_wsgi('Web server for AnyBlok', '0.0.1',
+                 ['config', 'database', 'logging'],
+                 ['AnyBlok'])
