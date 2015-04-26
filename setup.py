@@ -20,6 +20,12 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, 'README.rst')) as readme:
     README = readme.read()
 
+console_scripts = [
+    'anyblok_pyramid=anyblok_pyramid.scripts:wsgi',
+    'anyblok_pyramid_createdb=anyblok_pyramid.scripts:anyblok_createdb',
+    'anyblok_pyramid_nose=anyblok_pyramid.scripts:anyblok_nose',
+]
+
 setup(
     name="anyblok_pyramid",
     version=version,
@@ -49,9 +55,7 @@ setup(
         'License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)',
     ],
     entry_points={
-        'console_scripts': [
-            'anyblok_pyramid=anyblok_pyramid.scripts:wsgi',
-        ],
+        'console_scripts': console_scripts,
         'AnyBlok': [
             'pyramid=anyblok_pyramid.bloks.pyramid:Pyramid',
         ],

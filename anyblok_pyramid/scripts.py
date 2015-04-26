@@ -6,7 +6,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 from wsgiref.simple_server import make_server
-from anyblok.scripts import format_argsparse
+from anyblok.scripts import format_argsparse, createdb, run_exit
 from anyblok.blok import BlokManager
 from anyblok.registry import RegistryManager
 from anyblok._argsparse import ArgsParseManager
@@ -53,3 +53,15 @@ def wsgi():
     anyblok_wsgi('Web server for AnyBlok', '0.0.1',
                  ['config', 'database', 'logging'],
                  ['AnyBlok'])
+
+
+def anyblok_createdb():
+    from anyblok_pyramid.release import version
+    description = "Anyblok / Pyramid - %s create db" % version
+    createdb(description, ['config', 'database', 'unittest'], ['AnyBlok'])
+
+
+def anyblok_nose():
+    from anyblok_pyramid.release import version
+    run_exit("Nose test for AnyBlok / Pyramid", version,
+             ['config', 'database'], ['AnyBlok'])
