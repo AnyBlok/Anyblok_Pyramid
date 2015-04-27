@@ -83,7 +83,8 @@ class PyramidDBTestCase(PyramidTestCase, DBTestCase):
             function(**wfkwargs)
 
         try:
-            res = super(PyramidDBTestCase, self).init_registry(wrap_fnct, **kwargs)
+            res = super(PyramidDBTestCase, self).init_registry(wrap_fnct,
+                                                               **kwargs)
             self.init_web_server()
         finally:
             Declarations.Pyramid.routes = pyramid_routes

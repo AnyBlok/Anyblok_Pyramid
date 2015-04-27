@@ -270,7 +270,8 @@ class TestInheritedCache(PyramidDBTestCase):
                 @Declarations.classmethod_cache()
                 def method_cached(self):
                     self.y += 2
-                    return self.y + super(PyramidBaseHTTP, self).method_cached()
+                    return self.y + super(PyramidBaseHTTP,
+                                          self).method_cached()
             else:
                 @classmethod
                 def method_cached(cls):

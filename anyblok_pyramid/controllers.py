@@ -324,6 +324,7 @@ class PyramidBase:
         bases = TypeList(cls, registry, namespace)
         ns = registry.loaded_registries[namespace]
         properties = ns['properties'].copy()
+        loaded_registries = registry.loaded_registries[cls.__name__ + '_names']
 
         for b in ns['bases']:
             if b in bases:
@@ -343,7 +344,7 @@ class PyramidBase:
                     else:
                         bases.extend(cls.load_namespace(
                             registry, brn, realregistryname=namespace))
-                elif brn in registry.loaded_registries[cls.__name__ + '_names']:
+                elif brn in loaded_registries:
                     bases.extend(cls.load_namespace(registry, brn))
                 else:
                     raise PyramidException(
@@ -351,7 +352,7 @@ class PyramidBase:
                         "Only the 'PyramidMixin' and %r are allowed" % (
                             brn, cls.__name__))
 
-        if namespace in registry.loaded_registries[cls.__name__ + '_names']:
+        if namespace in loaded_registries:
             cls.hook_insert_in_bases(registry, bases)
             base = type(namespace, tuple(bases), properties)
             registry.loaded_controllers[namespace] = base
@@ -540,7 +541,8 @@ class PyramidHTTP(PyramidBase):
             the args already filled by the wraper are:
 
             * view: is the decorated function
-            * name: the default value is the name of the method or the first args
+            * name: the default value is the name of the method or the first
+                    args
 
         """
         def wraper(function):
