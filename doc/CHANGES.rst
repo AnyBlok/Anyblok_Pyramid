@@ -14,6 +14,11 @@ CHANGELOG
 Future
 ------
 
+0.3.1
+-----
+
+* [FIX] default value for beaker, None is bettaer than ''
+
 0.3.0
 -----
 
