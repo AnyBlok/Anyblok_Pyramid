@@ -23,16 +23,15 @@ def anyblok_wsgi(description, version, argsparse_groups, parts_to_load,
     :param parts_to_load: group of blok to load
     :param Configurator: callable which return a config instance
     """
-    format_argsparse(argsparse_groups, 'wsgi', 'beaker', 'logging')
+    format_argsparse(argsparse_groups, 'wsgi', 'pyramid-debug', 'beaker')
     BlokManager.load(*parts_to_load)
     ArgsParseManager.load(description="%s (%s)" % (description, version),
                           argsparse_groups=argsparse_groups,
                           parts_to_load=parts_to_load)
-    ArgsParseManager.init_logger()
     RegistryManager.add_needed_bloks('pyramid')
     config = Configurator()
-    wsgi_host = ArgsParseManager.get('wsgi_host', 'localhost')
-    wsgi_port = int(ArgsParseManager.get('wsgi_port', '5000'))
+    wsgi_host = ArgsParseManager.get('wsgi_host')
+    wsgi_port = int(ArgsParseManager.get('wsgi_port'))
 
     app = config.make_wsgi_app()
     server = make_server(wsgi_host, wsgi_port, app)
@@ -51,8 +50,7 @@ def anyblok_wsgi(description, version, argsparse_groups, parts_to_load,
 
 def wsgi():
     anyblok_wsgi('Web server for AnyBlok', '0.0.1',
-                 ['config', 'database', 'logging'],
-                 ['AnyBlok'])
+                 ['config', 'database'], ['AnyBlok'])
 
 
 def anyblok_createdb():
@@ -64,4 +62,4 @@ def anyblok_createdb():
 def anyblok_nose():
     from anyblok_pyramid.release import version
     run_exit("Nose test for AnyBlok / Pyramid", version,
-             ['config', 'database'], ['AnyBlok'])
+             ['wsgi', 'config', 'database'], ['AnyBlok'])

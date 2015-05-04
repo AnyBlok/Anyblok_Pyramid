@@ -11,7 +11,7 @@
 Bloks
 =====
 
-``pyramid`` blok
+Blok ``pyramid``
 ----------------
 
 .. automodule:: anyblok_pyramid.bloks.pyramid
@@ -20,3 +20,5 @@ Bloks
     :undoc-members:
     :show-inheritance:
     :noindex:
+
+.. include:: ../anyblok_pyramid/bloks/pyramid/README.rst

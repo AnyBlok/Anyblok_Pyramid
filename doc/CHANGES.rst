@@ -14,6 +14,13 @@ CHANGELOG
 Future
 ------
 
+0.3.0
+-----
+
+* [IMP] console script argsparse for pyramid and beaker
+* [ADD] MANIFEST.in
+* [FIX] script cause of remove logging configuration from AnyBlok
+
 0.2.0
 -----
 

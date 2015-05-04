@@ -49,7 +49,7 @@ class PyramidBase:
         return True
 
 
-@Declarations.register(Declarations.Core)
+@register(Core)
 class PyramidBaseHTTP:
 
     def get_function_from_view(self, view):
@@ -60,7 +60,7 @@ class PyramidBaseHTTP:
         return self.views[view]
 
 
-@Declarations.register(Declarations.Core)
+@register(Core)
 class PyramidBaseRPC:
 
     def get_function_from_method(self, method):

@@ -7,7 +7,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from setuptools import setup, find_packages
 import os
-version = '0.2.0'
+version = '0.3.0'
 
 requires = [
     'anyblok',
@@ -19,6 +19,12 @@ requires = [
 here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, 'README.rst')) as readme:
     README = readme.read()
+
+with open(os.path.join(here, 'doc', 'FRONT.rst')) as front:
+    FRONT = front.read()
+
+with open(os.path.join(here, 'doc', 'CHANGES.rst')) as change:
+    CHANGE = change.read()
 
 console_scripts = [
     'anyblok_pyramid=anyblok_pyramid.scripts:wsgi',
@@ -33,7 +39,7 @@ setup(
     author_email="jssuzanne@anybox.fr",
     description="Web Server Pyramid for AnyBlok",
     license="MPL2",
-    long_description='',
+    long_description=README + '\n' + FRONT + '\n' + CHANGE,
     url="https://bitbucket.org/jsuzanne/anyblok_pyramid",
     packages=find_packages(),
     zip_safe=False,

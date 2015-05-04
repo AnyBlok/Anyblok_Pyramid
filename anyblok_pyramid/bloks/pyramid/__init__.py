@@ -3,6 +3,10 @@ from anyblok_pyramid.release import version
 
 
 class Pyramid(Blok):
+    """
+    Server tools to use the Pyramid views and routes declarations with
+    the AnyBlok framework
+    """
     version = version
 
     required = [

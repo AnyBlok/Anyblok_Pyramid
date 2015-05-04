@@ -8,6 +8,7 @@
 from pyramid.config import Configurator
 from anyblok.blok import BlokManager
 from anyblok import Declarations
+from anyblok._argsparse import ArgsParseManager
 from os.path import join
 from .handler import HandlerHTTP, HandlerRPC
 from .controllers import Pyramid, PyramidHTTP, PyramidJsonRPC, PyramidXmlRPC
@@ -16,9 +17,50 @@ from .controllers import Pyramid, PyramidHTTP, PyramidJsonRPC, PyramidXmlRPC
 PyramidException = Declarations.Exception.PyramidException
 
 
-def make_config():
+def define_settings():
+    return {
+        'pyramid.reload_templates': ArgsParseManager.get(
+            'pyramid.reload_templates'),
+        'pyramid.reload_assets': ArgsParseManager.get('pyramid.reload_assets'),
+        'pyramid.debug_notfound': ArgsParseManager.get(
+            'pyramid.debug_notfound'),
+        'pyramid.debug_routematch': ArgsParseManager.get(
+            'pyramid.debug_routematch'),
+        'pyramid.prevent_http_cache': ArgsParseManager.get(
+            'pyramid.prevent_http_cache'),
+        'pyramid.debug_all': ArgsParseManager.get('pyramid.debug_all'),
+        'pyramid.reload_all': ArgsParseManager.get('pyramid.reload_all'),
+        'pyramid.default_locale_name': ArgsParseManager.get(
+            'pyramid.default_locale_name'),
+        'beaker.session.data_dir': ArgsParseManager.get(
+            'beaker.session.data_dir'),
+        'beaker.session.lock_dir': ArgsParseManager.get(
+            'beaker.session.lock_dir'),
+        'beaker.session.memcache_module': ArgsParseManager.get(
+            'beaker.session.memcache_module'),
+        'beaker.session.type': ArgsParseManager.get(
+            'beaker.session.type'),
+        'beaker.session.url': ArgsParseManager.get(
+            'beaker.session.url'),
+        'beaker.session.cookie_expires': ArgsParseManager.get(
+            'beaker.session.cookie_expires'),
+        'beaker.session.cookie_domain': ArgsParseManager.get(
+            'beaker.session.cookie_domain'),
+        'beaker.session.key': ArgsParseManager.get('beaker.session.key'),
+        'beaker.session.secret': ArgsParseManager.get('beaker.session.secret'),
+        'beaker.session.secure': ArgsParseManager.get('beaker.session.secure'),
+        'beaker.session.timeout': ArgsParseManager.get(
+            'beaker.session.timeout'),
+        'beaker.session.encrypt_key': ArgsParseManager.get(
+            'beaker.session.encrypt_key'),
+        'beaker.session.validate_key': ArgsParseManager.get(
+            'beaker.session.validate_key'),
+    }
+
+
+def make_config(settings=define_settings):
     """ Return the configuration for pyramid """
-    config = Configurator()
+    config = Configurator(settings=settings())
     config.include('pyramid_beaker')
     config.include('pyramid_rpc.jsonrpc')
     config.include('pyramid_rpc.xmlrpc')
