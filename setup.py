@@ -28,8 +28,6 @@ with open(os.path.join(here, 'doc', 'CHANGES.rst')) as change:
 
 console_scripts = [
     'anyblok_pyramid=anyblok_pyramid.scripts:wsgi',
-    'anyblok_pyramid_createdb=anyblok_pyramid.scripts:anyblok_createdb',
-    'anyblok_pyramid_nose=anyblok_pyramid.scripts:anyblok_nose',
 ]
 
 setup(
@@ -62,7 +60,7 @@ setup(
     ],
     entry_points={
         'console_scripts': console_scripts,
-        'AnyBlok': [
+        'bloks': [
             'pyramid=anyblok_pyramid.bloks.pyramid:Pyramid',
         ],
     },
