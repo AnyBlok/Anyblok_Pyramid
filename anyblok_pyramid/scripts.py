@@ -6,6 +6,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 from wsgiref.simple_server import make_server
+from anyblok.blok import BlokManager
 from anyblok.scripts import format_argsparse
 from anyblok.registry import RegistryManager
 from anyblok._argsparse import ArgsParseManager
@@ -21,6 +22,7 @@ def anyblok_wsgi(description, version, argsparse_groups,
     :param Configurator: callable which return a config instance
     """
     format_argsparse(argsparse_groups, 'wsgi', 'pyramid-debug', 'beaker')
+    BlokManager.load()
     ArgsParseManager.load(description="%s (%s)" % (description, version),
                           argsparse_groups=argsparse_groups)
     RegistryManager.add_needed_bloks('pyramid')
@@ -31,8 +33,8 @@ def anyblok_wsgi(description, version, argsparse_groups,
     app = config.make_wsgi_app()
     server = make_server(wsgi_host, wsgi_port, app)
 
-    dbnames = ArgsParseManager.get('dbnames', '').split(',')
-    dbname = ArgsParseManager.get('dbname')
+    dbnames = ArgsParseManager.get('db_names', '').split(',')
+    dbname = ArgsParseManager.get('db_name')
     if dbname not in dbnames:
         dbnames.append(dbname)
 

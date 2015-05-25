@@ -11,10 +11,10 @@ import os
 
 @ArgsParseManager.add('wsgi', label="WSGI")
 def define_wsgi_option(group, configuration):
-    group.add_argument('--databases', dest='dbnames', default='',
+    group.add_argument('--databases', dest='db_names', default='',
                        help='List of the database allow to be load')
-    group.add_argument('--wsgi-host', dest='wsgi_host', default='')
-    group.add_argument('--wsgi-port', dest='wsgi_port', default='')
+    group.add_argument('--wsgi-host', default='')
+    group.add_argument('--wsgi-port', default='')
     configuration.update({
         'wsgi_host': os.environ.get('ANYBLOK_PYRAMID_WSGI_HOST', 'localhost'),
         'wsgi_port': os.environ.get('ANYBLOK_PYRAMID_WSGI_PORT', '5000'),
