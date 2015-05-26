@@ -7,34 +7,34 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from wsgiref.simple_server import make_server
 from anyblok.blok import BlokManager
-from anyblok.scripts import format_argsparse
+from anyblok.scripts import format_configuration
 from anyblok.registry import RegistryManager
-from anyblok._argsparse import ArgsParseManager
+from anyblok.config import Configuration
 from .config import make_config
 
 
-def anyblok_wsgi(description, version, argsparse_groups,
+def anyblok_wsgi(description, version, configuration_groups,
                  Configurator=make_config):
     """
-    :param description: description of argsparse
+    :param description: description of configuration
     :param version: version of script for argparse
-    :param argsparse_groups: list argsparse groupe to load
+    :param configuration_groups: list configuration groupe to load
     :param Configurator: callable which return a config instance
     """
-    format_argsparse(argsparse_groups, 'wsgi', 'pyramid-debug', 'beaker')
+    format_configuration(configuration_groups, 'wsgi', 'pyramid-debug', 'beaker')
     BlokManager.load()
-    ArgsParseManager.load(description="%s (%s)" % (description, version),
-                          argsparse_groups=argsparse_groups)
+    Configuration.load(description="%s (%s)" % (description, version),
+                       configuration_groups=configuration_groups)
     RegistryManager.add_needed_bloks('pyramid')
     config = Configurator()
-    wsgi_host = ArgsParseManager.get('wsgi_host')
-    wsgi_port = int(ArgsParseManager.get('wsgi_port'))
+    wsgi_host = Configuration.get('wsgi_host')
+    wsgi_port = int(Configuration.get('wsgi_port'))
 
     app = config.make_wsgi_app()
     server = make_server(wsgi_host, wsgi_port, app)
 
-    dbnames = ArgsParseManager.get('db_names', '').split(',')
-    dbname = ArgsParseManager.get('db_name')
+    dbnames = Configuration.get('db_names', '').split(',')
+    dbname = Configuration.get('db_name')
     if dbname not in dbnames:
         dbnames.append(dbname)
 

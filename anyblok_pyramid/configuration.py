@@ -5,11 +5,11 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from anyblok._argsparse import ArgsParseManager
+from anyblok.config import Configuration
 import os
 
 
-@ArgsParseManager.add('wsgi', label="WSGI")
+@Configuration.add('wsgi', label="WSGI")
 def define_wsgi_option(group, configuration):
     group.add_argument('--databases', dest='db_names', default='',
                        help='List of the database allow to be load')
@@ -21,7 +21,7 @@ def define_wsgi_option(group, configuration):
     })
 
 
-@ArgsParseManager.add('pyramid-debug', label="Pyramid")
+@Configuration.add('pyramid-debug', label="Pyramid")
 def define_wsgi_debug_option(group, configuration):
     group.add_argument('--pyramid-reload-all', dest='pyramid.reload_all',
                        help="Turns on all reload* settings.",
@@ -82,7 +82,7 @@ def define_wsgi_debug_option(group, configuration):
     })
 
 
-@ArgsParseManager.add('beaker', label="Beaker session")
+@Configuration.add('beaker', label="Beaker session")
 def define_beaker_option(group, configuration):
     group.add_argument('--beaker-data-dir',
                        dest='beaker.session.data_dir',
