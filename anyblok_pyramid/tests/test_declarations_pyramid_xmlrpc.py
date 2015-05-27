@@ -1,5 +1,6 @@
 from anyblok_pyramid.tests.testcase import PyramidDBTestCase
 from anyblok import Declarations
+from ..controllers import PyramidException
 register = Declarations.register
 PyramidXmlRPC = Declarations.PyramidXmlRPC
 PyramidMixin = Declarations.PyramidMixin
@@ -47,7 +48,7 @@ class TestDeclarationPyramidXmlRPC(PyramidDBTestCase):
                 def method_B(self, *args):
                     return [x * 3 for x in args]
 
-        with self.assertRaises(Declarations.Exception.PyramidException):
+        with self.assertRaises(PyramidException):
             self.init_registry(add_xmlrpc_contoller)
 
     def test_simple_subclass_controller(self):

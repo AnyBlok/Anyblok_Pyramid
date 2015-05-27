@@ -1,27 +1,8 @@
 from anyblok import Declarations
+from .exceptions import (PyramidInvalidFunction, PyramidInvalidView,
+                         PyramidInvalidMethod, PyramidInvalidProperty)
 register = Declarations.register
 Core = Declarations.Core
-PyramidException = Declarations.Exception.PyramidException
-
-
-@register(PyramidException)
-class PyramidInvalidFunction(PyramidException):
-    """ Sub class of Pyramid Exception """
-
-
-@register(PyramidException)
-class PyramidInvalidView(PyramidException):
-    """ Sub class of Pyramid Exception """
-
-
-@register(PyramidException)
-class PyramidInvalidMethod(PyramidException):
-    """ Sub class of Pyramid Exception """
-
-
-@register(PyramidException)
-class PyramidInvalidProperty(PyramidException):
-    """ Sub class of Pyramid Exception """
 
 
 @register(Core)

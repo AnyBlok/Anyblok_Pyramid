@@ -7,10 +7,10 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok import Declarations
 from anyblok.registry import RegistryManager
+from .controllers import PyramidException
 
 
-@Declarations.register(Declarations.Exception.PyramidException)
-class HandlerException(Declarations.Exception.PyramidException):
+class HandlerException(PyramidException):
     """ Simple exception for handler """
 
 
@@ -27,7 +27,7 @@ class Handler:
         registry = RegistryManager.get(request.session['database'])
         registry.System.Cache.clear_invalidate_cache()
         if self.namespace not in registry.loaded_controllers:
-            raise Declarations.Exception.HandlerException(
+            raise HandlerException(
                 "Unknow controller %r" % self.namespace)
 
         self.controller = registry.loaded_controllers[self.namespace](

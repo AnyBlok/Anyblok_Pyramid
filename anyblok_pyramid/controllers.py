@@ -29,7 +29,6 @@ RegistryManager.declare_core('PyramidBaseJsonRPC')
 RegistryManager.declare_core('PyramidBaseXmlRPC')
 
 
-@Declarations.register(Declarations.Exception)
 class PyramidException(Exception):
     """ Exception for web type """
 
@@ -132,7 +131,7 @@ class Pyramid:
         :param cls_: Class Interface to add in registry
         :exception: PyramidException
         """
-        raise Declarations.Exception.PyramidException(
+        raise PyramidException(
             'Register declaration of one Pyramid type is forbidden')
 
     @classmethod
@@ -144,7 +143,7 @@ class Pyramid:
         :param cls_: Class Interface to remove in registry
         :exception: PyramidException
         """
-        raise Declarations.Exception.PyramidException(
+        raise PyramidException(
             'Unregister declaration of one Pyramid type is forbidden')
 
     @classmethod

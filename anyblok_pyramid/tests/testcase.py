@@ -1,8 +1,8 @@
-from anyblok._argsparse import ArgsParseManager
+from anyblok.config import Configuration
 from anyblok.registry import RegistryManager
 from anyblok.tests.testcase import DBTestCase, BlokTestCase
 from webtest import TestApp
-from anyblok_pyramid.config import make_config
+from ..config import make_config
 from pyramid.response import Response
 import json
 from pyramid_rpc.compat import xmlrpclib
@@ -52,7 +52,10 @@ class PyramidTestCase:
         config = make_config()
         app = config.make_wsgi_app()
         self.webserver = TestApp(app)
-        dbname = ArgsParseManager.get('dbname')
+        dbname = Configuration.get('dbname')
+        if dbname is None:
+            dbname = 'test_anyblok'
+
         self.webserver.post('/pyramid/testcase/database?database=%s' % dbname)
 
 

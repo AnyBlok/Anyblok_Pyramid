@@ -1,8 +1,8 @@
-from anyblok_pyramid._argsparse import (define_wsgi_option,
-                                        define_beaker_option,
-                                        define_wsgi_debug_option)
+from anyblok_pyramid.configuration import (define_wsgi_option,
+                                           define_beaker_option,
+                                           define_wsgi_debug_option)
 from anyblok.tests.testcase import TestCase
-from anyblok.tests.test_argsparse import MockArgumentParser
+from anyblok.tests.test_config import MockArgumentParser
 
 
 class TestArgsParseOption(TestCase):

@@ -1,10 +1,11 @@
 from anyblok_pyramid.tests.testcase import PyramidDBTestCase
 from anyblok import Declarations
 from pyramid.response import Response
+from ..controllers import PyramidException
+from anyblok_pyramid.bloks.pyramid.exceptions import PyramidInvalidProperty
 register = Declarations.register
 PyramidHTTP = Declarations.PyramidHTTP
 PyramidMixin = Declarations.PyramidMixin
-PyramidException = Declarations.Exception.PyramidException
 Core = Declarations.Core
 
 
@@ -61,7 +62,7 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
                     return Response(str({x: int(y) * 3
                                          for x, y in kwargs.items()}))
 
-        with self.assertRaises(Declarations.Exception.PyramidException):
+        with self.assertRaises(PyramidException):
             self.init_registry(add_http_contoller)
 
     def test_authentificated(self):
@@ -106,7 +107,7 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
             self.add_routes()
 
         self.init_registry(add_http_contoller)
-        with self.assertRaises(PyramidException.PyramidInvalidProperty):
+        with self.assertRaises(PyramidInvalidProperty):
             self.check_controller()
 
     def test_simple_subclass_controller(self):

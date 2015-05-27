@@ -1,4 +1,5 @@
 from anyblok_pyramid.tests.testcase import PyramidDBTestCase
+from ..controllers import PyramidException
 from anyblok import Declarations
 register = Declarations.register
 PyramidJsonRPC = Declarations.PyramidJsonRPC
@@ -48,7 +49,7 @@ class TestDeclarationPyramidJsonRPC(PyramidDBTestCase):
                 def method_B(self, **kwargs):
                     return {x: y * 3 for x, y in kwargs.items()}
 
-        with self.assertRaises(Declarations.Exception.PyramidException):
+        with self.assertRaises(PyramidException):
             self.init_registry(add_jsonrpc_contoller)
 
     def test_simple_subclass_controller(self):

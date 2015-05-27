@@ -7,14 +7,11 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from pyramid.config import Configurator
 from anyblok.blok import BlokManager
-from anyblok import Declarations
 from anyblok.config import Configuration
 from os.path import join
 from .handler import HandlerHTTP, HandlerRPC
-from .controllers import Pyramid, PyramidHTTP, PyramidJsonRPC, PyramidXmlRPC
-
-
-PyramidException = Declarations.Exception.PyramidException
+from .controllers import (Pyramid, PyramidHTTP, PyramidJsonRPC, PyramidXmlRPC,
+                          PyramidException)
 
 
 def define_settings():
