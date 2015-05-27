@@ -21,7 +21,8 @@ def anyblok_wsgi(description, version, configuration_groups,
     :param configuration_groups: list configuration groupe to load
     :param Configurator: callable which return a config instance
     """
-    format_configuration(configuration_groups, 'wsgi', 'pyramid-debug', 'beaker')
+    format_configuration(configuration_groups, 'wsgi', 'pyramid-debug',
+                         'beaker')
     BlokManager.load()
     Configuration.load(description="%s (%s)" % (description, version),
                        configuration_groups=configuration_groups)
