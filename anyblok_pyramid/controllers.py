@@ -303,8 +303,16 @@ class PyramidBase:
         :param properties: the properties of the controller
         :rtype: new base
         """
-        new_base = apply_cache(registry, namespace, base, properties)
-        return new_base
+        new_type_properties = {}
+        for attr in dir(base):
+            method = getattr(base, attr)
+            new_type_properties.update(apply_cache(
+                attr, method, registry, namespace, base, properties))
+
+        if new_type_properties:
+            return type(namespace, (base,), new_type_properties)
+
+        return base
 
     @classmethod
     def load_namespace(cls, registry, namespace, realregistryname=None):
