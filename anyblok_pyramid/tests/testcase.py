@@ -59,7 +59,7 @@ class PyramidTestCase:
         config = make_config()
         app = config.make_wsgi_app()
         self.webserver = TestApp(app)
-        dbname = Configuration.get('dbname')
+        dbname = Configuration.get('db_name')
         if dbname is None:
             dbname = 'test_anyblok'
 
