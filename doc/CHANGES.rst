@@ -14,6 +14,11 @@ CHANGELOG
 Future
 ------
 
+0.3.2
+-----
+
+* [REF] cause of upgrade version of AnyBlok 0.4.0
+
 0.3.1
 -----
 
