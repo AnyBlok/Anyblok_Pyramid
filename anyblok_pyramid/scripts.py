@@ -48,4 +48,4 @@ def anyblok_wsgi(description, version, configuration_groups,
 
 def wsgi():
     anyblok_wsgi('Web server for AnyBlok', '0.0.1',
-                 ['config', 'database'])
+                 ['config', 'database', 'logging'])
