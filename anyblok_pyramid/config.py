@@ -5,7 +5,10 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+from pyramid.authentication import AuthTktAuthenticationPolicy
+from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
+from pyramid.session import UnencryptedCookieSessionFactoryConfig
 from anyblok.blok import BlokManager
 from anyblok.config import Configuration
 from os.path import join
@@ -66,6 +69,7 @@ def make_config(settings=define_settings):
     config.include(pyramid_jsonrpc_config)
     config.include(pyramid_xmlrpc_config)
     config.include(declare_static)
+    config.include(pyramid_security_config)
     return config
 
 
@@ -162,3 +166,28 @@ def pyramid_xmlrpc_config(config):
     """
     _pyramid_rpc_config(
         PyramidXmlRPC, config.add_xmlrpc_endpoint, config.add_xmlrpc_method)
+
+
+def _group_finder(email, request):  # TODO
+    """Allow to find group of an user, identified by his email"""
+    return ("all",)
+
+
+def pyramid_security_config(config):
+    """Proposal to manage those:
+
+    * Authentication policy
+    * Authorization policy
+
+    :param config:  the pyramid configuration
+    :return: None
+    """
+
+    # Authentication policy
+    authn_policy = AuthTktAuthenticationPolicy(secret=Configuration.get("authn_key", "secret"),
+                                               callback=_group_finder)
+    config.set_authentication_policy(authn_policy)
+
+    # Authorization policy
+    authz_policy = ACLAuthorizationPolicy()
+    config.set_authorization_policy(authz_policy)
