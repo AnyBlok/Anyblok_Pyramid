@@ -180,6 +180,26 @@ def pyramid_security_config(config):
 
     :param config:  the pyramid configuration
     :return: None
+
+    Links to the official documentation :
+    http://docs.pylonsproject.org/projects/pyramid//en/latest/tutorials/wiki2/
+        design.html
+    http://docs.pylonsproject.org/projects/pyramid//en/latest/tutorials/wiki2/
+        authorization.html
+    http://docs.pylonsproject.org/projects/pyramid//en/latest/tutorials/wiki2/
+        authentication.html
+
+    http://docs.pylonsproject.org/projects/pyramid//en/latest/quick_tutorial/
+        authorization.html
+    http://docs.pylonsproject.org/projects/pyramid//en/latest/quick_tutorial/
+        authentication.html
+
+    Link to an official tutorial
+    If you want to replace default pyramid component by your own:
+    http://docs.pylonsproject.org/projects/pyramid//en/latest/narr/
+        security.html#creating-your-own-authentication-policy
+    http://docs.pylonsproject.org/projects/pyramid//en/latest/narr/
+        security.html#creating-your-own-authorization-policy
     """
 
     # Authentication policy
