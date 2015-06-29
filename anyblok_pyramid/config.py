@@ -8,7 +8,6 @@
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
-from pyramid.session import UnencryptedCookieSessionFactoryConfig
 from anyblok.blok import BlokManager
 from anyblok.config import Configuration
 from os.path import join
@@ -184,8 +183,9 @@ def pyramid_security_config(config):
     """
 
     # Authentication policy
-    authn_policy = AuthTktAuthenticationPolicy(secret=Configuration.get("authn_key", "secret"),
-                                               callback=_group_finder)
+    authn_policy = AuthTktAuthenticationPolicy(
+        secret=Configuration.get("authn_key", "secret"),
+        callback=_group_finder)
     config.set_authentication_policy(authn_policy)
 
     # Authorization policy
