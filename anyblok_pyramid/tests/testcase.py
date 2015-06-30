@@ -44,11 +44,9 @@ class PyramidTestCase:
                                           expect_errors=expect_errors,
                                           xhr=True)
         elif method == "post":
-            response = self.webserver.post(path, params=params,
-                                           headers=headers, status=status,
-                                           expect_errors=expect_errors,
-                                           content_type="application/json",
-                                           xhr=True)
+            response = self.webserver.post_json(path, params=params,
+                                                headers=headers, status=status,
+                                                expect_errors=expect_errors)
 
         self.assertEqual(response.content_type, 'application/json')
 
