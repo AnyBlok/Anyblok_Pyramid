@@ -39,18 +39,50 @@ class PyramidTestCase:
 
         method = method.lower()
         if method == "get":
-            response = self.webserver.get(path, params=params,
-                                          headers=headers, status=status,
+            response = self.webserver.get(path,
+                                          params=params,
+                                          headers=headers,
+                                          status=status,
                                           expect_errors=expect_errors,
                                           xhr=True)
         elif method == "post":
-            response = self.webserver.post_json(path, params=params,
-                                                headers=headers, status=status,
+            response = self.webserver.post_json(path,
+                                                params=params,
+                                                headers=headers,
+                                                status=status,
                                                 expect_errors=expect_errors)
         elif method == "put":
-            response = self.webserver.put_json(path, params=params,
-                                               headers=headers, status=status,
+            response = self.webserver.put_json(path,
+                                               params=params,
+                                               headers=headers,
+                                               status=status,
                                                expect_errors=expect_errors)
+        elif method == "delete":
+            response = self.webserver.delete_json(path,
+                                                  params=params,
+                                                  headers=headers,
+                                                  status=status,
+                                                  expect_errors=expect_errors)
+        elif method == "patch":
+            response = self.webserver.patch_json(path,
+                                                 params=params,
+                                                 headers=headers,
+                                                 status=status,
+                                                 expect_errors=expect_errors)
+        elif method == "head":
+            response = self.webserver.head(path,
+                                           headers=headers,
+                                           status=status,
+                                           expect_errors=expect_errors,
+                                           xhr=True)
+        elif method == "options":
+            response = self.webserver.options(path,
+                                              headers=headers,
+                                              status=status,
+                                              expect_errors=expect_errors,
+                                              xhr=True)
+        else:
+            return  # TODO: Should we raise an error ?
 
         self.assertEqual(response.content_type, 'application/json')
 
