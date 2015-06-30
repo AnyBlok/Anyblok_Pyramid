@@ -27,6 +27,33 @@ class PyramidTestCase:
         self.assertEqual(resp.status_int, 200)
         return resp
 
+    def json_xhr(self, path, method, params=None, headers=None,
+                 force_xhr_headers=True, status=None, expect_errors=False):
+
+        if headers is None:
+            headers = {}
+        # force some headers
+        if force_xhr_headers:
+            headers.update({"X-Requested-With": "XMLHttpRequest",
+                            "Content-Type": "application/json"})
+
+        method = method.lower()
+        if method == "get":
+            response = self.webserver.get(path, params=params,
+                                          headers=headers, status=status,
+                                          expect_errors=expect_errors,
+                                          xhr=True)
+        elif method == "post":
+            response = self.webserver.post(path, params=params,
+                                           headers=headers, status=status,
+                                           expect_errors=expect_errors,
+                                           content_type="application/json",
+                                           xhr=True)
+
+        self.assertEqual(response.content_type, 'application/json')
+
+        return response.status_int, response.headers, response.json
+
     def jsonrpc(self, path, method, params=None):
         body = {
             'id': 5,
