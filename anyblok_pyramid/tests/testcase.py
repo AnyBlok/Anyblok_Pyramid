@@ -27,6 +27,11 @@ class PyramidTestCase:
         self.assertEqual(resp.status_int, 200)
         return resp
 
+    def json_xhr_only(self, path, method, params=None):
+        resp = getattr(self.webserver, method)(path, params)
+        self.assertEqual(resp.status_int, 200)
+        return resp
+
     def json_xhr(self, path, method, params=None, headers=None,
                  force_xhr_headers=True, status=None, expect_errors=False):
 
@@ -44,49 +49,76 @@ class PyramidTestCase:
                                           headers=headers,
                                           status=status,
                                           expect_errors=expect_errors,
-                                          xhr=True)
-        elif method == "post":
+                                          xhr=force_xhr_headers)
+        elif method == "post" and force_xhr_headers:
             response = self.webserver.post_json(path,
                                                 params=params,
                                                 headers=headers,
                                                 status=status,
                                                 expect_errors=expect_errors)
-        elif method == "put":
+        elif method == "post":
+            response = self.webserver.post(path,
+                                           params=params,
+                                           headers=headers,
+                                           status=status,
+                                           expect_errors=expect_errors)
+        elif method == "put" and force_xhr_headers:
             response = self.webserver.put_json(path,
                                                params=params,
                                                headers=headers,
                                                status=status,
                                                expect_errors=expect_errors)
-        elif method == "delete":
+        elif method == "put":
+            response = self.webserver.put(path,
+                                          params=params,
+                                          headers=headers,
+                                          status=status,
+                                          expect_errors=expect_errors)
+        elif method == "delete" and force_xhr_headers:
             response = self.webserver.delete_json(path,
                                                   params=params,
                                                   headers=headers,
                                                   status=status,
                                                   expect_errors=expect_errors)
-        elif method == "patch":
+        elif method == "delete":
+            response = self.webserver.delete(path,
+                                             params=params,
+                                             headers=headers,
+                                             status=status,
+                                             expect_errors=expect_errors)
+        elif method == "patch" and force_xhr_headers:
             response = self.webserver.patch_json(path,
                                                  params=params,
                                                  headers=headers,
                                                  status=status,
                                                  expect_errors=expect_errors)
+        elif method == "patch":
+            response = self.webserver.patch(path,
+                                            params=params,
+                                            headers=headers,
+                                            status=status,
+                                            expect_errors=expect_errors)
         elif method == "head":
             response = self.webserver.head(path,
                                            headers=headers,
                                            status=status,
                                            expect_errors=expect_errors,
-                                           xhr=True)
+                                           xhr=force_xhr_headers)
         elif method == "options":
             response = self.webserver.options(path,
                                               headers=headers,
                                               status=status,
                                               expect_errors=expect_errors,
-                                              xhr=True)
+                                              xhr=force_xhr_headers)
         else:
             return  # TODO: Should we raise an error ?
 
-        self.assertEqual(response.content_type, 'application/json')
+        if force_xhr_headers:
+            self.assertEqual(response.content_type, 'application/json')
 
-        return response.status_int, response.headers, response.json
+            return response.status_int, response.headers, response.json
+
+        return response.status_int, response.headers, None
 
     def jsonrpc(self, path, method, params=None):
         body = {
