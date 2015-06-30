@@ -47,6 +47,10 @@ class PyramidTestCase:
             response = self.webserver.post_json(path, params=params,
                                                 headers=headers, status=status,
                                                 expect_errors=expect_errors)
+        elif method == "put":
+            response = self.webserver.put_json(path, params=params,
+                                               headers=headers, status=status,
+                                               expect_errors=expect_errors)
 
         self.assertEqual(response.content_type, 'application/json')
 
