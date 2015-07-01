@@ -60,7 +60,7 @@ class PyramidTestCase:
 
         response = getattr(self.webserver, method)(**data)
 
-        if force_xhr_headers:
+        if force_xhr_headers and response.status_int in [200, 404]:
             self.assertEqual(response.content_type, 'application/json')
 
             return response.status_int, response.headers, response.json
