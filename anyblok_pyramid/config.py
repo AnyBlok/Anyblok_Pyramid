@@ -179,6 +179,7 @@ def pyramid_security_config(config):
 
     * Authentication policy
     * Authorization policy
+    * root factory
 
     :param config:  the pyramid configuration
     :return: None
@@ -217,6 +218,8 @@ def pyramid_security_config(config):
             callback_name = Configuration.get("authn_callback_name",
                                               "group_finder")
             callback = getattr(module, callback_name)
+            if not callback:
+                callback = _group_finder
 
     authn_policy = AuthTktAuthenticationPolicy(secret=secret,
                                                callback=callback)
@@ -225,3 +228,17 @@ def pyramid_security_config(config):
     # Authorization policy
     authz_policy = ACLAuthorizationPolicy()
     config.set_authorization_policy(authz_policy)
+
+    # Root factory: only added if set in config file (no default one)
+    root_factory_module = Configuration.get("root_factory_module")
+    if root_factory_module:
+        try:
+            module = import_module(root_factory_module)
+        except ImportError:
+            pass  # TODO: Should we raise an exception here ?
+        else:
+            root_factory_name = Configuration.get("root_factory_name",
+                                                  "RootFactory")
+            root_factory = getattr(module, root_factory_name)
+            if root_factory:
+                config.set_root_factory(root_factory)
