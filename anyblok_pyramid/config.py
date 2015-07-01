@@ -5,12 +5,14 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+from importlib import import_module
+from os.path import join
+
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from anyblok.blok import BlokManager
 from anyblok.config import Configuration
-from os.path import join
 from .handler import HandlerHTTP, HandlerRPC
 from .controllers import (Pyramid, PyramidHTTP, PyramidJsonRPC, PyramidXmlRPC,
                           PyramidException)
@@ -203,9 +205,21 @@ def pyramid_security_config(config):
     """
 
     # Authentication policy
-    authn_policy = AuthTktAuthenticationPolicy(
-        secret=Configuration.get("authn_key", "secret"),
-        callback=_group_finder)
+    secret, callback = Configuration.get("authn_key", "secret"), _group_finder
+
+    callback_module = Configuration.get("authn_callback_module")
+    if callback_module:
+        try:
+            module = import_module(callback_module)
+        except ImportError:
+            pass  # TODO: Should we raise an exception here ?
+        else:
+            callback_name = Configuration.get("authn_callback_name",
+                                              "group_finder")
+            callback = getattr(module, callback_name)
+
+    authn_policy = AuthTktAuthenticationPolicy(secret=secret,
+                                               callback=callback)
     config.set_authentication_policy(authn_policy)
 
     # Authorization policy
