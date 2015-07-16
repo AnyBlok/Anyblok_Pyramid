@@ -14,6 +14,8 @@ CHANGELOG
 Future
 ------
 
+* [REF] Add entry point to add new pyramid includem and settings
+
 0.3.2
 -----
 
