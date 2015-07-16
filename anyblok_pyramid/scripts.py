@@ -11,6 +11,8 @@ from anyblok.scripts import format_configuration
 from anyblok.registry import RegistryManager
 from anyblok.config import Configuration
 from .pyramid_config import Configurator
+from logging import getLogger
+logger = getLogger(__name__)
 
 
 def anyblok_wsgi(description, version, configuration_groups):
@@ -43,6 +45,7 @@ def anyblok_wsgi(description, version, configuration_groups):
     for dbname in [x for x in dbnames if x != '']:
         RegistryManager.get(dbname)
 
+    logger.info("Serve forever on %r:%r" % (wsgi_host, wsgi_port))
     server.serve_forever()
 
 
