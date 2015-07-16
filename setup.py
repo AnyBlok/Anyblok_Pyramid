@@ -30,6 +30,9 @@ console_scripts = [
     'anyblok_pyramid=anyblok_pyramid.scripts:wsgi',
 ]
 
+anyblok_pyramid_includem = [
+]
+
 setup(
     name="anyblok_pyramid",
     version=version,
@@ -60,6 +63,11 @@ setup(
     ],
     entry_points={
         'console_scripts': console_scripts,
+        'anyblok_pyramid.settings': [
+            'pyramid_settings=anyblok_pyramid.pyramid_config:pyramid_settings',
+            'beaker_settings=anyblok_pyramid.pyramid_config:beaker_settings',
+        ],
+        'anyblok_pyramid.includem': anyblok_pyramid_includem,
         'bloks': [
             'pyramid=anyblok_pyramid.bloks.pyramid:Pyramid',
         ],

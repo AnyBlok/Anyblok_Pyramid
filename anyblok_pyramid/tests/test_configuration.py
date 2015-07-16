@@ -5,9 +5,9 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from anyblok_pyramid.configuration import (define_wsgi_option,
-                                           define_beaker_option,
-                                           define_wsgi_debug_option)
+from anyblok_pyramid.config import (define_wsgi_option,
+                                    define_beaker_option,
+                                    define_wsgi_debug_option)
 from anyblok.tests.testcase import TestCase
 from anyblok.tests.test_config import MockArgumentParser
 

@@ -11,9 +11,14 @@ register = Declarations.register
 PyramidXmlRPC = Declarations.PyramidXmlRPC
 PyramidMixin = Declarations.PyramidMixin
 Core = Declarations.Core
+from ..pyramid_config import (pyramid_beaker,
+                              pyramid_config,
+                              pyramid_xmlrpc_config)
 
 
 class TestSimpleCache(PyramidDBTestCase):
+
+    includems = (pyramid_beaker, pyramid_config, pyramid_xmlrpc_config)
 
     def call_xmlrpc(self, value):
         res = self.xmlrpc('/test', 'get_method_cached')
@@ -196,6 +201,8 @@ class TestSimpleCache(PyramidDBTestCase):
 
 
 class TestInheritedCache(PyramidDBTestCase):
+
+    includems = (pyramid_beaker, pyramid_config, pyramid_xmlrpc_config)
 
     def call_xmlrpc(self, value):
         res = self.xmlrpc('/test', 'get_method_cached')

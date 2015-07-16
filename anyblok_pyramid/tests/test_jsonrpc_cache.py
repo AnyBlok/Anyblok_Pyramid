@@ -11,9 +11,14 @@ register = Declarations.register
 PyramidJsonRPC = Declarations.PyramidJsonRPC
 PyramidMixin = Declarations.PyramidMixin
 Core = Declarations.Core
+from ..pyramid_config import (pyramid_beaker,
+                              pyramid_config,
+                              pyramid_jsonrpc_config)
 
 
 class TestSimpleCache(PyramidDBTestCase):
+
+    includems = (pyramid_beaker, pyramid_config, pyramid_jsonrpc_config)
 
     def call_json(self, value):
         res = self.jsonrpc('/test', 'get_method_cached')
@@ -196,6 +201,8 @@ class TestSimpleCache(PyramidDBTestCase):
 
 
 class TestInheritedCache(PyramidDBTestCase):
+
+    includems = (pyramid_beaker, pyramid_config, pyramid_jsonrpc_config)
 
     def call_json(self, value):
         res = self.jsonrpc('/test', 'get_method_cached')

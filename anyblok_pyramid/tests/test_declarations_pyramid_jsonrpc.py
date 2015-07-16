@@ -12,9 +12,14 @@ register = Declarations.register
 PyramidJsonRPC = Declarations.PyramidJsonRPC
 PyramidMixin = Declarations.PyramidMixin
 Core = Declarations.Core
+from ..pyramid_config import (pyramid_beaker,
+                              pyramid_config,
+                              pyramid_jsonrpc_config)
 
 
 class TestDeclarationPyramidJsonRPC(PyramidDBTestCase):
+
+    includems = (pyramid_beaker, pyramid_config, pyramid_jsonrpc_config)
 
     def check_controller(self):
         res = self.jsonrpc('/test', 'methodA', params={'a': 2, 'b': 3})

@@ -9,13 +9,15 @@ from anyblok.config import Configuration
 from anyblok.registry import RegistryManager
 from anyblok.tests.testcase import DBTestCase, BlokTestCase
 from webtest import TestApp
-from ..config import make_config
+from ..pyramid_config import Configurator
 from pyramid.response import Response
 import json
 from pyramid_rpc.compat import xmlrpclib
 
 
 class PyramidTestCase:
+
+    includems = ()
 
     @classmethod
     def setUpClass(cls):
@@ -96,7 +98,11 @@ class PyramidTestCase:
         return xmlrpclib.loads(resp.body)[0][0]
 
     def init_web_server(self):
-        config = make_config()
+        config = Configurator()
+        config.include_from_entry_point()
+        for includem in self.includems:
+            config.include(includem)
+
         app = config.make_wsgi_app()
         self.webserver = TestApp(app)
         dbname = Configuration.get('db_name')

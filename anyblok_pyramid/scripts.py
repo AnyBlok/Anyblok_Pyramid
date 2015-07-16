@@ -10,16 +10,14 @@ from anyblok.blok import BlokManager
 from anyblok.scripts import format_configuration
 from anyblok.registry import RegistryManager
 from anyblok.config import Configuration
-from .config import make_config
+from .pyramid_config import Configurator
 
 
-def anyblok_wsgi(description, version, configuration_groups,
-                 Configurator=make_config):
+def anyblok_wsgi(description, version, configuration_groups):
     """
     :param description: description of configuration
     :param version: version of script for argparse
     :param configuration_groups: list configuration groupe to load
-    :param Configurator: callable which return a config instance
     """
     format_configuration(configuration_groups, 'wsgi', 'pyramid-debug',
                          'beaker')
@@ -28,6 +26,8 @@ def anyblok_wsgi(description, version, configuration_groups,
                        configuration_groups=configuration_groups)
     RegistryManager.add_needed_bloks('pyramid')
     config = Configurator()
+    config.include_from_entry_point()
+
     wsgi_host = Configuration.get('wsgi_host')
     wsgi_port = int(Configuration.get('wsgi_port'))
 
