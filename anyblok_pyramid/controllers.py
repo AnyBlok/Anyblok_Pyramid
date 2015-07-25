@@ -243,7 +243,6 @@ class PyramidBase:
 
         kwargs.update({'__registry_name__': _registryname})
         kwargs.update(cls.hook_view_from_decorators(_registryname, cls_))
-        kwargs.update(cls.properties_from_decorators(_registryname, cls_))
 
         RegistryManager.add_entry_in_register(
             cls.__name__, _registryname, cls_, **kwargs)
@@ -257,27 +256,6 @@ class PyramidBase:
         :param cls_: Class Interface to remove in registry
         """
         RegistryManager.remove_in_register(cls_)
-
-    @classmethod
-    def properties_from_decorators(cls, registryname, cls_):
-        """ Properties is  used to make some check before  call the
-        view. This method get the view which are need this verification
-
-        :param registryname: the registry name
-        :param cls_: a class of the registry name to take the properties
-        :rtype: dict to save in the registry
-        """
-        properties = RegistryManager.get_entry_properties_in_register(
-            cls.__name__, registryname).get('properties', {})
-
-        for attr in dir(cls_):
-            if hasattr(getattr(cls_, attr), 'properties'):
-                if attr not in properties:
-                    properties[attr] = {}
-
-                properties[attr].update(getattr(cls_, attr).properties)
-
-        return {'properties': properties}
 
     @classmethod
     def hook_insert_in_bases(cls, registry, bases):
@@ -379,29 +357,6 @@ class PyramidBase:
 
         for namespace in registry.loaded_registries[cls.__name__ + '_names']:
             cls.load_namespace(registry, namespace)
-
-    @classmethod
-    def check_properties(cls, **kwargs):
-        """ decorator which add the properties to check
-
-        :param \*\*kwargs: dict property: value to check
-        """
-        def wraper(function):
-            function.properties = kwargs
-            return function
-
-        return wraper
-
-    @classmethod
-    def authentificated(cls):
-        """ Decorator which add the property ``authentificated`` with the value
-        ``True``
-        """
-        def wraper(function):
-            function.properties = {'authentificated': True}
-            return function
-
-        return wraper
 
 
 @Declarations.add_declaration_type(isAnEntry=True,

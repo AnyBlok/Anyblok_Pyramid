@@ -5,11 +5,7 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from importlib import import_module
 from os.path import join
-
-from pyramid.authentication import AuthTktAuthenticationPolicy
-from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator as PConfigurator
 from anyblok.blok import BlokManager
 from anyblok.config import Configuration
@@ -22,6 +18,7 @@ logger = getLogger(__name__)
 
 
 class Configurator(PConfigurator):
+    """Overwrite the Pyramid Configurator"""
 
     def __init__(self, *args, **kwargs):
         kwargs = self.default_kwargs(**kwargs)
@@ -34,6 +31,29 @@ class Configurator(PConfigurator):
         return kwargs
 
     def default_setting(self):
+        """Call all the entry point ``anyblok_pyramid.settings`` to update
+        the argument setting
+
+        the callable need to have one parametter, it is a dict::
+
+            def settings_callable(setting):
+                ...
+
+        We add the entry point by the setup file::
+
+            setup(
+                ...,
+                entry_points={
+                    'anyblok_pyramid.settings': [
+                        settings_callable=path:settings_callable,
+                        ...
+                    ],
+                },
+                ...,
+            )
+
+
+        """
         settings = {}
         for i in iter_entry_points('anyblok_pyramid.settings'):
             logger.debug('Load settings: %r' % i.name)
@@ -42,12 +62,40 @@ class Configurator(PConfigurator):
         return settings
 
     def include_from_entry_point(self):
+        """Call all the entry point ``anyblok_pyramid.includem`` to update
+        the pyramid configuration
+
+        the callable need to have one parametter(the instance of
+        ``Configurator`` class, self)::
+
+            def config_callable(config):
+                config.include(...)
+
+        We add the entry point by the setup file::
+
+            setup(
+                ...,
+                entry_points={
+                    'anyblok_pyramid.includem': [
+                        config_callable=path:config_callable,
+                        ...
+                    ],
+                },
+                ...,
+            )
+
+
+        """
         for i in iter_entry_points('anyblok_pyramid.includem'):
             logger.debug('Load includem: %r' % i.name)
             i.load()(self)
 
 
 def pyramid_settings(settings):
+    """Add in settings the default value for pyramid configuration
+
+    :param settings: dict of the existing settings
+    """
     settings.update({
         'pyramid.reload_templates': Configuration.get(
             'pyramid.reload_templates'),
@@ -66,6 +114,10 @@ def pyramid_settings(settings):
 
 
 def beaker_settings(settings):
+    """Add in settings the default value for beaker configuration
+
+    :param settings: dict of the existing settings
+    """
     settings.update({
         'beaker.session.data_dir': Configuration.get(
             'beaker.session.data_dir'),
@@ -94,14 +146,20 @@ def beaker_settings(settings):
 
 
 def pyramid_beaker(config):
+    """Add beaker includem in pyramid configuration
+
+    :param config: Pyramid configurator instance
+    """
+
     config.include('pyramid_beaker')
 
 
 def declare_static(config):
-    """ Pyramid includeme, add the static path of the blok
+    """Pyramid includem, add the static path of the blok
 
-    :param config: the pyramid configuration
+    :param config: Pyramid configurator instance
     """
+
     for blok, cls in BlokManager.bloks.items():
         if hasattr(cls, 'static_paths'):
             paths = cls.static_paths
@@ -117,10 +175,10 @@ def declare_static(config):
 
 
 def pyramid_config(config):
-    """ Pyramid includeme, add the route and view which are not
+    """Pyramid includem, add the route and view which are not
     added in the blok
 
-    :param config: the pyramid configuration
+    :param config: Pyramid configurator instance
     """
     for args, kwargs in Pyramid.routes:
         config.add_route(*args, **kwargs)
@@ -133,7 +191,7 @@ def pyramid_http_config(config):
     """ Pyramid includeme, add the route and view which are
     added in the blok by ``PyramidHTTP`` Type
 
-    :param config: the pyramid configuration
+    :param config: Pyramid configurator instance
     :exception: PyramidException
     """
     for args, kwargs in PyramidHTTP.routes:
@@ -176,7 +234,7 @@ def pyramid_jsonrpc_config(config):
     """ Pyramid includeme, add the route and view which are
     added in the blok by ``PyramidJsonRPC`` Type
 
-    :param config: the pyramid configuration
+    :param config: Pyramid configurator instance
     """
     config.include('pyramid_rpc.jsonrpc')
     _pyramid_rpc_config(
@@ -187,83 +245,8 @@ def pyramid_xmlrpc_config(config):
     """ Pyramid includeme, add the route and view which are
     added in the blok by ``PyramidXmlRPC`` Type
 
-    :param config: the pyramid configuration
+    :param config: Pyramid configurator instance
     """
     config.include('pyramid_rpc.xmlrpc')
     _pyramid_rpc_config(
         PyramidXmlRPC, config.add_xmlrpc_endpoint, config.add_xmlrpc_method)
-
-
-def _group_finder(email, request):  # TODO
-    """Allow to find group of an user, identified by his email"""
-    return ("all",)
-
-
-def pyramid_security_config(config):
-    """Proposal to manage those:
-
-    * Authentication policy
-    * Authorization policy
-    * root factory
-
-    :param config:  the pyramid configuration
-    :return: None
-
-    Links to the official documentation :
-    http://docs.pylonsproject.org/projects/pyramid//en/latest/tutorials/wiki2/
-        design.html
-    http://docs.pylonsproject.org/projects/pyramid//en/latest/tutorials/wiki2/
-        authorization.html
-    http://docs.pylonsproject.org/projects/pyramid//en/latest/tutorials/wiki2/
-        authentication.html
-
-    http://docs.pylonsproject.org/projects/pyramid//en/latest/quick_tutorial/
-        authorization.html
-    http://docs.pylonsproject.org/projects/pyramid//en/latest/quick_tutorial/
-        authentication.html
-
-    Link to an official tutorial
-    If you want to replace default pyramid component by your own:
-    http://docs.pylonsproject.org/projects/pyramid//en/latest/narr/
-        security.html#creating-your-own-authentication-policy
-    http://docs.pylonsproject.org/projects/pyramid//en/latest/narr/
-        security.html#creating-your-own-authorization-policy
-    """
-
-    # Authentication policy
-    secret, callback = Configuration.get("authn_key", "secret"), _group_finder
-
-    callback_module = Configuration.get("authn_callback_module")
-    if callback_module:
-        try:
-            module = import_module(callback_module)
-        except ImportError:
-            pass  # TODO: Should we raise an exception here ?
-        else:
-            callback_name = Configuration.get("authn_callback_name",
-                                              "group_finder")
-            callback = getattr(module, callback_name)
-            if not callback:
-                callback = _group_finder
-
-    authn_policy = AuthTktAuthenticationPolicy(secret=secret,
-                                               callback=callback)
-    config.set_authentication_policy(authn_policy)
-
-    # Authorization policy
-    authz_policy = ACLAuthorizationPolicy()
-    config.set_authorization_policy(authz_policy)
-
-    # Root factory: only added if set in config file (no default one)
-    root_factory_module = Configuration.get("root_factory_module")
-    if root_factory_module:
-        try:
-            module = import_module(root_factory_module)
-        except ImportError:
-            pass  # TODO: Should we raise an exception here ?
-        else:
-            root_factory_name = Configuration.get("root_factory_name",
-                                                  "RootFactory")
-            root_factory = getattr(module, root_factory_name)
-            if root_factory:
-                config.set_root_factory(root_factory)

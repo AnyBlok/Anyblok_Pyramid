@@ -18,7 +18,3 @@ class PyramidInvalidView(PyramidException):
 
 class PyramidInvalidMethod(PyramidException):
     """ Sub class of Pyramid Exception """
-
-
-class PyramidInvalidProperty(PyramidException):
-    """ Sub class of Pyramid Exception """

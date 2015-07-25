@@ -1,2 +1,2 @@
 include doc/*.rst
-recursive-include anyblok_pyramid/bloks */*.rst
+recursive-include anyblok_pyramid/bloks/*/*.rst

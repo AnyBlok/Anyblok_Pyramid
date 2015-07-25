@@ -7,7 +7,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok import Declarations
 from .exceptions import (PyramidInvalidFunction, PyramidInvalidView,
-                         PyramidInvalidMethod, PyramidInvalidProperty)
+                         PyramidInvalidMethod)
 register = Declarations.register
 Core = Declarations.Core
 
@@ -23,18 +23,6 @@ class PyramidBase:
         if not hasattr(self, function):
             raise PyramidInvalidFunction("%s has no %s function" % (
                 self.__registry_name__, function))
-
-        if function in self.properties:
-            for k, v in self.properties[function].items():
-                func = 'check_property_%s' % k
-                if not hasattr(self, func):
-                    raise PyramidInvalidProperty('%s has no %s function' % (
-                        self.__registry_name__, func))
-
-                getattr(self, func)(v)
-
-    def check_property_authentificated(self, value):
-        return True
 
 
 @register(Core)

@@ -370,25 +370,64 @@ Declare a cache on a ``Core``::
     ``Declarations.cache`` to cache in only one request else use
     ``Declarations.classmethod_cache`` to cache a method for all the request
 
-Properties
-~~~~~~~~~~
+Authentication and authorization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-the decorator ``*Controller*.check_properties`` allow to define an property
-to check before the ``view`` or ``rpc_method`` be called.
+Authentication can be add directly in configuration with includem.
 
-This property check if the *user* is authentificated::
+Links to the official documentation :
 
-    @register(PyramidHTTP)
-    class MyController:
+* `design (wiki)<http://docs.pylonsproject.org/projects/pyramid//en/latest/tutorials/wiki2/>`_
+* `authorization (wiki)<http://docs.pylonsproject.org/projects/pyramid//en/latest/tutorials/wiki2/>`_
+* `authorization (tutorial)<http://docs.pylonsproject.org/projects/pyramid//en/latest/quick_tutorial/>`_
+* `authentication (wiki)<http://docs.pylonsproject.org/projects/pyramid//en/latest/tutorials/wiki2/>`_
+* `authentication (tutorial)<http://docs.pylonsproject.org/projects/pyramid//en/latest/quick_tutorial/>`_
 
-        def check_property_myproperty(self, value):
-            """If the value property is not good the this method must raise"""
+Link to an official tutorial
+If you want to replace default pyramid component by your own:
 
-        @check_properties(myproperty=OneValue)
-        @PyramidHTTP.view()
-        def myview(self):
-            ...
+* `authentication <http://docs.pylonsproject.org/projects/pyramid//en/latest/narr/security.html#creating-your-own-authentication-policy>`_
+* `authorization <http://docs.pylonsproject.org/projects/pyramid//en/latest/narr/security.html#creating-your-own-authorization-policy>`_
 
-You can add your property but the property must be associated at a check
-method on the controller. This method can be in a ``Mixin`` or in a ``Core``.
-This method can be overload.
+Add a root factory::
+
+    class RootFactory(object):
+
+        def __init__(self, request):
+            self.request = request
+
+        __acl__ = [
+            (Allow, Everyone, 'all'),
+        ]
+
+Add the authentication callback::
+
+    def group_finder(email, request):
+        return ("all",)
+
+Add the includem callable::
+
+    def pyramid_security_config(config):
+        # Authentication policy
+        secret = Configuration.get("authn_key", "secret")
+        authn_policy = AuthTktAuthenticationPolicy(secret=secret,
+                                                   callback=group_finder)
+        config.set_authentication_policy(authn_policy)
+        # Authorization policy
+        authz_policy = ACLAuthorizationPolicy()
+        config.set_authorization_policy(authz_policy)
+        # Root factory: only added if set in config file (no default one)
+        config.set_root_factory(RootFactory)
+
+Add the includem in the entry point::
+
+        setup(
+            ...,
+            entry_points={
+                'anyblok_pyramid.includem': [
+                    pyramid_security_config=path:pyramid_security_config,
+                    ...
+                ],
+            },
+            ...,
+        )

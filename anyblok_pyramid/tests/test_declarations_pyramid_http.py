@@ -9,7 +9,6 @@ from anyblok_pyramid.tests.testcase import PyramidDBTestCase
 from anyblok import Declarations
 from pyramid.response import Response
 from ..controllers import PyramidException
-from anyblok_pyramid.bloks.pyramid.exceptions import PyramidInvalidProperty
 register = Declarations.register
 PyramidHTTP = Declarations.PyramidHTTP
 PyramidMixin = Declarations.PyramidMixin
@@ -76,51 +75,6 @@ class TestDeclarationPyramidHTTP(PyramidDBTestCase):
 
         with self.assertRaises(PyramidException):
             self.init_registry(add_http_contoller)
-
-    def test_authentificated(self):
-        def add_http_contoller():
-
-            @register(PyramidHTTP)
-            class Test:
-
-                @PyramidHTTP.view()
-                @PyramidHTTP.authentificated()
-                def methodA(self, *args, **kwargs):
-                    return Response(str({x: int(y) * 2
-                                         for x, y in kwargs.items()}))
-
-                @PyramidHTTP.view()
-                def method_B(self, **kwargs):
-                    return Response(str({x: int(y) * 3
-                                         for x, y in kwargs.items()}))
-
-            self.add_routes()
-
-        self.init_registry(add_http_contoller)
-        self.check_controller()
-
-    def test_unknown_property(self):
-        def add_http_contoller():
-
-            @register(PyramidHTTP)
-            class Test:
-
-                @PyramidHTTP.view()
-                @PyramidHTTP.check_properties(unknown_property=True)
-                def methodA(self, *args, **kwargs):
-                    return Response(str({x: int(y) * 2
-                                         for x, y in kwargs.items()}))
-
-                @PyramidHTTP.view()
-                def method_B(self, **kwargs):
-                    return Response(str({x: int(y) * 3
-                                         for x, y in kwargs.items()}))
-
-            self.add_routes()
-
-        self.init_registry(add_http_contoller)
-        with self.assertRaises(PyramidInvalidProperty):
-            self.check_controller()
 
     def test_simple_subclass_controller(self):
         def add_http_contoller():

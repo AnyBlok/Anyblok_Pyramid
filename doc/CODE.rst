@@ -72,12 +72,29 @@ anyblok_pyramid.handler
     :members:
     :noindex:
 
-anyblok_pyramid.config
-----------------------
+anyblok_pyramid.pyramid_config
+------------------------------
 
-.. automodule:: anyblok_pyramid.config
+.. automodule:: anyblok_pyramid.pyramid_config
 
-.. autofunction:: make_config
+.. autoclass:: Configurator
+    :show-inheritance:
+    :members:
+    :noindex:
+
+pyramid_config.settings
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autofunction:: pyramid_settings
+    :noindex:
+
+.. autofunction:: beaker_settings
+    :noindex:
+
+pyramid_config.includem
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autofunction:: pyramid_beaker
     :noindex:
 
 .. autofunction:: declare_static
