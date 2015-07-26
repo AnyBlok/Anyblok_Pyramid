@@ -377,17 +377,17 @@ Authentication can be add directly in configuration with includem.
 
 Links to the official documentation :
 
-* `design (wiki)<http://docs.pylonsproject.org/projects/pyramid//en/latest/tutorials/wiki2/>`_
-* `authorization (wiki)<http://docs.pylonsproject.org/projects/pyramid//en/latest/tutorials/wiki2/>`_
-* `authorization (tutorial)<http://docs.pylonsproject.org/projects/pyramid//en/latest/quick_tutorial/>`_
-* `authentication (wiki)<http://docs.pylonsproject.org/projects/pyramid//en/latest/tutorials/wiki2/>`_
-* `authentication (tutorial)<http://docs.pylonsproject.org/projects/pyramid//en/latest/quick_tutorial/>`_
+* http://docs.pylonsproject.org/projects/pyramid//en/latest/tutorials/wiki2/design.html
+* http://docs.pylonsproject.org/projects/pyramid//en/latest/tutorials/wiki2/authorization.html
+* http://docs.pylonsproject.org/projects/pyramid//en/latest/tutorials/wiki2/authentication.html
+* http://docs.pylonsproject.org/projects/pyramid//en/latest/quick_tutorial/authorization.html
+* http://docs.pylonsproject.org/projects/pyramid//en/latest/quick_tutorial/authentication.html
 
 Link to an official tutorial
 If you want to replace default pyramid component by your own:
 
-* `authentication <http://docs.pylonsproject.org/projects/pyramid//en/latest/narr/security.html#creating-your-own-authentication-policy>`_
-* `authorization <http://docs.pylonsproject.org/projects/pyramid//en/latest/narr/security.html#creating-your-own-authorization-policy>`_
+* http://docs.pylonsproject.org/projects/pyramid//en/latest/narr/security.html#creating-your-own-authentication-policy
+* http://docs.pylonsproject.org/projects/pyramid//en/latest/narr/security.html#creating-your-own-authorization-policy
 
 Add a root factory::
 
