@@ -431,3 +431,12 @@ Add the includem in the entry point::
             },
             ...,
         )
+
+.. note::
+    You can use the session in the request to get the name of the data base.
+    Only if the database's name is on the session::
+
+    dbname = request.session.get('database')
+    if dbname:
+        from anyblok.registry import RegistryManager
+        registry = RegistryManager.get(dbname)
