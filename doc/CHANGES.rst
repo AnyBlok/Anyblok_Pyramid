@@ -14,7 +14,15 @@ CHANGELOG
 Future
 ------
 
+.. warning::
+
+    this version can be uncapable with the previous version
+
 * [REF] Add entry point to add new pyramid includem and settings
+* [DEL] properties decorator, it is useless because pyramid have a better
+  behaviour
+* [REF] add workingset to define overwritable callback used for application,
+  no for the blok, add first callback, get_registry
 
 0.3.2
 -----

@@ -7,10 +7,16 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok.registry import RegistryManager
 from .controllers import PyramidException
+from anyblok_pyramid import set_callable, get_callable
 
 
 class HandlerException(PyramidException):
     """ Simple exception for handler """
+
+
+@set_callable()
+def get_registry(request):
+    return RegistryManager.get(request.session['database'])
 
 
 class Handler:
@@ -23,7 +29,7 @@ class Handler:
         :rtype: instance of Pyramid controller
         :exception: HandlerException
         """
-        registry = RegistryManager.get(request.session['database'])
+        registry = get_callable('get_registry')(request)
         registry.System.Cache.clear_invalidate_cache()
         if self.namespace not in registry.loaded_controllers:
             raise HandlerException(

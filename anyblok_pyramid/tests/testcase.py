@@ -10,9 +10,9 @@ from anyblok.registry import RegistryManager
 from anyblok.tests.testcase import DBTestCase, BlokTestCase
 from webtest import TestApp
 from ..pyramid_config import Configurator
-from pyramid.response import Response
 import json
 from pyramid_rpc.compat import xmlrpclib
+from anyblok_pyramid import set_callable
 
 
 class PyramidTestCase:
@@ -23,6 +23,13 @@ class PyramidTestCase:
     def setUpClass(cls):
         super(PyramidTestCase, cls).setUpClass()
         RegistryManager.add_needed_bloks('pyramid')
+
+        @set_callable()
+        def get_registry(request):
+            dbname = Configuration.get('db_name')
+            if dbname is None:
+                dbname = 'test_anyblok'
+            return RegistryManager.get(dbname)
 
     def http(self, path, params=None, method='post'):
         resp = getattr(self.webserver, method)(path, params)
@@ -105,11 +112,6 @@ class PyramidTestCase:
 
         app = config.make_wsgi_app()
         self.webserver = TestApp(app)
-        dbname = Configuration.get('db_name')
-        if dbname is None:
-            dbname = 'test_anyblok'
-
-        self.webserver.post('/pyramid/testcase/database?database=%s' % dbname)
 
 
 class PyramidDBTestCase(PyramidTestCase, DBTestCase):
@@ -125,21 +127,8 @@ class PyramidDBTestCase(PyramidTestCase, DBTestCase):
         pyramid_xmlrpc_routes = [] + Declarations.PyramidXmlRPC.routes
         pyramid_xmlrpc_methods = Declarations.PyramidXmlRPC.methods.copy()
 
-        def wrap_fnct(**wfkwargs):
-            Declarations.Pyramid.add_route(
-                'pyramidtestcasedatabase', '/pyramid/testcase/database')
-
-            @Declarations.Pyramid.add_view('pyramidtestcasedatabase',
-                                           request_method='POST')
-            def save_db_in_session(request, database=None):
-                request.session['database'] = database
-                request.session.save()
-                return Response('ok')
-
-            function(**wfkwargs)
-
         try:
-            res = super(PyramidDBTestCase, self).init_registry(wrap_fnct,
+            res = super(PyramidDBTestCase, self).init_registry(function,
                                                                **kwargs)
             self.init_web_server()
         finally:

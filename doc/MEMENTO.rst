@@ -370,8 +370,20 @@ Declare a cache on a ``Core``::
     ``Declarations.cache`` to cache in only one request else use
     ``Declarations.classmethod_cache`` to cache a method for all the request
 
+WorkingSet
+----------
+
+Anyblok / Pyramid add two function to use callback:
+
+* `set_callable`: save a callback, the name of the callable is the name of the callback
+* `get_callable`: return a callback in function of this name
+
+for exemple, see the callable `get_registry`::
+
+    registry = get_callable('get_registry')(request)
+
 Authentication and authorization
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------
 
 Authentication can be add directly in configuration with includem.
 
@@ -434,10 +446,12 @@ Add the includem in the entry point::
 
 .. note::
 
-    You can use the session in the request to get the name of the data base.
-    Only if the database's name is on the session::
+    You can get the session, with the callback get_registry::
 
-        dbname = request.session.get('database')
-        if dbname:
-            from anyblok.registry import RegistryManager
-            registry = RegistryManager.get(dbname)
+        from anyblok_pyramid import get_callable
+        # only if get_registry is implemented for you use case
+        registry = get_callable('get_registry')(request)
+
+.. note::
+
+    You can merge the authorization of Pyramid and the authorization of AnyBlok

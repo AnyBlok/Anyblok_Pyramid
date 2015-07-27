@@ -11,12 +11,13 @@
 AnyBlok / Pyramid framework
 ===========================
 
-AnyBlok/ Pyramid controllers
-----------------------------
+AnyBlok / Pyramid controllers
+-----------------------------
 
 .. automodule:: anyblok_pyramid.controllers
 
-.. autoclass:: PyramidException
+.. autoexception:: PyramidException
+    :show-inheritance:
     :members:
     :noindex:
 
@@ -52,6 +53,20 @@ AnyBlok/ Pyramid controllers
 
 .. autoclass:: PyramidXmlRPC
     :show-inheritance:
+    :members:
+    :noindex:
+
+anyblok_pyramid.workingset
+--------------------------
+
+.. automodule:: anyblok_pyramid.workingset
+
+.. autoexception:: WorkingSetException
+    :show-inheritance:
+    :members:
+    :noindex:
+
+.. autoclass:: WorkingSet
     :members:
     :noindex:
 
