@@ -110,7 +110,7 @@ class PyramidTestCase:
             config.include(includem)
 
         app = config.make_wsgi_app()
-        self.webserver = TestApp(app)
+        return TestApp(app)
 
 
 class PyramidDBTestCase(PyramidTestCase, DBTestCase):
@@ -129,7 +129,7 @@ class PyramidDBTestCase(PyramidTestCase, DBTestCase):
         try:
             res = super(PyramidDBTestCase, self).init_registry(function,
                                                                **kwargs)
-            self.init_web_server()
+            self.webserver = self.init_web_server()
         finally:
             Declarations.Pyramid.routes = pyramid_routes
             Declarations.Pyramid.views = pyramid_views
@@ -145,6 +145,6 @@ class PyramidDBTestCase(PyramidTestCase, DBTestCase):
 
 class PyramidBlokTestCase(PyramidTestCase, BlokTestCase):
 
-    def setUp(self):
-        super(PyramidBlokTestCase, self).setUp()
-        self.init_web_server()
+    @property
+    def webserver(self):
+        return self.init_web_server()
