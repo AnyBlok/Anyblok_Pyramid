@@ -43,7 +43,7 @@ def anyblok_wsgi(description, version, configuration_groups):
 
     # preload all db names
     for dbname in [x for x in dbnames if x != '']:
-        RegistryManager.get(dbname)
+        RegistryManager.get(dbname).commit()
 
     logger.info("Serve forever on %r:%r" % (wsgi_host, wsgi_port))
     server.serve_forever()
