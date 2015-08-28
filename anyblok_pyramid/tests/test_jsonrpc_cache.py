@@ -6,7 +6,8 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok_pyramid.tests.testcase import PyramidDBTestCase
-from anyblok import Declarations
+from anyblok.declarations import Declarations, classmethod_cache
+from anyblok.tests.test_cache import wrap_cls_cache
 register = Declarations.register
 PyramidJsonRPC = Declarations.PyramidJsonRPC
 PyramidMixin = Declarations.PyramidMixin
@@ -48,7 +49,7 @@ class TestSimpleCache(PyramidDBTestCase):
 
                 x = 0
 
-                @Declarations.classmethod_cache()
+                @classmethod_cache()
                 def method_cached(cls):
                     cls.x += 1
                     return cls.x
@@ -65,7 +66,7 @@ class TestSimpleCache(PyramidDBTestCase):
 
                 x = 0
 
-                @Declarations.classmethod_cache()
+                @classmethod_cache()
                 def method_cached(cls):
                     cls.x += 1
                     return cls.x
@@ -82,7 +83,7 @@ class TestSimpleCache(PyramidDBTestCase):
 
                 x = 0
 
-                @Declarations.classmethod_cache()
+                @classmethod_cache()
                 def method_cached(cls):
                     cls.x += 1
                     return cls.x
@@ -106,50 +107,30 @@ class TestSimpleCache(PyramidDBTestCase):
 
             x = 0
 
-            if withcore:
-                @Declarations.classmethod_cache()
-                def method_cached(cls):
-                    cls.x += 1
-                    return cls.x
-
-            else:
-                @classmethod
-                def method_cached(cls):
-                    cls.x += 1
-                    return cls.x
+            @wrap_cls_cache(withcore)
+            def method_cached(cls):
+                cls.x += 1
+                return cls.x
 
         @register(PyramidMixin)
         class MTest:
 
             y = 0
 
-            if withmixin:
-                @Declarations.classmethod_cache()
-                def method_cached(cls):
-                    cls.y += 2
-                    return cls.y + super(MTest, cls).method_cached()
-
-            else:
-                @classmethod
-                def method_cached(cls):
-                    cls.y += 2
-                    return cls.y + super(MTest, cls).method_cached()
+            @wrap_cls_cache(withmixin)
+            def method_cached(cls):
+                cls.y += 2
+                return cls.y + super(MTest, cls).method_cached()
 
         @register(PyramidJsonRPC)
         class Test(PyramidMixin.MTest):
 
             z = 0
 
-            if withmodel:
-                @Declarations.classmethod_cache()
-                def method_cached(cls):
-                    cls.z += 3
-                    return cls.z + super(Test, cls).method_cached()
-            else:
-                @classmethod
-                def method_cached(cls):
-                    cls.z += 3
-                    return cls.z + super(Test, cls).method_cached()
+            @wrap_cls_cache(withmodel)
+            def method_cached(cls):
+                cls.z += 3
+                return cls.z + super(Test, cls).method_cached()
 
         self.add_controller()
 
@@ -240,7 +221,7 @@ class TestInheritedCache(PyramidDBTestCase):
 
             x = 0
 
-            @Declarations.classmethod_cache()
+            @classmethod_cache()
             def method_cached(cls):
                 cls.x += 1
                 return cls.x
@@ -250,16 +231,10 @@ class TestInheritedCache(PyramidDBTestCase):
 
             y = 0
 
-            if inheritcache:
-                @Declarations.classmethod_cache()
-                def method_cached(cls):
-                    cls.y += 2
-                    return cls.y + super(Test, cls).method_cached()
-            else:
-                @classmethod
-                def method_cached(cls):
-                    cls.y += 2
-                    return cls.y + super(Test, cls).method_cached()
+            @wrap_cls_cache(inheritcache)
+            def method_cached(cls):
+                cls.y += 2
+                return cls.y + super(Test, cls).method_cached()
 
         self.add_controller()
 
@@ -270,7 +245,7 @@ class TestInheritedCache(PyramidDBTestCase):
 
             x = 0
 
-            @Declarations.classmethod_cache()
+            @classmethod_cache()
             def method_cached(cls):
                 cls.x += 1
                 return cls.x
@@ -280,16 +255,10 @@ class TestInheritedCache(PyramidDBTestCase):
 
             y = 0
 
-            if inheritcache:
-                @Declarations.classmethod_cache()
-                def method_cached(self):
-                    self.y += 2
-                    return self.y + super(PyramidBaseRPC, self).method_cached()
-            else:
-                @classmethod
-                def method_cached(cls):
-                    cls.y += 2
-                    return cls.y + super(PyramidBaseRPC, cls).method_cached()
+            @wrap_cls_cache(inheritcache)
+            def method_cached(self):
+                self.y += 2
+                return self.y + super(PyramidBaseRPC, self).method_cached()
 
         self.add_controller()
 
@@ -300,7 +269,7 @@ class TestInheritedCache(PyramidDBTestCase):
 
             x = 0
 
-            @Declarations.classmethod_cache()
+            @classmethod_cache()
             def method_cached(cls):
                 cls.x += 1
                 return cls.x
@@ -310,16 +279,10 @@ class TestInheritedCache(PyramidDBTestCase):
 
             y = 0
 
-            if inheritcache:
-                @Declarations.classmethod_cache()
-                def method_cached(cls):
-                    cls.y += 2
-                    return cls.y + super(MTest, cls).method_cached()
-            else:
-                @classmethod
-                def method_cached(cls):
-                    cls.y += 2
-                    return cls.y + super(MTest, cls).method_cached()
+            @wrap_cls_cache(inheritcache)
+            def method_cached(cls):
+                cls.y += 2
+                return cls.y + super(MTest, cls).method_cached()
 
         @register(PyramidJsonRPC)
         class Test(PyramidMixin.MTest):
