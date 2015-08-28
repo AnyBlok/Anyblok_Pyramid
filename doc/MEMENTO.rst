@@ -437,7 +437,7 @@ Add the includem in the entry point::
             ...,
             entry_points={
                 'anyblok_pyramid.includem': [
-                    pyramid_security_config=path:pyramid_security_config,
+                    'pyramid_security_config=path:pyramid_security_config',
                     ...
                 ],
             },
@@ -455,3 +455,34 @@ Add the includem in the entry point::
 .. note::
 
     You can merge the authorization of Pyramid and the authorization of AnyBlok
+
+JSON adapter
+------------
+
+In the case where you need to return json value you can format the data with:
+
+* Define an adapter for the python ``type``::
+
+    def datetime_adapter(obj, request):
+        return obj.isoformat()
+
+* Add the adapter at the pyramid configuration::
+
+    def declare_json_data_adapter(config):
+        from pyramid.renderers import JSON
+        json_renderer = JSON()
+        json_renderer.add_adapter(datetime, datetime_adapter)
+        config.add_renderer('json', json_renderer)
+
+* Add the includem::
+
+    setup(
+        ...,
+        entry_points={
+            'anyblok_pyramid.includem': [
+                'json_adapter=path:declare_json_data_adapter',
+                ...
+            ],
+        },
+        ...,
+    )
