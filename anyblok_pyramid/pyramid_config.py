@@ -62,7 +62,7 @@ class Configurator(PConfigurator):
         return settings
 
     def include_from_entry_point(self):
-        """Call all the entry point ``anyblok_pyramid.includem`` to update
+        """Call all the entry point ``anyblok_pyramid.includeme`` to update
         the pyramid configuration
 
         the callable need to have one parametter(the instance of
@@ -76,7 +76,7 @@ class Configurator(PConfigurator):
             setup(
                 ...,
                 entry_points={
-                    'anyblok_pyramid.includem': [
+                    'anyblok_pyramid.includeme': [
                         config_callable=path:config_callable,
                         ...
                     ],
@@ -86,8 +86,8 @@ class Configurator(PConfigurator):
 
 
         """
-        for i in iter_entry_points('anyblok_pyramid.includem'):
-            logger.debug('Load includem: %r' % i.name)
+        for i in iter_entry_points('anyblok_pyramid.includeme'):
+            logger.debug('Load includeme: %r' % i.name)
             i.load()(self)
 
 
@@ -146,7 +146,7 @@ def beaker_settings(settings):
 
 
 def pyramid_beaker(config):
-    """Add beaker includem in pyramid configuration
+    """Add beaker includeme in pyramid configuration
 
     :param config: Pyramid configurator instance
     """
@@ -155,7 +155,7 @@ def pyramid_beaker(config):
 
 
 def declare_static(config):
-    """Pyramid includem, add the static path of the blok
+    """Pyramid includeme, add the static path of the blok
 
     :param config: Pyramid configurator instance
     """
@@ -175,7 +175,7 @@ def declare_static(config):
 
 
 def pyramid_config(config):
-    """Pyramid includem, add the route and view which are not
+    """Pyramid includeme, add the route and view which are not
     added in the blok
 
     :param config: Pyramid configurator instance
@@ -188,7 +188,7 @@ def pyramid_config(config):
 
 
 def pyramid_http_config(config):
-    """ Pyramid includeme, add the route and view which are
+    """ Pyramid includemee, add the route and view which are
     added in the blok by ``PyramidHTTP`` Type
 
     :param config: Pyramid configurator instance
@@ -231,7 +231,7 @@ def _pyramid_rpc_config(cls, add_endpoint, add_method):
 
 
 def pyramid_jsonrpc_config(config):
-    """ Pyramid includeme, add the route and view which are
+    """ Pyramid includemee, add the route and view which are
     added in the blok by ``PyramidJsonRPC`` Type
 
     :param config: Pyramid configurator instance
@@ -242,7 +242,7 @@ def pyramid_jsonrpc_config(config):
 
 
 def pyramid_xmlrpc_config(config):
-    """ Pyramid includeme, add the route and view which are
+    """ Pyramid includemee, add the route and view which are
     added in the blok by ``PyramidXmlRPC`` Type
 
     :param config: Pyramid configurator instance

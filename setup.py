@@ -30,7 +30,7 @@ console_scripts = [
     'anyblok_pyramid=anyblok_pyramid.scripts:wsgi',
 ]
 
-anyblok_pyramid_includem = [
+anyblok_pyramid_includeme = [
 ]
 
 setup(
@@ -67,7 +67,7 @@ setup(
             'pyramid_settings=anyblok_pyramid.pyramid_config:pyramid_settings',
             'beaker_settings=anyblok_pyramid.pyramid_config:beaker_settings',
         ],
-        'anyblok_pyramid.includem': anyblok_pyramid_includem,
+        'anyblok_pyramid.includeme': anyblok_pyramid_includeme,
         'bloks': [
             'pyramid=anyblok_pyramid.bloks.pyramid:Pyramid',
         ],

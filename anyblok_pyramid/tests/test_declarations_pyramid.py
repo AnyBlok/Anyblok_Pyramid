@@ -13,7 +13,7 @@ from ..pyramid_config import pyramid_beaker, pyramid_config
 
 class TestDeclarationPyramid(PyramidDBTestCase):
 
-    includems = (pyramid_beaker, pyramid_config)
+    includemes = (pyramid_beaker, pyramid_config)
 
     def add_in_registry(self, path=None):
         from anyblok import Declarations

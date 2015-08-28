@@ -19,7 +19,7 @@ from ..pyramid_config import (pyramid_beaker,
 
 class TestSimpleCache(PyramidDBTestCase):
 
-    includems = (pyramid_beaker, pyramid_config, pyramid_jsonrpc_config)
+    includemes = (pyramid_beaker, pyramid_config, pyramid_jsonrpc_config)
 
     def call_json(self, value):
         res = self.jsonrpc('/test', 'get_method_cached')
@@ -183,7 +183,7 @@ class TestSimpleCache(PyramidDBTestCase):
 
 class TestInheritedCache(PyramidDBTestCase):
 
-    includems = (pyramid_beaker, pyramid_config, pyramid_jsonrpc_config)
+    includemes = (pyramid_beaker, pyramid_config, pyramid_jsonrpc_config)
 
     def call_json(self, value):
         res = self.jsonrpc('/test', 'get_method_cached')

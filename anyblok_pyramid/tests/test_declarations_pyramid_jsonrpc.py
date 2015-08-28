@@ -19,7 +19,7 @@ from ..pyramid_config import (pyramid_beaker,
 
 class TestDeclarationPyramidJsonRPC(PyramidDBTestCase):
 
-    includems = (pyramid_beaker, pyramid_config, pyramid_jsonrpc_config)
+    includemes = (pyramid_beaker, pyramid_config, pyramid_jsonrpc_config)
 
     def check_controller(self):
         res = self.jsonrpc('/test', 'methodA', params={'a': 2, 'b': 3})

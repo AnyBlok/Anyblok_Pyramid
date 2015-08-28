@@ -64,7 +64,7 @@ class Pyramid:
     .. warning::
 
         This case is only use by the script ``anyblok_wsgi``, if you use an
-        another script, you must include the includem ``pyramid_config``
+        another script, you must include the includeme ``pyramid_config``
         or use the function ``make_config`` to get all the configuration
 
     This ``Type`` is not an entry, no class are assembled in the registry.
@@ -374,7 +374,7 @@ class PyramidHTTP(PyramidBase):
     .. warning::
 
         This case is only use by the script ``anyblok_wsgi``, if you use an
-        another script, you must include the includem ``pyramid_http_config``
+        another script, you must include the includeme ``pyramid_http_config``
         or use the function ``make_config`` to get all the configuration
 
     Add a view::
@@ -624,7 +624,7 @@ class PyramidJsonRPC(PyramidRPC):
     .. warning::
 
         This case is only use by the script ``anyblok_wsgi``, if you use an
-        another script, you must include the includem
+        another script, you must include the includeme
         ``pyramid_jsonrpc_config`` or use the function ``make_config``
         to get all the configuration
 
@@ -719,7 +719,7 @@ class PyramidXmlRPC(PyramidRPC):
     .. warning::
 
         This case is only use by the script ``anyblok_wsgi``, if you use an
-        another script, you must include the includem
+        another script, you must include the includeme
         ``pyramid_xmlrpc_config`` or use the function ``make_config``
         to get all the configuration
 

@@ -19,7 +19,7 @@ from ..pyramid_config import (pyramid_beaker,
 
 class TestDeclarationPyramidXmlRPC(PyramidDBTestCase):
 
-    includems = (pyramid_beaker, pyramid_config, pyramid_xmlrpc_config)
+    includemes = (pyramid_beaker, pyramid_config, pyramid_xmlrpc_config)
 
     def check_controller(self):
         res = self.xmlrpc('/test', 'methodA', params=(2, 3))

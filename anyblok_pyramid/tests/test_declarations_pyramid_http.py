@@ -20,7 +20,7 @@ from ..pyramid_config import (pyramid_beaker,
 
 class TestDeclarationPyramidHTTP(PyramidDBTestCase):
 
-    includems = (pyramid_beaker, pyramid_config, pyramid_http_config)
+    includemes = (pyramid_beaker, pyramid_config, pyramid_http_config)
 
     def check_controller(self):
         res = self.http('/test/methodA', params={'a': 2, 'b': 3})

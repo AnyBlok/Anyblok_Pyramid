@@ -106,8 +106,8 @@ pyramid_config.settings
 .. autofunction:: beaker_settings
     :noindex:
 
-pyramid_config.includem
-~~~~~~~~~~~~~~~~~~~~~~~
+pyramid_config.includeme
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autofunction:: pyramid_beaker
     :noindex:

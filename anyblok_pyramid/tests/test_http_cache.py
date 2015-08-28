@@ -20,7 +20,7 @@ from ..pyramid_config import (pyramid_beaker,
 
 class TestSimpleCache(PyramidDBTestCase):
 
-    includems = (pyramid_beaker, pyramid_config, pyramid_http_config)
+    includemes = (pyramid_beaker, pyramid_config, pyramid_http_config)
 
     def call_http(self, value):
         res = self.http('/test', method='get')
@@ -184,7 +184,7 @@ class TestSimpleCache(PyramidDBTestCase):
 
 class TestInheritedCache(PyramidDBTestCase):
 
-    includems = (pyramid_beaker, pyramid_config, pyramid_http_config)
+    includemes = (pyramid_beaker, pyramid_config, pyramid_http_config)
 
     def call_http(self, value):
         res = self.http('/test', method='get')

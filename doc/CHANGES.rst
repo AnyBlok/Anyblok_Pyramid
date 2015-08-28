@@ -22,7 +22,7 @@ Future
 
     Works only with AnyBlok 0.5.0 and after
 
-* [REF] Add entry point to add new pyramid includem and settings
+* [REF] Add entry point to add new pyramid includeme and settings
 * [DEL] properties decorator, it is useless because pyramid have a better
   behaviour
 * [REF] add workingset to define overwritable callback used for application,
@@ -37,7 +37,7 @@ Future
 0.3.1
 -----
 
-* [FIX] default value for beaker, None is bettaer than ''
+* [FIX] default value for beaker, None is better than ''
 
 0.3.0
 -----

@@ -17,7 +17,7 @@ from anyblok_pyramid import set_callable
 
 class PyramidTestCase:
 
-    includems = ()
+    includemes = ()
 
     @classmethod
     def setUpClass(cls):
@@ -106,8 +106,8 @@ class PyramidTestCase:
     def init_web_server(self):
         config = Configurator()
         config.include_from_entry_point()
-        for includem in self.includems:
-            config.include(includem)
+        for includeme in self.includemes:
+            config.include(includeme)
 
         app = config.make_wsgi_app()
         return TestApp(app)

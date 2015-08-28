@@ -385,7 +385,7 @@ for exemple, see the callable `get_registry`::
 Authentication and authorization
 --------------------------------
 
-Authentication can be add directly in configuration with includem.
+Authentication can be add directly in configuration with includeme.
 
 Links to the official documentation :
 
@@ -417,7 +417,7 @@ Add the authentication callback::
     def group_finder(email, request):
         return ("all",)
 
-Add the includem callable::
+Add the includeme callable::
 
     def pyramid_security_config(config):
         # Authentication policy
@@ -431,12 +431,12 @@ Add the includem callable::
         # Root factory: only added if set in config file (no default one)
         config.set_root_factory(RootFactory)
 
-Add the includem in the entry point::
+Add the includeme in the entry point::
 
         setup(
             ...,
             entry_points={
-                'anyblok_pyramid.includem': [
+                'anyblok_pyramid.includeme': [
                     'pyramid_security_config=path:pyramid_security_config',
                     ...
                 ],
@@ -474,12 +474,12 @@ In the case where you need to return json value you can format the data with:
         json_renderer.add_adapter(datetime, datetime_adapter)
         config.add_renderer('json', json_renderer)
 
-* Add the includem::
+* Add the includeme::
 
     setup(
         ...,
         entry_points={
-            'anyblok_pyramid.includem': [
+            'anyblok_pyramid.includeme': [
                 'json_adapter=path:declare_json_data_adapter',
                 ...
             ],
