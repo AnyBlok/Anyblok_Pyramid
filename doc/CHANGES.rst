@@ -16,11 +16,11 @@ Future
 
 .. warning::
 
-    this version can be uncapable with the previous version
+    this version can not be capable with the previous version
 
 .. note::
 
-    Works only with AnyBlok 0.5.0 and after
+    Works only with AnyBlok 0.5.1 and after
 
 * [REF] Add entry point to add new pyramid includeme and settings
 * [DEL] properties decorator, it is useless because pyramid have a better
@@ -28,6 +28,8 @@ Future
 * [REF] add workingset to define overwritable callback used for application,
   no for the blok, add first callback, get_registry
 * [REF] unit test cause of new version of AnyBlok 0.5.0
+* [FIX] unit test case, update controller to unload the declaration when 
+  BlokManager are unloaded
 
 0.3.2
 -----
