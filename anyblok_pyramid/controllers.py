@@ -51,7 +51,7 @@ class PyramidMixin(MixinType):
 
 
 # Not depend of the registry
-@Declarations.add_declaration_type()
+@Declarations.add_declaration_type(unload='unload_callback')
 class Pyramid:
     """ The Pyramid controller is a simple wrapper of the Pyramid controller
 
@@ -121,6 +121,12 @@ class Pyramid:
     """Route properties to add in pyramid configuration"""
     views = []
     """View properties to add in pyramid configuration"""
+
+    @classmethod
+    def unload_callback(cls):
+        """Clear known routes and known views"""
+        cls.routes = []
+        cls.views = []
 
     @classmethod
     def register(cls, parent, name, cls_):
@@ -293,24 +299,8 @@ class PyramidBase:
         return base
 
     @classmethod
-    def load_namespace(cls, registry, namespace, realregistryname=None):
-        """ Return the bases and the properties of the namespace
-
-        :param registry: the current registry
-        :param namespace: the namespace of the model
-        :param realregistryname: the name of the model if the namespace is a
-            mixin
-        :rtype: the list od the bases and the properties
-        :exception: PyramidException
-        """
-        if namespace in registry.loaded_namespaces:
-            return [registry.loaded_controllers[namespace]]
-
-        bases = TypeList(cls, registry, namespace)
-        ns = registry.loaded_registries[namespace]
-        properties = ns['properties'].copy()
-        loaded_registries = registry.loaded_registries[cls.__name__ + '_names']
-
+    def _load_namespace_bases(cls, ns, bases, realregistryname, registry,
+                              namespace, loaded_registries):
         for b in ns['bases']:
             if b in bases:
                 continue
@@ -337,6 +327,26 @@ class PyramidBase:
                         "Only the 'PyramidMixin' and %r are allowed" % (
                             brn, cls.__name__))
 
+    @classmethod
+    def load_namespace(cls, registry, namespace, realregistryname=None):
+        """ Return the bases and the properties of the namespace
+
+        :param registry: the current registry
+        :param namespace: the namespace of the model
+        :param realregistryname: the name of the model if the namespace is a
+            mixin
+        :rtype: the list od the bases and the properties
+        :exception: PyramidException
+        """
+        if namespace in registry.loaded_namespaces:
+            return [registry.loaded_controllers[namespace]]
+
+        bases = TypeList(cls, registry, namespace)
+        ns = registry.loaded_registries[namespace]
+        properties = ns['properties'].copy()
+        loaded_registries = registry.loaded_registries[cls.__name__ + '_names']
+        cls._load_namespace_bases(ns, bases, realregistryname, registry,
+                                  namespace, loaded_registries)
         if namespace in loaded_registries:
             cls.hook_insert_in_bases(registry, bases)
             base = type(namespace, tuple(bases), properties)
@@ -360,7 +370,8 @@ class PyramidBase:
 
 
 @Declarations.add_declaration_type(isAnEntry=True,
-                                   assemble='assemble_callback')
+                                   assemble='assemble_callback',
+                                   unload='unload_callback')
 class PyramidHTTP(PyramidBase):
     """ The PyramidHTTP controller is a simple wrapper of the Pyramid
     controller
@@ -436,6 +447,12 @@ class PyramidHTTP(PyramidBase):
     """Route properties to add in pyramid configuration"""
     views = {}
     """View properties to add in pyramid configuration"""
+
+    @classmethod
+    def unload_callback(cls):
+        """Clear known routes and known views"""
+        cls.routes = []
+        cls.views = {}
 
     @classmethod
     def hook_view_from_decorators(cls, registryname, cls_):
@@ -610,7 +627,8 @@ class PyramidRPC(PyramidBase):
 
 
 @Declarations.add_declaration_type(isAnEntry=True,
-                                   assemble='assemble_callback')
+                                   assemble='assemble_callback',
+                                   unload='unload_callback')
 class PyramidJsonRPC(PyramidRPC):
     """ The PyramidJsonRPC controller is a simple wrapper of the Pyramid
     JSON-RPC controller
@@ -691,6 +709,12 @@ class PyramidJsonRPC(PyramidRPC):
     """RPC method properties to add in pyramid configuration"""
 
     @classmethod
+    def unload_callback(cls):
+        """Clear known routes and known methods"""
+        cls.routes = []
+        cls.methods = {}
+
+    @classmethod
     def hook_insert_in_bases(cls, registry, bases):
         """ Define the Core class inherited by PyramidJsonRPC controllers
 
@@ -705,7 +729,8 @@ class PyramidJsonRPC(PyramidRPC):
 
 
 @Declarations.add_declaration_type(isAnEntry=True,
-                                   assemble='assemble_callback')
+                                   assemble='assemble_callback',
+                                   unload='unload_callback')
 class PyramidXmlRPC(PyramidRPC):
     """ The PyramidXmlRPC controller is a simple wrapper of the Pyramid
     XML-RPC controller
@@ -784,6 +809,12 @@ class PyramidXmlRPC(PyramidRPC):
     """Route properties to add in pyramid configuration"""
     methods = {}
     """RPC method properties to add in pyramid configuration"""
+
+    @classmethod
+    def unload_callback(cls):
+        """Clear known routes and known methods"""
+        cls.routes = []
+        cls.methods = {}
 
     @classmethod
     def hook_insert_in_bases(cls, registry, bases):

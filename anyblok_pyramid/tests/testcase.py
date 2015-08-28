@@ -116,30 +116,8 @@ class PyramidTestCase:
 class PyramidDBTestCase(PyramidTestCase, DBTestCase):
 
     def init_registry(self, function, **kwargs):
-        from anyblok import Declarations
-        pyramid_routes = [] + Declarations.Pyramid.routes
-        pyramid_views = [] + Declarations.Pyramid.views
-        pyramid_http_routes = [] + Declarations.PyramidHTTP.routes
-        pyramid_http_views = Declarations.PyramidHTTP.views.copy()
-        pyramid_jsonrpc_routes = [] + Declarations.PyramidJsonRPC.routes
-        pyramid_jsonrpc_methods = Declarations.PyramidJsonRPC.methods.copy()
-        pyramid_xmlrpc_routes = [] + Declarations.PyramidXmlRPC.routes
-        pyramid_xmlrpc_methods = Declarations.PyramidXmlRPC.methods.copy()
-
-        try:
-            res = super(PyramidDBTestCase, self).init_registry(function,
-                                                               **kwargs)
-            self.webserver = self.init_web_server()
-        finally:
-            Declarations.Pyramid.routes = pyramid_routes
-            Declarations.Pyramid.views = pyramid_views
-            Declarations.PyramidHTTP.routes = pyramid_http_routes
-            Declarations.PyramidHTTP.views = pyramid_http_views
-            Declarations.PyramidJsonRPC.routes = pyramid_jsonrpc_routes
-            Declarations.PyramidJsonRPC.methods = pyramid_jsonrpc_methods
-            Declarations.PyramidXmlRPC.routes = pyramid_xmlrpc_routes
-            Declarations.PyramidXmlRPC.methods = pyramid_xmlrpc_methods
-
+        res = super(PyramidDBTestCase, self).init_registry(function, **kwargs)
+        self.webserver = self.init_web_server()
         return res
 
 
