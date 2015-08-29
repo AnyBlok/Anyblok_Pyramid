@@ -14,6 +14,9 @@ CHANGELOG
 Future
 ------
 
+0.4.0
+-----
+
 .. warning::
 
     this version can not be capable with the previous version
