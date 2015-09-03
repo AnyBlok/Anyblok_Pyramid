@@ -11,6 +11,7 @@ from anyblok.scripts import format_configuration
 from anyblok.registry import RegistryManager
 from anyblok.config import Configuration
 from .pyramid_config import Configurator
+import sys
 from logging import getLogger
 logger = getLogger(__name__)
 
@@ -21,8 +22,8 @@ def anyblok_wsgi(description, version, configuration_groups):
     :param version: version of script for argparse
     :param configuration_groups: list configuration groupe to load
     """
-    format_configuration(configuration_groups, 'wsgi', 'pyramid-debug',
-                         'beaker')
+    format_configuration(configuration_groups, 'preload', 'pyramid-debug',
+                         'wsgi', 'beaker')
     BlokManager.load()
     Configuration.load(description="%s (%s)" % (description, version),
                        configuration_groups=configuration_groups)
@@ -52,3 +53,22 @@ def anyblok_wsgi(description, version, configuration_groups):
 def wsgi():
     anyblok_wsgi('Web server for AnyBlok', '0.0.1',
                  ['config', 'database', 'logging'])
+
+
+def gunicorn_anyblok_wsgi(description, version, configuration_groups):
+    try:
+        import gunicorn  # noqa
+    except ImportError:
+        logger.error("No gunicorn installed")
+        sys.exit(1)
+
+    format_configuration(configuration_groups, 'preload', 'pyramid-debug',
+                         'beaker')
+    from .gunicorn import WSGIApplication
+    WSGIApplication(usage="%s (%s)" % (description, version),
+                    configuration_groups=configuration_groups).run()
+
+
+def gunicorn_wsgi():
+    gunicorn_anyblok_wsgi('Web server for AnyBlok', '0.0.1',
+                          ['gunicorn', 'database', 'logging'])

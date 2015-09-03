@@ -9,10 +9,14 @@ from anyblok.config import Configuration
 import os
 
 
-@Configuration.add('wsgi', label="WSGI")
-def define_wsgi_option(group, configuration):
+@Configuration.add('preload', label="Preload")
+def define_preload_option(group, configuration):
     group.add_argument('--databases', dest='db_names', default='',
                        help='List of the database allow to be load')
+
+
+@Configuration.add('wsgi', label="WSGI")
+def define_wsgi_option(group, configuration):
     group.add_argument('--wsgi-host', default='')
     group.add_argument('--wsgi-port', default='')
     configuration.update({
@@ -180,3 +184,16 @@ def define_beaker_option(group, configuration):
                        dest='beaker.session.validate_key',
                        help="Validation key used to sign the AES encrypted "
                             "data.")
+
+
+@Configuration.add('gunicorn')
+def add_configuration_file(parser, configuration):
+    parser.add_argument('--anyblok-configfile', dest='configfile', default='',
+                        help="Relative path of the config file")
+    parser.add_argument('--without-auto-migration',
+                        dest='withoutautomigration',
+                        action='store_true')
+    configuration.update({
+        'configfile': None,
+        'withoutautomigration': False,
+    })

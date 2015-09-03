@@ -28,6 +28,7 @@ with open(os.path.join(here, 'doc', 'CHANGES.rst')) as change:
 
 console_scripts = [
     'anyblok_pyramid=anyblok_pyramid.scripts:wsgi',
+    'gunicorn_anyblok_pyramid=anyblok_pyramid.scripts:gunicorn_wsgi',
 ]
 
 anyblok_pyramid_includeme = [
