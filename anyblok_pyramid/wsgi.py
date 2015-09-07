@@ -33,7 +33,7 @@ if 'logging_level' in Configuration.configuration:
     Configuration.initialize_logging()
 
 BlokManager.load()
-RegistryManager.get('showroomblok').commit()
+RegistryManager.get(Configuration.get('db_name')).commit()
 config = Configurator()
 config.include_from_entry_point()
 app = config.make_wsgi_app()
