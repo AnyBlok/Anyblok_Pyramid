@@ -24,9 +24,9 @@ def anyblok_wsgi(description, version, configuration_groups):
     """
     format_configuration(configuration_groups, 'preload', 'pyramid-debug',
                          'wsgi', 'beaker')
-    BlokManager.load()
     Configuration.load(description="%s (%s)" % (description, version),
                        configuration_groups=configuration_groups)
+    BlokManager.load()
     RegistryManager.add_needed_bloks('pyramid')
     config = Configurator()
     config.include_from_entry_point()
