@@ -5,12 +5,16 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from gunicorn.config import Config as GunicornConfig
+from gunicorn.config import (Config as GunicornConfig,
+                             Setting, validate_callable, validate_post_request)
 from gunicorn.app.base import Application
 from anyblok.config import Configuration
 from anyblok.blok import BlokManager
 from anyblok.registry import RegistryManager
 from .pyramid_config import Configurator
+import six
+from logging import getLogger
+logger = getLogger(__name__)
 
 
 class Config(GunicornConfig):
@@ -70,3 +74,40 @@ class WSGIApplication(Application):
         config = Configurator()
         config.include_from_entry_point()
         return config.make_wsgi_app()
+
+
+class PreRequest(Setting):
+    name = "pre_request"
+    section = "Server Hooks"
+    validator = validate_callable(2)
+    type = six.callable
+
+    def pre_request(worker, req):
+        logger.info("PRE-REQUEST => %s %s" % (req.method, req.path))
+
+    default = staticmethod(pre_request)
+    desc = """\
+        Called just before a worker processes the request.
+
+        The callable needs to accept two instance variables for the Worker and
+        the Request.
+    """
+
+
+class PostRequest(Setting):
+    name = "post_request"
+    section = "Server Hooks"
+    validator = validate_post_request
+    type = six.callable
+
+    def post_request(worker, req, environ, resp):
+        logger.info("POST-REQUEST => %s %s | %r" % (
+            req.method, req.path, resp.status))
+
+    default = staticmethod(post_request)
+    desc = """\
+        Called after a worker processes the request.
+
+        The callable needs to accept two instance variables for the Worker and
+        the Request.
+    """
