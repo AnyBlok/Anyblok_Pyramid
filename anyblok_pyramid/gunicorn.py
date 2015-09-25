@@ -53,6 +53,7 @@ class WSGIApplication(Application):
                 if value:
                     self.cfg.settings[name].set(value)
 
+    def load(self):
         BlokManager.load()
         RegistryManager.add_needed_bloks('pyramid')
         dbnames = Configuration.get('db_names', '').split(',')
@@ -66,7 +67,6 @@ class WSGIApplication(Application):
             registry.commit()
             registry.session.close()
 
-    def load(self):
         config = Configurator()
         config.include_from_entry_point()
         return config.make_wsgi_app()
