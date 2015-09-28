@@ -14,8 +14,11 @@ CHANGELOG
 Future
 ------
 
-0.4.0
------
+* [ADD] console script, implementation with gunicorn only
+* [ADD] wsgi script to give un app for wsgi server
+
+0.4.0 (2015-08-25)
+------------------
 
 .. warning::
 
@@ -34,33 +37,33 @@ Future
 * [FIX] unit test case, update controller to unload the declaration when 
   BlokManager are unloaded
 
-0.3.2
------
+0.3.2 (2015-06-22)
+------------------
 
 * [REF] cause of upgrade version of AnyBlok 0.4.0
 
-0.3.1
------
+0.3.1 (2015-05-04)
+------------------
 
 * [FIX] default value for beaker, None is better than ''
 
-0.3.0
------
+0.3.0 (2015-05-04)
+------------------
 
 * [IMP] console script argsparse for pyramid and beaker
 * [ADD] MANIFEST.in
 * [FIX] script cause of remove logging configuration from AnyBlok
 
-0.2.0
------
+0.2.0 (2015-03-15)
+------------------
 
 * [ADD] configurator callable
 * [REF] Adapt the import of python module of the blok, cause of the change in
   AnyBlok version 0.2.2
 
 
-0.1.0
------
+0.1.0 (2015-02-07)
+------------------
 
 Main version of AnyBlok / Pyramid. You can with this version
 
