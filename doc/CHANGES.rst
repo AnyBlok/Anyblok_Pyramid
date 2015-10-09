@@ -11,8 +11,8 @@
 CHANGELOG
 =========
 
-Future
-------
+0.4.1 (2015-10-9)
+-----------------
 
 * [ADD] console script, implementation with gunicorn only
 * [ADD] wsgi script to give un app for wsgi server
