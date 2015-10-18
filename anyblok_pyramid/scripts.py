@@ -16,16 +16,16 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 
-def anyblok_wsgi(description, version, configuration_groups):
+def anyblok_wsgi(application, configuration_groups, **kwargs):
     """
-    :param description: description of configuration
-    :param version: version of script for argparse
+    :param application: name of the application
     :param configuration_groups: list configuration groupe to load
+    :param \**kwargs: ArgumentParser named arguments
     """
     format_configuration(configuration_groups, 'preload', 'pyramid-debug',
                          'wsgi', 'beaker')
-    Configuration.load(description="%s (%s)" % (description, version),
-                       configuration_groups=configuration_groups)
+    Configuration.load(application,
+                       configuration_groups=configuration_groups, **kwargs)
     BlokManager.load()
     RegistryManager.add_needed_bloks('pyramid')
     config = Configurator()
@@ -51,8 +51,7 @@ def anyblok_wsgi(description, version, configuration_groups):
 
 
 def wsgi():
-    anyblok_wsgi('Web server for AnyBlok', '0.0.1',
-                 ['config', 'database', 'logging'])
+    anyblok_wsgi('pyramid', ['logging'])
 
 
 def gunicorn_anyblok_wsgi(description, version, configuration_groups):
