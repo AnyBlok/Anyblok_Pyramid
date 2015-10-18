@@ -14,7 +14,7 @@ class HandlerException(PyramidException):
     """ Simple exception for handler """
 
 
-@set_callable()
+@set_callable
 def get_registry(request):
     return RegistryManager.get(request.session['database'])
 

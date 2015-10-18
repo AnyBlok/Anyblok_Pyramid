@@ -7,21 +7,16 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from . import config  # noqa
 from . import controllers  # noqa
-from .workingset import WorkingSet
-from pkg_resources import _call_aside
+
+callables = {}
 
 
-__all__ = [
-    'get_callable',
-    'set_callable',
-]
+def set_callable(c):
+    callables[c.__name__] = c
 
 
-@_call_aside
-def _initialize_master_working_set():
-    ws = WorkingSet._build_master()
-    globals().update(dict(set_callable=ws.set_callable,
-                          get_callable=ws.get_callable))
+def get_callable(k):
+    return callables[k]
 
 
 from . import handler  # noqa
