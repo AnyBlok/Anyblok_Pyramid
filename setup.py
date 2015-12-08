@@ -14,6 +14,8 @@ requires = [
     'pyramid',
     'pyramid_beaker',
     'pyramid_rpc',
+    # 'pyramid_tm',
+    'zope.sqlalchemy',
 ]
 
 here = os.path.abspath(os.path.dirname(__file__))
