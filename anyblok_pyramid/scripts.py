@@ -12,6 +12,7 @@ from anyblok.registry import RegistryManager
 from anyblok.config import Configuration
 from .pyramid_config import Configurator
 import sys
+from .anyblok import AnyBlokZopeTransactionExtension
 from logging import getLogger
 logger = getLogger(__name__)
 
@@ -43,8 +44,13 @@ def anyblok_wsgi(description, version, configuration_groups):
         dbnames.append(dbname)
 
     # preload all db names
+    settings = {
+        'additionnal_setting': {
+            'sa.session.extension': AnyBlokZopeTransactionExtension,
+        },
+    }
     for dbname in [x for x in dbnames if x != '']:
-        RegistryManager.get(dbname).commit()
+        RegistryManager.get(dbname, **settings).commit()
 
     logger.info("Serve forever on %r:%r" % (wsgi_host, wsgi_port))
     server.serve_forever()

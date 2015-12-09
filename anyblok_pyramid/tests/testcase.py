@@ -29,6 +29,7 @@ class PyramidTestCase:
             dbname = Configuration.get('db_name')
             if dbname is None:
                 dbname = 'test_anyblok'
+
             return RegistryManager.get(dbname)
 
     def http(self, path, params=None, method='post'):

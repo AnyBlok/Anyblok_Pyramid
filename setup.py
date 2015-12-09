@@ -14,7 +14,7 @@ requires = [
     'pyramid',
     'pyramid_beaker',
     'pyramid_rpc',
-    # 'pyramid_tm',
+    'pyramid_tm',
     'zope.sqlalchemy',
 ]
 
@@ -34,6 +34,7 @@ console_scripts = [
 ]
 
 anyblok_pyramid_includeme = [
+    'pyramid_tm=anyblok_pyramid.pyramid_config:pyramid_tm',
 ]
 
 setup(
