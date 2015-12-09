@@ -68,9 +68,7 @@ class WSGIApplication(Application):
 
         # preload all db names
         settings = {
-            'additionnal_setting': {
-                'sa.session.extension': AnyBlokZopeTransactionExtension,
-            },
+            'sa.session.extension': AnyBlokZopeTransactionExtension,
         }
         for dbname in [x for x in dbnames if x != '']:
             registry = RegistryManager.get(dbname, **settings)

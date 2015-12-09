@@ -35,9 +35,7 @@ if 'logging_level' in Configuration.configuration:
 
 BlokManager.load()
 settings = {
-    'additionnal_setting': {
-        'sa.session.extension': AnyBlokZopeTransactionExtension,
-    },
+    'sa.session.extension': AnyBlokZopeTransactionExtension,
 }
 RegistryManager.get(Configuration.get('db_name'), **settings).commit()
 config = Configurator()

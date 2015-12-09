@@ -18,9 +18,7 @@ class HandlerException(PyramidException):
 @set_callable()
 def get_registry(request):
     settings = {
-        'additionnal_setting': {
-            'sa.session.extension': AnyBlokZopeTransactionExtension,
-        },
+        'sa.session.extension': AnyBlokZopeTransactionExtension,
     }
     return RegistryManager.get(request.session['database'], **settings)
 

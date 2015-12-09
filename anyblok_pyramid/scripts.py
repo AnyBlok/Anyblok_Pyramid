@@ -45,9 +45,7 @@ def anyblok_wsgi(description, version, configuration_groups):
 
     # preload all db names
     settings = {
-        'additionnal_setting': {
-            'sa.session.extension': AnyBlokZopeTransactionExtension,
-        },
+        'sa.session.extension': AnyBlokZopeTransactionExtension,
     }
     for dbname in [x for x in dbnames if x != '']:
         RegistryManager.get(dbname, **settings).commit()
