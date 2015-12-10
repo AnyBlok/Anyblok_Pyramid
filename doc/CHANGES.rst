@@ -11,6 +11,11 @@
 CHANGELOG
 =========
 
+0.4.2
+-----
+
+* [ADD] pyramid_pm and zope.sqlalchemy to isolate each controller call
+
 0.4.1 (2015-10-9)
 -----------------
 
@@ -34,7 +39,7 @@ CHANGELOG
 * [REF] add workingset to define overwritable callback used for application,
   no for the blok, add first callback, get_registry
 * [REF] unit test cause of new version of AnyBlok 0.5.0
-* [FIX] unit test case, update controller to unload the declaration when 
+* [FIX] unit test case, update controller to unload the declaration when
   BlokManager are unloaded
 
 0.3.2 (2015-06-22)
