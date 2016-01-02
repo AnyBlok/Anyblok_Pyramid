@@ -1,6 +1,6 @@
 # This file is a part of the AnyBlok / Pyramid project
 #
-#    Copyright (C) 2015 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
+#    Copyright (C) 2016 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
 #
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
@@ -10,23 +10,23 @@ import os
 
 
 @Configuration.add('preload', label="Preload")
-def define_preload_option(group, configuration):
+def define_preload_option(group):
     group.add_argument('--databases', dest='db_names', default='',
                        help='List of the database allow to be load')
 
 
 @Configuration.add('wsgi', label="WSGI")
-def define_wsgi_option(group, configuration):
-    group.add_argument('--wsgi-host', default='')
-    group.add_argument('--wsgi-port', default='')
-    configuration.update({
-        'wsgi_host': os.environ.get('ANYBLOK_PYRAMID_WSGI_HOST', 'localhost'),
-        'wsgi_port': os.environ.get('ANYBLOK_PYRAMID_WSGI_PORT', '5000'),
-    })
+def define_wsgi_option(group):
+    group.add_argument(
+        '--wsgi-host',
+        default=os.environ.get('ANYBLOK_PYRAMID_WSGI_HOST', 'localhost'))
+    group.add_argument(
+        '--wsgi-port', type=int,
+        default=os.environ.get('ANYBLOK_PYRAMID_WSGI_PORT', 5000))
 
 
 @Configuration.add('pyramid-debug', label="Pyramid")
-def define_wsgi_debug_option(group, configuration):
+def define_wsgi_debug_option(group):
     group.add_argument('--pyramid-reload-all', dest='pyramid.reload_all',
                        help="Turns on all reload* settings.",
                        action='store_true')
@@ -74,20 +74,10 @@ def define_wsgi_debug_option(group, configuration):
                             "locale name when a locale negotiator is not "
                             "registered.",
                        default='')
-    configuration.update({
-        'pyramid.reload_all': False,
-        'pyramid.reload_templates': False,
-        'pyramid.reload_assets': False,
-        'pyramid.debug_all': False,
-        'pyramid.debug_notfound': False,
-        'pyramid.debug_routematch': False,
-        'pyramid.prevent_http_cache': False,
-        'pyramid.default_locale_name': '',
-    })
 
 
 @Configuration.add('beaker', label="Beaker session")
-def define_beaker_option(group, configuration):
+def define_beaker_option(group):
     group.add_argument('--beaker-data-dir',
                        dest='beaker.session.data_dir',
                        help="Used with any back-end that stores its data in "
@@ -187,13 +177,9 @@ def define_beaker_option(group, configuration):
 
 
 @Configuration.add('gunicorn')
-def add_configuration_file(parser, configuration):
+def add_configuration_file(parser):
     parser.add_argument('--anyblok-configfile', dest='configfile', default='',
                         help="Relative path of the config file")
     parser.add_argument('--without-auto-migration',
                         dest='withoutautomigration',
                         action='store_true')
-    configuration.update({
-        'configfile': None,
-        'withoutautomigration': False,
-    })
