@@ -39,8 +39,11 @@ class Config(GunicornConfig):
 
 class WSGIApplication(Application):
 
-    def __init__(self, usage=None, prog=None, configuration_groups=None):
+    def __init__(self, application, configuration_groups=None):
         self.configuration_groups = configuration_groups
+        conf = Configuration.applications.get(application, {})
+        usage = conf.get('usage')
+        prog = conf.get('prog')
         super(WSGIApplication, self).__init__(usage=usage, prog=prog)
 
     def load_default_config(self):
