@@ -11,6 +11,11 @@
 CHANGELOG
 =========
 
+Future
+------
+
+* [REF] Adapt with the new version of AnyBlok
+
 0.4.2
 -----
 
