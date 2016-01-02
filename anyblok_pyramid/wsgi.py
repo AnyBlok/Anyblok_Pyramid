@@ -17,6 +17,7 @@ from anyblok.registry import RegistryManager
 from anyblok.config import Configuration
 from os import environ, path
 from appdirs import AppDirs
+from .anyblok import AnyBlokZopeTransactionExtension
 
 # load default files
 ad = AppDirs('AnyBlok')
@@ -33,7 +34,10 @@ if 'logging_level' in Configuration.configuration:
     Configuration.initialize_logging()
 
 BlokManager.load()
-RegistryManager.get(Configuration.get('db_name')).commit()
+settings = {
+    'sa.session.extension': AnyBlokZopeTransactionExtension,
+}
+RegistryManager.get(Configuration.get('db_name'), **settings).commit()
 config = Configurator()
 config.include_from_entry_point()
 app = config.make_wsgi_app()

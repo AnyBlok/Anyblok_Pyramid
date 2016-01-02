@@ -8,6 +8,7 @@
 from anyblok.registry import RegistryManager
 from .controllers import PyramidException
 from anyblok_pyramid import set_callable, get_callable
+from .anyblok import AnyBlokZopeTransactionExtension
 
 
 class HandlerException(PyramidException):
@@ -16,7 +17,10 @@ class HandlerException(PyramidException):
 
 @set_callable
 def get_registry(request):
-    return RegistryManager.get(request.session['database'])
+    settings = {
+        'sa.session.extension': AnyBlokZopeTransactionExtension,
+    }
+    return RegistryManager.get(request.session['database'], **settings)
 
 
 class Handler:

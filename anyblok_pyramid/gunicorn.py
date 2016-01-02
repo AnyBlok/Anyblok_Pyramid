@@ -13,6 +13,7 @@ from anyblok.blok import BlokManager
 from anyblok.registry import RegistryManager
 from .pyramid_config import Configurator
 import six
+from .anyblok import AnyBlokZopeTransactionExtension
 from logging import getLogger
 logger = getLogger(__name__)
 
@@ -66,8 +67,11 @@ class WSGIApplication(Application):
             dbnames.append(dbname)
 
         # preload all db names
+        settings = {
+            'sa.session.extension': AnyBlokZopeTransactionExtension,
+        }
         for dbname in [x for x in dbnames if x != '']:
-            registry = RegistryManager.get(dbname)
+            registry = RegistryManager.get(dbname, **settings)
             registry.commit()
             registry.session.close()
 

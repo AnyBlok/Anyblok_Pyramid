@@ -154,6 +154,15 @@ def pyramid_beaker(config):
     config.include('pyramid_beaker')
 
 
+def pyramid_tm(config):
+    """Add beaker includeme in pyramid configuration
+
+    :param config: Pyramid configurator instance
+    """
+
+    config.include('pyramid_tm')
+
+
 def declare_static(config):
     """Pyramid includeme, add the static path of the blok
 

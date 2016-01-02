@@ -15,7 +15,6 @@ To implement
 ------------
 
 * WebSocket
-* Add check properties type
 
 Functionnality which need a sprint
 ----------------------------------

@@ -14,6 +14,8 @@ requires = [
     'pyramid',
     'pyramid_beaker',
     'pyramid_rpc',
+    'pyramid_tm',
+    'zope.sqlalchemy',
 ]
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -32,6 +34,7 @@ console_scripts = [
 ]
 
 anyblok_pyramid_includeme = [
+    'pyramid_tm=anyblok_pyramid.pyramid_config:pyramid_tm',
 ]
 
 setup(
