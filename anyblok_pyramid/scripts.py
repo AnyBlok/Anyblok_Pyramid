@@ -40,11 +40,12 @@ def anyblok_wsgi(application, configuration_groups, **kwargs):
     """
     format_configuration(configuration_groups, 'preload', 'pyramid-debug',
                          'wsgi', 'beaker')
+    config = Configurator()
+    config.init_function()
     Configuration.load(application,
                        configuration_groups=configuration_groups, **kwargs)
     BlokManager.load()
     RegistryManager.add_needed_bloks('pyramid')
-    config = Configurator()
     config.include_from_entry_point()
 
     wsgi_host = Configuration.get('wsgi_host')

@@ -20,13 +20,25 @@ logger = getLogger(__name__)
 
 class Config(GunicornConfig):
 
-    def __init__(self, usage=None, prog=None, configuration_groups=None):
+    def __init__(self, usage=None, prog=None, application=None,
+                 configuration_groups=None):
         super(Config, self).__init__(usage=usage, prog=prog)
         self.configuration_groups = configuration_groups
+        self.application = application
 
     def parser(self):
         parser = super(Config, self).parser()
-        Configuration._load(parser, self.configuration_groups,
+        description = {}
+        if self.application in Configuration.applications:
+            description.update(Configuration.applications[self.application])
+        else:
+            description.update(Configuration.applications['default'])
+
+        _configuration_groups = description.pop('configuration_groups',
+                                                ['config', 'database'])
+        configuration_groups = set(self.configuration_groups or []).union(
+            _configuration_groups)
+        Configuration._load(parser, configuration_groups,
                             ('AnyBlok', 'bloks'))
         return parser
 
@@ -44,10 +56,14 @@ class WSGIApplication(Application):
         conf = Configuration.applications.get(application, {})
         usage = conf.get('usage')
         prog = conf.get('prog')
+        self.application = application
+        self.config = Configurator()
+        self.config.init_function()
         super(WSGIApplication, self).__init__(usage=usage, prog=prog)
 
     def load_default_config(self):
         self.cfg = Config(self.usage, prog=self.prog,
+                          application=self.application,
                           configuration_groups=self.configuration_groups)
 
     def init(self, parser, opts, args):
@@ -78,9 +94,8 @@ class WSGIApplication(Application):
             registry.commit()
             registry.session.close()
 
-        config = Configurator()
-        config.include_from_entry_point()
-        return config.make_wsgi_app()
+        self.config.include_from_entry_point()
+        return self.config.make_wsgi_app()
 
 
 class PreRequest(Setting):

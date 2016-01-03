@@ -37,6 +37,9 @@ anyblok_pyramid_includeme = [
     'pyramid_tm=anyblok_pyramid.pyramid_config:pyramid_tm',
 ]
 
+anyblok_pyramid_init = [
+]
+
 setup(
     name="anyblok_pyramid",
     version=version,
@@ -72,6 +75,7 @@ setup(
             'beaker_settings=anyblok_pyramid.pyramid_config:beaker_settings',
         ],
         'anyblok_pyramid.includeme': anyblok_pyramid_includeme,
+        'anyblok_pyramid.init': anyblok_pyramid_init,
         'bloks': [
             'pyramid=anyblok_pyramid.bloks.pyramid:Pyramid',
         ],
