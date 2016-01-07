@@ -15,6 +15,7 @@ Future
 ------
 
 * [REF] Adapt with the new version of AnyBlok
+* [IMP] Add new entry point to load function before load AnyBlok bloks
 
 0.5.0 (2016-01-07)
 ------------------
