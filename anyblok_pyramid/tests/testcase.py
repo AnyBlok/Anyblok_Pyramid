@@ -24,7 +24,7 @@ class PyramidTestCase:
         super(PyramidTestCase, cls).setUpClass()
         RegistryManager.add_needed_bloks('pyramid')
 
-        @set_callable()
+        @set_callable
         def get_registry(request):
             dbname = Configuration.get('db_name')
             if dbname is None:
