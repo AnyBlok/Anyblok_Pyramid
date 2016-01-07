@@ -14,6 +14,7 @@ from anyblok.registry import RegistryManager
 from .pyramid_config import Configurator
 import six
 from .anyblok import AnyBlokZopeTransactionExtension
+from anyblok_pyramid import load_init_function_from_entry_points
 from logging import getLogger
 logger = getLogger(__name__)
 
@@ -57,8 +58,7 @@ class WSGIApplication(Application):
         usage = conf.get('usage')
         prog = conf.get('prog')
         self.application = application
-        self.config = Configurator()
-        self.config.init_function()
+        load_init_function_from_entry_points()
         super(WSGIApplication, self).__init__(usage=usage, prog=prog)
 
     def load_default_config(self):
@@ -94,8 +94,9 @@ class WSGIApplication(Application):
             registry.commit()
             registry.session.close()
 
-        self.config.include_from_entry_point()
-        return self.config.make_wsgi_app()
+        config = Configurator()
+        config.include_from_entry_point()
+        return config.make_wsgi_app()
 
 
 class PreRequest(Setting):

@@ -14,6 +14,7 @@ from .pyramid_config import Configurator
 from anyblok_pyramid.release import version
 import sys
 from .anyblok import AnyBlokZopeTransactionExtension
+from anyblok_pyramid import load_init_function_from_entry_points
 from logging import getLogger
 logger = getLogger(__name__)
 
@@ -40,12 +41,12 @@ def anyblok_wsgi(application, configuration_groups, **kwargs):
     """
     format_configuration(configuration_groups, 'preload', 'pyramid-debug',
                          'wsgi', 'beaker')
-    config = Configurator()
-    config.init_function()
+    load_init_function_from_entry_points()
     Configuration.load(application,
                        configuration_groups=configuration_groups, **kwargs)
     BlokManager.load()
     RegistryManager.add_needed_bloks('pyramid')
+    config = Configurator()
     config.include_from_entry_point()
 
     wsgi_host = Configuration.get('wsgi_host')

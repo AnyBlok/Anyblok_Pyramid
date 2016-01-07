@@ -18,10 +18,10 @@ from anyblok.config import Configuration
 from os import environ, path
 from appdirs import AppDirs
 from .anyblok import AnyBlokZopeTransactionExtension
+from anyblok_pyramid import load_init_function_from_entry_points
 
 
-config = Configurator()
-config.init_function()
+load_init_function_from_entry_points()
 # load default files
 ad = AppDirs('AnyBlok')
 # load the global configuration file
@@ -41,5 +41,6 @@ settings = {
     'sa.session.extension': AnyBlokZopeTransactionExtension,
 }
 RegistryManager.get(Configuration.get('db_name'), **settings).commit()
+config = Configurator()
 config.include_from_entry_point()
 app = config.make_wsgi_app()
