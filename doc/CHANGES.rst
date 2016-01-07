@@ -11,8 +11,8 @@
 CHANGELOG
 =========
 
-0.4.2
------
+0.5.0 (2016-01-07)
+------------------
 
 * [ADD] pyramid_pm and zope.sqlalchemy to isolate each controller call
 
