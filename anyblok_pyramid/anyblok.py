@@ -24,7 +24,8 @@ from sqlalchemy.exc import DBAPIError
 
 class AnyBlokSessionDataManager:
 
-    def __init__(self, session, status, transaction_manager, keep_session=False):
+    def __init__(self, session, status, transaction_manager,
+                 keep_session=False):
         self.transaction_manager = transaction_manager
         self.registry = session._query_cls.registry
         self.transaction = self.registry.session.transaction
