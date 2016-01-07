@@ -56,20 +56,6 @@ AnyBlok / Pyramid controllers
     :members:
     :noindex:
 
-anyblok_pyramid.workingset
---------------------------
-
-.. automodule:: anyblok_pyramid.workingset
-
-.. autoexception:: WorkingSetException
-    :show-inheritance:
-    :members:
-    :noindex:
-
-.. autoclass:: WorkingSet
-    :members:
-    :noindex:
-
 anyblok_pyramid.handler
 -----------------------
 
