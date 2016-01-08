@@ -11,8 +11,8 @@
 CHANGELOG
 =========
 
-Future
-------
+0.5.1 (2016-01-08)
+------------------
 
 * [REF] Adapt with the new version of AnyBlok
 * [IMP] Add new entry point to load function before load AnyBlok bloks
