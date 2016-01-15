@@ -8,13 +8,13 @@
 from anyblok_pyramid.tests.testcase import PyramidDBTestCase
 from anyblok.declarations import Declarations, classmethod_cache
 from anyblok.tests.test_cache import wrap_cls_cache
+from ..pyramid_config import (pyramid_beaker,
+                              pyramid_config,
+                              pyramid_jsonrpc_config)
 register = Declarations.register
 PyramidJsonRPC = Declarations.PyramidJsonRPC
 PyramidMixin = Declarations.PyramidMixin
 Core = Declarations.Core
-from ..pyramid_config import (pyramid_beaker,
-                              pyramid_config,
-                              pyramid_jsonrpc_config)
 
 
 class TestSimpleCache(PyramidDBTestCase):

@@ -8,13 +8,13 @@
 from anyblok_pyramid.tests.testcase import PyramidDBTestCase
 from anyblok import Declarations
 from ..controllers import PyramidException
+from ..pyramid_config import (pyramid_beaker,
+                              pyramid_config,
+                              pyramid_xmlrpc_config)
 register = Declarations.register
 PyramidXmlRPC = Declarations.PyramidXmlRPC
 PyramidMixin = Declarations.PyramidMixin
 Core = Declarations.Core
-from ..pyramid_config import (pyramid_beaker,
-                              pyramid_config,
-                              pyramid_xmlrpc_config)
 
 
 class TestDeclarationPyramidXmlRPC(PyramidDBTestCase):

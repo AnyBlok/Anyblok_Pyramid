@@ -9,13 +9,13 @@ from anyblok_pyramid.tests.testcase import PyramidDBTestCase
 from pyramid.response import Response
 from anyblok.declarations import Declarations, classmethod_cache
 from anyblok.tests.test_cache import wrap_cls_cache
+from ..pyramid_config import (pyramid_beaker,
+                              pyramid_config,
+                              pyramid_http_config)
 register = Declarations.register
 PyramidHTTP = Declarations.PyramidHTTP
 PyramidMixin = Declarations.PyramidMixin
 Core = Declarations.Core
-from ..pyramid_config import (pyramid_beaker,
-                              pyramid_config,
-                              pyramid_http_config)
 
 
 class TestSimpleCache(PyramidDBTestCase):

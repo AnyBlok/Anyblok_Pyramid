@@ -9,13 +9,13 @@ from anyblok_pyramid.tests.testcase import PyramidDBTestCase
 from anyblok import Declarations
 from pyramid.response import Response
 from ..controllers import PyramidException
+from ..pyramid_config import (pyramid_beaker,
+                              pyramid_config,
+                              pyramid_http_config)
 register = Declarations.register
 PyramidHTTP = Declarations.PyramidHTTP
 PyramidMixin = Declarations.PyramidMixin
 Core = Declarations.Core
-from ..pyramid_config import (pyramid_beaker,
-                              pyramid_config,
-                              pyramid_http_config)
 
 
 class TestDeclarationPyramidHTTP(PyramidDBTestCase):

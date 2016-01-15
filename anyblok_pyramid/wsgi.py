@@ -12,13 +12,13 @@ if BlokManager.bloks:
     # AnyBlok already load, the state are not sure, better to stop here
     sys.exit(1)
 
-from anyblok_pyramid.pyramid_config import Configurator
-from anyblok.registry import RegistryManager
-from anyblok.config import Configuration
-from os import environ, path
-from appdirs import AppDirs
-from .anyblok import AnyBlokZopeTransactionExtension
-from anyblok import load_init_function_from_entry_points
+from anyblok_pyramid.pyramid_config import Configurator  # noqa
+from anyblok.registry import RegistryManager  # noqa
+from anyblok.config import Configuration  # noqa
+from os import environ, path  # noqa
+from appdirs import AppDirs  # noqa
+from .anyblok import AnyBlokZopeTransactionExtension  # noqa
+from anyblok import load_init_function_from_entry_points  # noqa
 
 
 load_init_function_from_entry_points()
