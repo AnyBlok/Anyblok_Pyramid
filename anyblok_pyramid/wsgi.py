@@ -18,7 +18,7 @@ from anyblok.config import Configuration
 from os import environ, path
 from appdirs import AppDirs
 from .anyblok import AnyBlokZopeTransactionExtension
-from anyblok_pyramid import load_init_function_from_entry_points
+from anyblok import load_init_function_from_entry_points
 
 
 load_init_function_from_entry_points()

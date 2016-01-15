@@ -8,13 +8,15 @@
 from gunicorn.config import (Config as GunicornConfig,
                              Setting, validate_callable, validate_post_request)
 from gunicorn.app.base import Application
-from anyblok.config import Configuration
+from gunicorn import __version__
+from anyblok.config import Configuration, getParser
 from anyblok.blok import BlokManager
 from anyblok.registry import RegistryManager
 from .pyramid_config import Configurator
+import argparse
 import six
 from .anyblok import AnyBlokZopeTransactionExtension
-from anyblok_pyramid import load_init_function_from_entry_points
+from anyblok import load_init_function_from_entry_points
 from logging import getLogger
 logger = getLogger(__name__)
 
@@ -28,7 +30,22 @@ class Config(GunicornConfig):
         self.application = application
 
     def parser(self):
-        parser = super(Config, self).parser()
+        # Don't call super to user the Parser of anyblok
+        kwargs = {
+            "usage": self.usage,
+            "prog": self.prog
+        }
+        parser = getParser(**kwargs)
+        parser.add_argument("-v", "--version",
+                            action="version", default=argparse.SUPPRESS,
+                            version="%(prog)s (version " + __version__ + ")\n",
+                            help="show program's version number and exit")
+        parser.add_argument("args", nargs="*", help=argparse.SUPPRESS)
+
+        keys = sorted(self.settings, key=self.settings.__getitem__)
+        for k in keys:
+            self.settings[k].add_option(parser)
+
         description = {}
         if self.application in Configuration.applications:
             description.update(Configuration.applications[self.application])

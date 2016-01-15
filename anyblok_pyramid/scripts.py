@@ -14,7 +14,7 @@ from .pyramid_config import Configurator
 from anyblok_pyramid.release import version
 import sys
 from .anyblok import AnyBlokZopeTransactionExtension
-from anyblok_pyramid import load_init_function_from_entry_points
+from anyblok import load_init_function_from_entry_points
 from logging import getLogger
 logger = getLogger(__name__)
 
