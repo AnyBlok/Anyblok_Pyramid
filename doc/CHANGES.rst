@@ -11,8 +11,8 @@
 CHANGELOG
 =========
 
-Future
-------
+0.5.2 (2016-01-15)
+------------------
 
 * [FIX] use anyblok parser for config with gunicorn
 * [REF] entry point init is now in anyblok
