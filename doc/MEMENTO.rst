@@ -114,7 +114,7 @@ Declare a ``view``::
             # route name == myview
             ...
 
-        @PyramidHTTP.view('myroute')
+        @PyramidHTTP.view(route_name='myroute')
         def myotherview(request):
             # route name == myroute
             ...
