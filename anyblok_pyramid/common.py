@@ -8,10 +8,14 @@
 from anyblok.config import Configuration
 from .anyblok import AnyBlokZopeTransactionExtension
 from anyblok.registry import RegistryManager
+from sqlalchemy_utils.functions import database_exists
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 
 def preload_databases():
-    dbnames = Configuration.get('db_names', '').split(',')
+    dbnames = Configuration.get('db_names') or []
     dbname = Configuration.get('db_name')
     if dbname not in dbnames:
         dbnames.append(dbname)
@@ -20,7 +24,15 @@ def preload_databases():
     settings = {
         'sa.session.extension': AnyBlokZopeTransactionExtension,
     }
-    for dbname in [x for x in dbnames if x != '']:
-        registry = RegistryManager.get(dbname, **settings)
-        registry.commit()
-        registry.session.close()
+    dbnames = [x for x in dbnames if x]
+    logger.info("Preload the databases : %s", ', '.join(dbnames))
+    for dbname in dbnames:
+        url = Configuration.get_url(db_name=dbname)
+        logger.info("Preload the database : %r", dbname)
+        if database_exists(url):
+            registry = RegistryManager.get(dbname, **settings)
+            registry.commit()
+            registry.session.close()
+            logger.info("The database %r is preloaded", dbname)
+        else:
+            logger.warn("The database %r does not exist", dbname)
