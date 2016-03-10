@@ -13,8 +13,8 @@ from anyblok.config import Configuration
 from .pyramid_config import Configurator
 from anyblok_pyramid.release import version
 import sys
-from .anyblok import AnyBlokZopeTransactionExtension
 from anyblok import load_init_function_from_entry_points
+from .common import preload_databases
 from logging import getLogger
 logger = getLogger(__name__)
 
@@ -54,18 +54,7 @@ def anyblok_wsgi(application, configuration_groups, **kwargs):
 
     app = config.make_wsgi_app()
     server = make_server(wsgi_host, wsgi_port, app)
-
-    dbnames = Configuration.get('db_names', '').split(',')
-    dbname = Configuration.get('db_name')
-    if dbname not in dbnames:
-        dbnames.append(dbname)
-
-    # preload all db names
-    settings = {
-        'sa.session.extension': AnyBlokZopeTransactionExtension,
-    }
-    for dbname in [x for x in dbnames if x != '']:
-        RegistryManager.get(dbname, **settings).commit()
+    preload_databases()
 
     logger.info("Serve forever on %r:%r" % (wsgi_host, wsgi_port))
     server.serve_forever()

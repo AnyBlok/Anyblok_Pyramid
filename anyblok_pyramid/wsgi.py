@@ -6,6 +6,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok.blok import BlokManager
+from .common import preload_databases
 import sys
 
 if BlokManager.bloks:
@@ -37,10 +38,7 @@ if 'logging_level' in Configuration.configuration:
     Configuration.initialize_logging()
 
 BlokManager.load()
-settings = {
-    'sa.session.extension': AnyBlokZopeTransactionExtension,
-}
-RegistryManager.get(Configuration.get('db_name'), **settings).commit()
+preload_databases()
 config = Configurator()
 config.include_from_entry_point()
 app = config.make_wsgi_app()

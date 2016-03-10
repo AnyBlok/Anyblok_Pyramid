@@ -15,8 +15,8 @@ from anyblok.registry import RegistryManager
 from .pyramid_config import Configurator
 import argparse
 import six
-from .anyblok import AnyBlokZopeTransactionExtension
 from anyblok import load_init_function_from_entry_points
+from .common import preload_databases
 from logging import getLogger
 logger = getLogger(__name__)
 
@@ -97,20 +97,7 @@ class WSGIApplication(Application):
     def load(self):
         BlokManager.load()
         RegistryManager.add_needed_bloks('pyramid')
-        dbnames = Configuration.get('db_names', '').split(',')
-        dbname = Configuration.get('db_name')
-        if dbname not in dbnames:
-            dbnames.append(dbname)
-
-        # preload all db names
-        settings = {
-            'sa.session.extension': AnyBlokZopeTransactionExtension,
-        }
-        for dbname in [x for x in dbnames if x != '']:
-            registry = RegistryManager.get(dbname, **settings)
-            registry.commit()
-            registry.session.close()
-
+        preload_databases()
         config = Configurator()
         config.include_from_entry_point()
         return config.make_wsgi_app()
