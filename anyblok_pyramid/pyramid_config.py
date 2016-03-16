@@ -9,7 +9,7 @@ from os.path import join
 from pyramid.config import Configurator as PConfigurator
 from anyblok.blok import BlokManager
 from anyblok.config import Configuration
-from .handler import HandlerHTTP, HandlerRPC
+from .handler import HandlerHTTP, HandlerJSONRPC, HandlerXMLRPC
 from pkg_resources import iter_entry_points
 from .controllers import (Pyramid, PyramidHTTP, PyramidJsonRPC, PyramidXmlRPC,
                           PyramidException)
@@ -215,7 +215,7 @@ def pyramid_http_config(config):
         config.add_view(HandlerHTTP(*hargs).wrap_view, **properties)
 
 
-def _pyramid_rpc_config(cls, add_endpoint, add_method):
+def _pyramid_rpc_config(cls, add_endpoint, add_method, HandlerRPC):
     """ Add the route and view which are added in the blok
 
     :param cls: PyramidRPC Type
@@ -247,7 +247,8 @@ def pyramid_jsonrpc_config(config):
     """
     config.include('pyramid_rpc.jsonrpc')
     _pyramid_rpc_config(
-        PyramidJsonRPC, config.add_jsonrpc_endpoint, config.add_jsonrpc_method)
+        PyramidJsonRPC, config.add_jsonrpc_endpoint, config.add_jsonrpc_method,
+        HandlerJSONRPC)
 
 
 def pyramid_xmlrpc_config(config):
@@ -258,4 +259,5 @@ def pyramid_xmlrpc_config(config):
     """
     config.include('pyramid_rpc.xmlrpc')
     _pyramid_rpc_config(
-        PyramidXmlRPC, config.add_xmlrpc_endpoint, config.add_xmlrpc_method)
+        PyramidXmlRPC, config.add_xmlrpc_endpoint, config.add_xmlrpc_method,
+        HandlerXMLRPC)

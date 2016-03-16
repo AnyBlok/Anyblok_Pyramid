@@ -9,6 +9,11 @@ from anyblok.registry import RegistryManager
 from .controllers import PyramidException
 from anyblok_pyramid import set_callable, get_callable
 from .anyblok import AnyBlokZopeTransactionExtension
+from pyramid_rpc.jsonrpc import JsonRpcInternalError
+from pyramid_rpc.xmlrpc import XmlRpcApplicationError
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 
 class HandlerException(PyramidException):
@@ -99,3 +104,29 @@ class HandlerRPC(Handler):
         self.init_controller(request)
         self.function = self.controller.get_function_from_method(self.method)
         return self.call_controller(*args, **kwargs)
+
+
+class HandlerJSONRPC(HandlerRPC):
+
+    def wrap_view(self, *args, **kwargs):
+        try:
+            return super(HandlerJSONRPC, self).wrap_view(*args, **kwargs)
+        except Exception as e:
+            logger.exception(str(e))
+            if hasattr(e, 'code'):
+                raise
+
+            raise JsonRpcInternalError(message=str(e))
+
+
+class HandlerXMLRPC(HandlerRPC):
+
+    def wrap_view(self, *args, **kwargs):
+        try:
+            return super(HandlerXMLRPC, self).wrap_view(*args, **kwargs)
+        except Exception as e:
+            logger.exception(str(e))
+            if hasattr(e, 'faultCode'):
+                raise
+
+            raise XmlRpcApplicationError(message=str(e))

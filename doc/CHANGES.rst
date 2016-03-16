@@ -12,8 +12,12 @@
 CHANGELOG
 =========
 
+Futur
+-----
+
 * [REF] Preload database, add log and check if the database exist before load
   it
+* [FIX] catch simple exception to reput in real rpc exception
 
 0.5.2 (2016-01-15)
 ------------------
