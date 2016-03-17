@@ -12,6 +12,9 @@
 CHANGELOG
 =========
 
+0.5.3 (2016-03-17)
+------------------
+
 * [REF] Preload database, add log and check if the database exist before load
   it
 
