@@ -14,6 +14,13 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 
+def get_registry_for(dbname):
+    settings = {
+        'sa.session.extension': AnyBlokZopeTransactionExtension,
+    }
+    return RegistryManager.get(dbname, **settings)
+
+
 def preload_databases():
     dbnames = Configuration.get('db_names') or []
     dbname = Configuration.get('db_name')
@@ -21,16 +28,13 @@ def preload_databases():
         dbnames.append(dbname)
 
     # preload all db names
-    settings = {
-        'sa.session.extension': AnyBlokZopeTransactionExtension,
-    }
     dbnames = [x for x in dbnames if x]
     logger.info("Preload the databases : %s", ', '.join(dbnames))
     for dbname in dbnames:
         url = Configuration.get_url(db_name=dbname)
         logger.info("Preload the database : %r", dbname)
         if database_exists(url):
-            registry = RegistryManager.get(dbname, **settings)
+            registry = get_registry_for(dbname)
             registry.commit()
             registry.session.close()
             logger.info("The database %r is preloaded", dbname)

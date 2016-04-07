@@ -32,8 +32,8 @@ console_scripts = [
 ]
 
 anyblok_pyramid_includeme = [
-    'pyramid_tm=anyblok_pyramid.pyramid_config.pyramid_tm',
-    'static_paths=anyblok_pyramid.pyramid_config.static_paths',
+    'pyramid_tm=anyblok_pyramid.pyramid_config:pyramid_tm',
+    'static_paths=anyblok_pyramid.pyramid_config:static_paths',
 ]
 anyblok_init = [
     'anyblok_pyramid_config=anyblok_pyramid.anyblok_init_config',

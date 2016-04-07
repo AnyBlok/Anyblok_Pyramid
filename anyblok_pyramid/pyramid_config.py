@@ -10,8 +10,48 @@ from pyramid.config import Configurator as PConfigurator
 from anyblok.blok import BlokManager
 from anyblok.config import Configuration
 from pkg_resources import iter_entry_points
+from sqlalchemy_utils.functions import database_exists
+from .common import get_registry_for
+from . import get_callable
 from logging import getLogger
 logger = getLogger(__name__)
+
+
+class AnyBlokRequest:
+
+    def __init__(self, request):
+        self.request = request
+
+    @property
+    def registry(self):
+        dbname = get_callable('get_db_name')(self.request)
+        url = Configuration.get_url(db_name=dbname)
+        if database_exists(url):
+            return get_registry_for(dbname)
+        else:
+            return None
+
+
+class AnyBlokInstalledBlokPredicate:
+
+    def __init__(self, blok_name, config):
+        self.blok_name = blok_name
+
+    def text(self):
+        return 'instaled blok = %s' % self.blok_name
+
+    phash = text
+
+    def __call__(self, context, request):
+        if not request.anyblok:
+            return False
+
+        if not request.anyblok.registry:
+            return False
+
+        # use this method because she is cached
+        return request.anyblok.registry.System.Blok.is_installed(
+            self.blok_name)
 
 
 class Configurator(PConfigurator):
@@ -83,9 +123,21 @@ class Configurator(PConfigurator):
 
 
         """
+        self.add_request_method(AnyBlokRequest, 'anyblok', reify=True)
+        self.add_subscriber_predicate(
+            'installed_blok', AnyBlokInstalledBlokPredicate)
         for i in iter_entry_points('anyblok_pyramid.includeme'):
             logger.debug('Load includeme: %r' % i.name)
             i.load()(self)
+
+    def load_config_bloks(self):
+        for blok_name in BlokManager.ordered_bloks:
+            blok = BlokManager.get(blok_name)
+            if hasattr(blok, 'anyblok_pyramid_config'):
+                logger.debug('Load configuration from: %r' % blok_name)
+                blok.anyblok_pyramid_config(self)
+
+        # self.scan()
 
 
 def pyramid_settings(settings):

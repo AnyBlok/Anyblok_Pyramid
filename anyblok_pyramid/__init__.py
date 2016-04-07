@@ -12,8 +12,9 @@ from anyblok.config import Configuration
 callables = {}
 
 
-def set_callable(c, name=None):
-    callables[name if name else c.__name__] = c
+def set_callable(c):
+    callables[c.__name__] = c
+    return c
 
 
 def get_callable(k):
@@ -33,3 +34,8 @@ def anyblok_init_config():
             'configuration_groups': ['gunicorn', 'database'],
         },
     })
+
+
+@set_callable
+def get_db_name(request):
+    return Configuration.get('db_name')
