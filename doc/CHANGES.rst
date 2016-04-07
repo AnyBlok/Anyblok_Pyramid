@@ -15,6 +15,12 @@ CHANGELOG
 Futur
 -----
 
+.. warning::
+
+    This version break the compatibility with previous version. The goal
+    is to use all the functionnality of pyramid, and give the tools to make 
+    the bind with AnyBlok easily
+
 0.5.3 (2016-03-17)
 ------------------
 

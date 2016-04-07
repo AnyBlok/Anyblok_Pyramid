@@ -14,7 +14,6 @@ Contents:
    FRONT.rst
    MEMENTO.rst
    CODE.rst
-   BLOKS.rst
    UNITTEST.rst
    ROADMAP.rst
    CHANGES.rst

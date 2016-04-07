@@ -83,13 +83,12 @@ Contributors
 `Anybox <http://anybox.fr>`_ team:
 
 * Georges Racinet
-* Christophe Combelles
-* Sandrine Chaufournais
 * Jean-Sébastien Suzanne
-* Florent Jouatte
 * Simon André
-* Clovis Nzouendjou
 * Pierre Verkest
+
+`Sensee <http://sensee.com>`_ team:
+
 * Franck Bret
 
 Bugs

@@ -12,7 +12,6 @@ from gunicorn.app.base import Application
 from gunicorn import __version__
 from anyblok.config import Configuration, getParser
 from anyblok.blok import BlokManager
-from anyblok.registry import RegistryManager
 from .pyramid_config import Configurator
 import argparse
 import six
@@ -54,7 +53,7 @@ class Config(GunicornConfig):
             description.update(Configuration.applications['default'])
 
         _configuration_groups = description.pop('configuration_groups',
-                                                ['config', 'database'])
+                                                ['gunicorn', 'database'])
         configuration_groups = set(self.configuration_groups or []).union(
             _configuration_groups)
         Configuration._load(parser, configuration_groups,
@@ -97,10 +96,10 @@ class WSGIApplication(Application):
 
     def load(self):
         BlokManager.load()
-        RegistryManager.add_needed_bloks('pyramid')
         preload_databases()
         config = Configurator()
         config.include_from_entry_point()
+        config.load_config_bloks()
         return config.make_wsgi_app()
 
 
