@@ -131,13 +131,15 @@ class Configurator(PConfigurator):
             i.load()(self)
 
     def load_config_bloks(self):
+        self.commit()
         for blok_name in BlokManager.ordered_bloks:
             blok = BlokManager.get(blok_name)
             if hasattr(blok, 'anyblok_pyramid_config'):
                 logger.debug('Load configuration from: %r' % blok_name)
                 blok.anyblok_pyramid_config(self)
 
-        # self.scan()
+            self.scan(blok.__module__)
+            self.commit()
 
 
 def pyramid_settings(settings):
