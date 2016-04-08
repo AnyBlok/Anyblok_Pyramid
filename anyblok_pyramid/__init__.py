@@ -22,6 +22,7 @@ def get_callable(k):
 
 
 def anyblok_init_config():
+    from . import config  # noqa import config definition
     Configuration.applications.update({
         'pyramid': {
             'prog': 'AnyBlok simple wsgi app, version %r' % version,
