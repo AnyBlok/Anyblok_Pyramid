@@ -32,7 +32,7 @@ class AnyBlokRequest:
             return None
 
 
-class AnyBlokInstalledBlokPredicate:
+class InstalledBlokPredicate:
 
     def __init__(self, blok_name, config):
         self.blok_name = blok_name
@@ -124,8 +124,8 @@ class Configurator(PConfigurator):
 
         """
         self.add_request_method(AnyBlokRequest, 'anyblok', reify=True)
-        self.add_subscriber_predicate(
-            'installed_blok', AnyBlokInstalledBlokPredicate)
+        self.add_route_predicate('installed_blok', InstalledBlokPredicate)
+        self.add_view_predicate('installed_blok', InstalledBlokPredicate)
         for i in iter_entry_points('anyblok_pyramid.includeme'):
             logger.debug('Load includeme: %r' % i.name)
             i.load()(self)

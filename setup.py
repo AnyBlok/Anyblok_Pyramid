@@ -36,7 +36,7 @@ anyblok_pyramid_includeme = [
     'static_paths=anyblok_pyramid.pyramid_config:static_paths',
 ]
 anyblok_init = [
-    'anyblok_pyramid_config=anyblok_pyramid.anyblok_init_config',
+    'anyblok_pyramid_config=anyblok_pyramid:anyblok_init_config',
 ]
 
 setup(
