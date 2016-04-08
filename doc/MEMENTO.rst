@@ -18,6 +18,62 @@ Anyblok / Pyramid mainly depends on:
 * `Pyramid <http://pyramid.readthedocs.org>`_
 
 
+Get AnyBlok registry in view
+----------------------------
+
+By default the registry load is the registry of the ``Configuration`` ``db_name``
+key.
+
+Define a simple view::
+
+    from pyramid.view import view_config
+    from pyramid.response import Response
+
+
+    @view_config(route_name='foo')
+    def bar(request):
+        registry = request.anyblok.registry
+        nb_installed_bloks = registry.System.Blok.query().filter_by(
+            state='installed').count()
+        return Response("Welcome in AnyBlok application, you have %d installed "
+                        "bloks" % nb_installed_bloks)
+
+
+Define view which are use only if one blok is installed
+-------------------------------------------------------
+
+See the link `view and route predicated <http://docs.pylonsproject.org/projects/pyramid/en/latest/narr/hooks.html#adding-a-third-party-view-route-or-subscriber-predicate>`_
+
+the goal of the prédicate is to get the access of the route or the view only if
+the predicate condition is validated. AnyBlok / Pyramid add the predicate
+``installed_blok``::
+
+    from pyramid.view import view_config
+    from pyramid.response import Response
+
+
+    @view_config(route_name='foo')
+    def bar1(request):
+        """ This is the default view """
+        return Response("Welcome in AnyBlok application, you have 0 installed "
+                        "bloks")
+
+    @view_config(route_name='foo', installed_blok='anyblok-core')
+    def bar2(request):
+        """ This view id call if the anyblok is installed """
+        registry = request.anyblok.registry
+        nb_installed_bloks = registry.System.Blok.query().filter_by(
+            state='installed').count()
+        return Response("Welcome in AnyBlok application, you have %d installed "
+                        "bloks" % nb_installed_bloks)
+
+
+.. note::
+
+    installed predicated detect if the registry is load, without registry,
+    the installated blok can no be verify.
+
+
 WorkingSet
 ----------
 
@@ -26,9 +82,66 @@ Anyblok / Pyramid add two function to use callback:
 * `set_callable`: save a callback, the name of the callable is the name of the callback
 * `get_callable`: return a callback in function of this name
 
-for exemple, see the callable `get_registry`::
+for exemple, see the callable `get_db_name`::
 
-    registry = get_callable('get_registry')(request)
+    db_name = get_callable('get_db_name')(request)
+
+Define the name of the database
+-------------------------------
+
+The name of the database determine the registry use by the view.
+
+By default the name of the database come from the ``Configuration`` ``db_name``
+key. But it is possible to define a callback to define the good db name.
+
+Define an AnyBlok init function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In the setup of the package add new entry point::
+
+    setup(
+        ...
+        entry_points={
+            ...
+            'anyblok.init': ['get_db_name=package.path:add_get_db_name'],
+            ...
+        },
+        ...
+    )
+
+In the file ``path`` of the ``package`` add the method ``add_get_db_name``::
+
+    def add_get_db_name():
+        from anyblok_pyramid import set_callable
+
+        @set_callable
+        def get_db_name(request):
+            return ``My db Name``
+
+
+Define the db name in the request path
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is an example to define the good db name in function of the path of the
+method.
+
+This example work if the path id define like this::
+
+    config.add_route('one_route', '/{dbname}/foo/bar')
+
+
+The definition of ``get_db_name`` is::
+
+    def add_get_db_name():
+        from anyblok_pyramid import set_callable
+
+        @set_callable
+        def get_db_name(request):
+            return request.matchdict.get(
+                dbname',
+                Configuration.get('db_name'))
+
+
 
 Authentication and authorization
 --------------------------------
