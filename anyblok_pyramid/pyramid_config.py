@@ -18,12 +18,27 @@ logger = getLogger(__name__)
 
 
 class AnyBlokRequest:
+    """ Add anyblok properties in the request
+    ::
 
+        request.anyblok
+
+    """
     def __init__(self, request):
         self.request = request
 
     @property
     def registry(self):
+        """ Add the property registry
+        ::
+
+            registry = request.anyblok.registry
+
+        .. note::
+
+            The db_name must be defined
+
+        """
         dbname = get_callable('get_db_name')(self.request)
         url = Configuration.get_url(db_name=dbname)
         if database_exists(url):
@@ -33,6 +48,7 @@ class AnyBlokRequest:
 
 
 class InstalledBlokPredicate:
+    """ Predicate ``installed_blok`` """
 
     def __init__(self, blok_name, config):
         self.blok_name = blok_name
@@ -131,15 +147,22 @@ class Configurator(PConfigurator):
             i.load()(self)
 
     def load_config_bloks(self):
+        """ loop on each blok, keep the order of the blok to load the
+        pyramid config. The blok must declare the meth
+        ``pyramid_load_config``::
+
+            def pyramid_load_config(config):
+                config.add_route('hello', '/hello/{name}/')
+                ...
+
+        """
         self.commit()
         for blok_name in BlokManager.ordered_bloks:
             blok = BlokManager.get(blok_name)
-            if hasattr(blok, 'anyblok_pyramid_config'):
+            if hasattr(blok, 'pyramid_load_config'):
                 logger.debug('Load configuration from: %r' % blok_name)
-                blok.anyblok_pyramid_config(self)
-
-            self.scan(blok.__module__)
-            self.commit()
+                blok.pyramid_load_config(self)
+                self.commit()
 
 
 def pyramid_settings(settings):

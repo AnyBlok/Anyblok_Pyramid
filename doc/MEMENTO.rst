@@ -18,6 +18,62 @@ Anyblok / Pyramid mainly depends on:
 * `Pyramid <http://pyramid.readthedocs.org>`_
 
 
+Add route, view, ... in pyramid config
+--------------------------------------
+
+By includeme
+~~~~~~~~~~~~
+
+1. define the view in one file
+
+  in the file views.py::
+
+      from pyramid.view import view_config
+      from pyramid.response import Response
+
+      @view_config(route_name='hello')
+      def say_hello(request):
+          return Response('Hello %(name)s !!!' % request.matchdict)
+
+2. define the entrypoint function
+
+   in the file foo.py::
+   
+       def update_pyramid_config(config):
+           config.add_route('hello', '/hello/{name})
+           config.scan('.views')
+
+
+By blok
+~~~~~~~
+
+1. define the view in one file of the blok
+
+  in the file views.py::
+
+      from pyramid.view import view_config
+      from pyramid.response import Response
+
+      @view_config(route_name='hello')
+      def say_hello(request):
+          return Response('Hello %(name)s !!!' % request.matchdict)
+
+2. add the class method ``pyramid_load_config``
+
+   in the file foo.py::
+   
+       from anyblok.blok import Blok
+
+       class MyBlok(Blok):
+
+           ...
+
+           @classmethod
+           def update_pyramid_config(cls, config):
+               config.add_route('hello', '/hello/{name})
+               config.scan('.views')
+
+
 Get AnyBlok registry in view
 ----------------------------
 

@@ -21,6 +21,16 @@ anyblok_pyramid.pyramid_config
     :members:
     :noindex:
 
+.. autoclass:: AnyBlokRequest
+    :show-inheritance:
+    :members:
+    :noindex:
+
+.. autoclass:: InstalledBlokPredicate
+    :show-inheritance:
+    :members:
+    :noindex:
+
 pyramid_config.settings
 ~~~~~~~~~~~~~~~~~~~~~~~
 
