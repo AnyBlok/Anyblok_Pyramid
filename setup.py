@@ -74,6 +74,10 @@ setup(
         ],
         'anyblok_pyramid.includeme': anyblok_pyramid_includeme,
         'anyblok.init': anyblok_init,
+        'test_bloks': [
+            'test-pyramid-blok1=anyblok_pyramid.test_bloks.test_pyramid_blok1:'
+            'TestPyramidBlok',
+        ]
     },
     extras_require={},
 )

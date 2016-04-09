@@ -7,6 +7,8 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from .release import version
 from anyblok.config import Configuration
+from anyblok.blok import BlokManager
+import inspect
 
 
 callables = {}
@@ -40,3 +42,16 @@ def anyblok_init_config():
 @set_callable
 def get_db_name(request):
     return Configuration.get('db_name')
+
+
+class AnyBlokPyramidException(Exception):
+    pass
+
+
+def current_blok():
+    stack = inspect.stack()[1]
+    for blok in BlokManager.ordered_bloks:
+        if stack.filename.startswith(BlokManager.getPath(blok)):
+            return blok
+
+    raise AnyBlokPyramidException("You are not in a Blok")
