@@ -38,6 +38,13 @@ Futur
       def say_hello(request):
           ...
 
+* [ADD] need_anyblok_registry predicate for route and view
+  ::
+
+      @view_config(route_name='hello', need_anyblok_registry=True)
+      def say_hello(request):
+          ...
+
 
 0.5.3 (2016-03-17)
 ------------------

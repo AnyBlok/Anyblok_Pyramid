@@ -95,8 +95,8 @@ Define a simple view::
                         "bloks" % nb_installed_bloks)
 
 
-Define view which are use only if one blok is installed
--------------------------------------------------------
+Define view which are used only if one blok is installed
+--------------------------------------------------------
 
 See the link `view and route predicated <http://docs.pylonsproject.org/projects/pyramid/en/latest/narr/hooks.html#adding-a-third-party-view-route-or-subscriber-predicate>`_
 
@@ -144,8 +144,6 @@ the predicate condition is validated. AnyBlok / Pyramid add the predicate
                 state='installed').count()
             return Response("Welcome in AnyBlok application, you have %d installed "
                             "bloks" % nb_installed_bloks)
-
-
 
 
 WorkingSet

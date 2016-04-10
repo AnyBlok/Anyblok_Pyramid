@@ -47,6 +47,28 @@ class AnyBlokRequest:
             return None
 
 
+class NeedAnyBlokRegistryPredicate:
+    """ Predicate ``need_anyblok_registry`` """
+
+    def __init__(self, need_anyblok_registry, config):
+        self.need_anyblok_registry = need_anyblok_registry
+
+    def text(self):
+        return 'Need AnyBlok registry = %s' % str(self.need_anyblok_registry)
+
+    phash = text
+
+    def __call__(self, context, request):
+        if self.need_anyblok_registry:
+            if not request.anyblok:
+                return False
+
+            if not request.anyblok.registry:
+                return False
+
+        return True
+
+
 class InstalledBlokPredicate:
     """ Predicate ``installed_blok`` """
 
@@ -142,6 +164,10 @@ class Configurator(PConfigurator):
         self.add_request_method(AnyBlokRequest, 'anyblok', reify=True)
         self.add_route_predicate('installed_blok', InstalledBlokPredicate)
         self.add_view_predicate('installed_blok', InstalledBlokPredicate)
+        self.add_route_predicate('need_anyblok_registry',
+                                 NeedAnyBlokRegistryPredicate)
+        self.add_view_predicate('need_anyblok_registry',
+                                NeedAnyBlokRegistryPredicate)
         for i in iter_entry_points('anyblok_pyramid.includeme'):
             logger.debug('Load includeme: %r' % i.name)
             i.load()(self)

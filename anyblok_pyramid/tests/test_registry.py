@@ -19,10 +19,10 @@ def _get_db_name(request):
     return Response(dbname)
 
 
-class TestArgsParseOption(PyramidDBTestCase):
+class TestRegistry(PyramidDBTestCase):
 
     def tearDown(self):
-        super(TestArgsParseOption, self).tearDown()
+        super(TestRegistry, self).tearDown()
         set_callable(get_db_name)
 
     def add_route_and_views(self, config):
