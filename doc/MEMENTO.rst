@@ -38,7 +38,7 @@ By includeme
 2. define the entrypoint function
 
    in the file foo.py::
-   
+
        def update_pyramid_config(config):
            config.add_route('hello', '/hello/{name})
            config.scan('.views')
@@ -61,7 +61,7 @@ By blok
 2. add the class method ``pyramid_load_config``
 
    in the file foo.py::
-   
+
        from anyblok.blok import Blok
 
        class MyBlok(Blok):
@@ -126,8 +126,26 @@ the predicate condition is validated. AnyBlok / Pyramid add the predicate
 
 .. note::
 
-    installed predicated detect if the registry is load, without registry,
+    Installed predicated detect if the registry is load, without registry,
     the installated blok can no be verify.
+
+
+.. note::
+
+    you can use the ``current_blok`` function to not write the blok name::
+
+        from anyblok_pyramid import current_blok
+
+        @view_config(route_name='foo', installed_blok=current_blok())
+        def bar2(request):
+            """ This view id call if the anyblok is installed """
+            registry = request.anyblok.registry
+            nb_installed_bloks = registry.System.Blok.query().filter_by(
+                state='installed').count()
+            return Response("Welcome in AnyBlok application, you have %d installed "
+                            "bloks" % nb_installed_bloks)
+
+
 
 
 WorkingSet
