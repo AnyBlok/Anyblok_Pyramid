@@ -36,9 +36,9 @@ class AnyBlokPyramidException(Exception):
 
 
 def current_blok():
-    stack = inspect.stack()[1]
+    filename = inspect.stack()[1][1]
     for blok in BlokManager.ordered_bloks:
-        if stack.filename.startswith(BlokManager.getPath(blok)):
+        if filename.startswith(BlokManager.getPath(blok)):
             return blok
 
     raise AnyBlokPyramidException("You are not in a Blok")
