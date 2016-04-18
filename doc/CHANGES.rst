@@ -15,6 +15,37 @@ CHANGELOG
 Futur
 -----
 
+.. warning::
+
+    This version break the compatibility with previous version. The goal
+    is to use all the functionnality of pyramid, and give the tools to make
+    the bind with AnyBlok easily
+
+* [REM] remove old Controller declarations:
+   * Declarations.Pyramid
+   * Declarations.PyramidHTTP
+   * Declarations.PyramidJSONRPC
+   * Declarations.PyramidXMLRPC
+* [ADD] add anyblok request property
+  ::
+
+      registry = request.anyblok.registry
+
+* [ADD] installed_blok predicate for route and view
+  ::
+
+      @view_config(route_name='hello', installed_blok='my-blok')
+      def say_hello(request):
+          ...
+
+* [ADD] need_anyblok_registry predicate for route and view
+  ::
+
+      @view_config(route_name='hello', need_anyblok_registry=True)
+      def say_hello(request):
+          ...
+
+
 0.5.3 (2016-03-17)
 ------------------
 

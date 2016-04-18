@@ -9,12 +9,87 @@ from os.path import join
 from pyramid.config import Configurator as PConfigurator
 from anyblok.blok import BlokManager
 from anyblok.config import Configuration
-from .handler import HandlerHTTP, HandlerJSONRPC, HandlerXMLRPC
 from pkg_resources import iter_entry_points
-from .controllers import (Pyramid, PyramidHTTP, PyramidJsonRPC, PyramidXmlRPC,
-                          PyramidException)
+from sqlalchemy_utils.functions import database_exists
+from .common import get_registry_for
+from . import get_callable
 from logging import getLogger
 logger = getLogger(__name__)
+
+
+class AnyBlokRequest:
+    """ Add anyblok properties in the request
+    ::
+
+        request.anyblok
+
+    """
+    def __init__(self, request):
+        self.request = request
+
+    @property
+    def registry(self):
+        """ Add the property registry
+        ::
+
+            registry = request.anyblok.registry
+
+        .. note::
+
+            The db_name must be defined
+
+        """
+        dbname = get_callable('get_db_name')(self.request)
+        url = Configuration.get_url(db_name=dbname)
+        if database_exists(url):
+            return get_registry_for(dbname)
+        else:
+            return None
+
+
+class NeedAnyBlokRegistryPredicate:
+    """ Predicate ``need_anyblok_registry`` """
+
+    def __init__(self, need_anyblok_registry, config):
+        self.need_anyblok_registry = need_anyblok_registry
+
+    def text(self):
+        return 'Need AnyBlok registry = %s' % str(self.need_anyblok_registry)
+
+    phash = text
+
+    def __call__(self, context, request):
+        if self.need_anyblok_registry:
+            if not request.anyblok:
+                return False
+
+            if not request.anyblok.registry:
+                return False
+
+        return True
+
+
+class InstalledBlokPredicate:
+    """ Predicate ``installed_blok`` """
+
+    def __init__(self, blok_name, config):
+        self.blok_name = blok_name
+
+    def text(self):
+        return 'instaled blok = %s' % self.blok_name
+
+    phash = text
+
+    def __call__(self, context, request):
+        if not request.anyblok:
+            return False
+
+        if not request.anyblok.registry:
+            return False
+
+        # use this method because she is cached
+        return request.anyblok.registry.System.Blok.is_installed(
+            self.blok_name)
 
 
 class Configurator(PConfigurator):
@@ -86,9 +161,34 @@ class Configurator(PConfigurator):
 
 
         """
+        self.add_request_method(AnyBlokRequest, 'anyblok', reify=True)
+        self.add_route_predicate('installed_blok', InstalledBlokPredicate)
+        self.add_view_predicate('installed_blok', InstalledBlokPredicate)
+        self.add_route_predicate('need_anyblok_registry',
+                                 NeedAnyBlokRegistryPredicate)
+        self.add_view_predicate('need_anyblok_registry',
+                                NeedAnyBlokRegistryPredicate)
         for i in iter_entry_points('anyblok_pyramid.includeme'):
             logger.debug('Load includeme: %r' % i.name)
             i.load()(self)
+
+    def load_config_bloks(self):
+        """ loop on each blok, keep the order of the blok to load the
+        pyramid config. The blok must declare the meth
+        ``pyramid_load_config``::
+
+            def pyramid_load_config(config):
+                config.add_route('hello', '/hello/{name}/')
+                ...
+
+        """
+        self.commit()
+        for blok_name in BlokManager.ordered_bloks:
+            blok = BlokManager.get(blok_name)
+            if hasattr(blok, 'pyramid_load_config'):
+                logger.debug('Load configuration from: %r' % blok_name)
+                blok.pyramid_load_config(self)
+                self.commit()
 
 
 def pyramid_settings(settings):
@@ -113,47 +213,6 @@ def pyramid_settings(settings):
     })
 
 
-def beaker_settings(settings):
-    """Add in settings the default value for beaker configuration
-
-    :param settings: dict of the existing settings
-    """
-    settings.update({
-        'beaker.session.data_dir': Configuration.get(
-            'beaker.session.data_dir'),
-        'beaker.session.lock_dir': Configuration.get(
-            'beaker.session.lock_dir'),
-        'beaker.session.memcache_module': Configuration.get(
-            'beaker.session.memcache_module'),
-        'beaker.session.type': Configuration.get(
-            'beaker.session.type'),
-        'beaker.session.url': Configuration.get(
-            'beaker.session.url'),
-        'beaker.session.cookie_expires': Configuration.get(
-            'beaker.session.cookie_expires'),
-        'beaker.session.cookie_domain': Configuration.get(
-            'beaker.session.cookie_domain'),
-        'beaker.session.key': Configuration.get('beaker.session.key'),
-        'beaker.session.secret': Configuration.get('beaker.session.secret'),
-        'beaker.session.secure': Configuration.get('beaker.session.secure'),
-        'beaker.session.timeout': Configuration.get(
-            'beaker.session.timeout'),
-        'beaker.session.encrypt_key': Configuration.get(
-            'beaker.session.encrypt_key'),
-        'beaker.session.validate_key': Configuration.get(
-            'beaker.session.validate_key'),
-    })
-
-
-def pyramid_beaker(config):
-    """Add beaker includeme in pyramid configuration
-
-    :param config: Pyramid configurator instance
-    """
-
-    config.include('pyramid_beaker')
-
-
 def pyramid_tm(config):
     """Add beaker includeme in pyramid configuration
 
@@ -163,7 +222,7 @@ def pyramid_tm(config):
     config.include('pyramid_tm')
 
 
-def declare_static(config):
+def static_paths(config):
     """Pyramid includeme, add the static path of the blok
 
     :param config: Pyramid configurator instance
@@ -181,83 +240,3 @@ def declare_static(config):
 
         for p in paths:
             config.add_static_view(join(blok, p), join(blok_path, p))
-
-
-def pyramid_config(config):
-    """Pyramid includeme, add the route and view which are not
-    added in the blok
-
-    :param config: Pyramid configurator instance
-    """
-    for args, kwargs in Pyramid.routes:
-        config.add_route(*args, **kwargs)
-
-    for function, properties in Pyramid.views:
-        config.add_view(function, **properties)
-
-
-def pyramid_http_config(config):
-    """ Pyramid includemee, add the route and view which are
-    added in the blok by ``PyramidHTTP`` Type
-
-    :param config: Pyramid configurator instance
-    :exception: PyramidException
-    """
-    for args, kwargs in PyramidHTTP.routes:
-        config.add_route(*args, **kwargs)
-
-    endpoints = [x[0][0] for x in PyramidHTTP.routes]
-    for hargs, properties in PyramidHTTP.views.items():
-        if hargs[1] not in endpoints:
-            raise PyramidException(
-                "One or more %s controller has been declared but no route have"
-                " declared" % hargs[1])
-        config.add_view(HandlerHTTP(*hargs).wrap_view, **properties)
-
-
-def _pyramid_rpc_config(cls, add_endpoint, add_method, HandlerRPC):
-    """ Add the route and view which are added in the blok
-
-    :param cls: PyramidRPC Type
-    :param add_endpoint: function to add route in configuation
-    :param add_method: function to add rpc_method in configuration
-    :exception: PyramidException
-    """
-    for args, kwargs in cls.routes:
-        add_endpoint(*args, **kwargs)
-
-    endpoints = [x[0][0] for x in cls.routes]
-    for namespace in cls.methods:
-        if namespace not in endpoints:
-            raise PyramidException(
-                "One or more %s controller has been declared but no route have"
-                " declared" % namespace)
-        for method in cls.methods[namespace]:
-            rpc_method = cls.methods[namespace][method]
-            add_method(HandlerRPC(namespace, method).wrap_view,
-                       route_name=namespace,
-                       **rpc_method)
-
-
-def pyramid_jsonrpc_config(config):
-    """ Pyramid includemee, add the route and view which are
-    added in the blok by ``PyramidJsonRPC`` Type
-
-    :param config: Pyramid configurator instance
-    """
-    config.include('pyramid_rpc.jsonrpc')
-    _pyramid_rpc_config(
-        PyramidJsonRPC, config.add_jsonrpc_endpoint, config.add_jsonrpc_method,
-        HandlerJSONRPC)
-
-
-def pyramid_xmlrpc_config(config):
-    """ Pyramid includemee, add the route and view which are
-    added in the blok by ``PyramidXmlRPC`` Type
-
-    :param config: Pyramid configurator instance
-    """
-    config.include('pyramid_rpc.xmlrpc')
-    _pyramid_rpc_config(
-        PyramidXmlRPC, config.add_xmlrpc_endpoint, config.add_xmlrpc_method,
-        HandlerXMLRPC)

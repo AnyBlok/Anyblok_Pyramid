@@ -13,362 +13,138 @@ MEMENTO
 
 Anyblok / Pyramid mainly depends on:
 
-* Python 3.2+
+* Python 3.3+
 * `AnyBlok <http://doc.anyblok.org>`_
 * `Pyramid <http://pyramid.readthedocs.org>`_
 
-If the scrip ``anyblok_wsgi`` is used to start the ``WSGI`` application,
-the you can not declare ``route`` and ``view``. AnyBlok / Pyramid define two
-familly of controller:
 
-* Controller which no depend of blok
-* Controller which depend of the installation or not of bloks
+Add route, view, ... in pyramid config
+--------------------------------------
 
-Pyramid ``route`` and ``view`` which does not depend of the bloks
------------------------------------------------------------------
+By includeme
+~~~~~~~~~~~~
 
-The goal is to declare in your application code source the ``route`` and the
-``view``::
+1. define the view in one file
 
-    from anyblok import Declarations
-    Pyramid = Declarations.Pyramid
+  in the file views.py::
 
-Declare a ``view``::
+      from pyramid.view import view_config
+      from pyramid.response import Response
 
-    @Pyramid.add_view('route name')
-    def myview(request):
-        ...
+      @view_config(route_name='hello')
+      def say_hello(request):
+          return Response('Hello %(name)s !!!' % request.matchdict)
+
+2. define the entrypoint function
+
+   in the file foo.py::
+
+       def update_pyramid_config(config):
+           config.add_route('hello', '/hello/{name})
+           config.scan('.views')
+
+
+By blok
+~~~~~~~
+
+1. define the view in one file of the blok
+
+  in the file views.py::
+
+      from pyramid.view import view_config
+      from pyramid.response import Response
+
+      @view_config(route_name='hello')
+      def say_hello(request):
+          return Response('Hello %(name)s !!!' % request.matchdict)
+
+2. add the class method ``pyramid_load_config``
+
+   in the file foo.py::
+
+       from anyblok.blok import Blok
+
+       class MyBlok(Blok):
+
+           ...
+
+           @classmethod
+           def update_pyramid_config(cls, config):
+               config.add_route('hello', '/hello/{name})
+               config.scan(cls.__module__ + '.views')
+
+
+Get AnyBlok registry in view
+----------------------------
+
+By default the registry load is the registry of the ``Configuration`` ``db_name``
+key.
+
+Define a simple view::
+
+    from pyramid.view import view_config
+    from pyramid.response import Response
+
+
+    @view_config(route_name='foo')
+    def bar(request):
+        registry = request.anyblok.registry
+        nb_installed_bloks = registry.System.Blok.query().filter_by(
+            state='installed').count()
+        return Response("Welcome in AnyBlok application, you have %d installed "
+                        "bloks" % nb_installed_bloks)
+
+
+Define view which are used only if one blok is installed
+--------------------------------------------------------
+
+See the link `view and route predicated <http://docs.pylonsproject.org/projects/pyramid/en/latest/narr/hooks.html#adding-a-third-party-view-route-or-subscriber-predicate>`_
+
+the goal of the prédicate is to get the access of the route or the view only if
+the predicate condition is validated. AnyBlok / Pyramid add the predicate
+``installed_blok``::
+
+    from pyramid.view import view_config
+    from pyramid.response import Response
+
+
+    @view_config(route_name='foo')
+    def bar1(request):
+        """ This is the default view """
+        return Response("Welcome in AnyBlok application, you have 0 installed "
+                        "bloks")
+
+    @view_config(route_name='foo', installed_blok='anyblok-core')
+    def bar2(request):
+        """ This view id call if the anyblok is installed """
+        registry = request.anyblok.registry
+        nb_installed_bloks = registry.System.Blok.query().filter_by(
+            state='installed').count()
+        return Response("Welcome in AnyBlok application, you have %d installed "
+                        "bloks" % nb_installed_bloks)
+
 
 .. note::
 
-    The decorator ``add_view`` is just a wrapper of `add_view
-    <http://docs.pylonsproject.org/docs/pyramid/en/latest/api/
-    config.html#pyramid.config.Configurator.add_view>`_
+    Installed predicated detect if the registry is load, without registry,
+    the installated blok can no be verify.
 
-    the args already filled by the wraper are:
-
-    * view: is the decorated function
-    * name: is the **route name**
-
-Declare a ``route``::
-
-    Pyramid.add_route('route name', '/my/path')
 
 .. note::
 
-    The function ``add_route`` is just a wrapper of `add_route
-    <http://docs.pylonsproject.org/docs/pyramid/en/latest/api/
-    config.html#pyramid.config.Configurator.add_route>`_
+    you can use the ``current_blok`` function to not write the blok name::
+
+        from anyblok_pyramid import current_blok
+
+        @view_config(route_name='foo', installed_blok=current_blok())
+        def bar2(request):
+            """ This view id call if the anyblok is installed """
+            registry = request.anyblok.registry
+            nb_installed_bloks = registry.System.Blok.query().filter_by(
+                state='installed').count()
+            return Response("Welcome in AnyBlok application, you have %d installed "
+                            "bloks" % nb_installed_bloks)
 
-    The args already filled by the wraper are:
-
-    * name: is the **route name**
-    * pattern: is the path
-
-.. warning::
-
-    It 's important to use the add_route of Pyramid, because
-    when the view are add in configuration, this view check is the
-    **route name** exist in the routes.
-
-Pyramid controller which depend of the installation of the bloks
-----------------------------------------------------------------
-
-Theses controllers must be `declared in the bloks
-<http://doc.anyblok.org/HOWTO_CREATE_APP.html#create-bloks>`_
-
-The declaration of theses controllers is as the declaration of `AnyBlok Model
-<http://doc.anyblok.org/HOWTO_CREATE_APP.html#create-models>`_
-
-They are three controllers which can be declared in the bloks:
-
-* PyramidHTTP
-* PyramidJsonRPC
-* PyramidXmlRPC
-
-The controller can be inherited by ``Mixin``
-
-* PyramidMixin
-
-The controller inherit also ``Core`` and have some feature as:
-
-* Cache
-* Properties
-
-HTTP controller
-~~~~~~~~~~~~~~~
-
-Get the ``Type`` of controller::
-
-    from anyblok import Declarations
-    PyramidHTTP = Declarations.PyramidHTTP
-    register = Declarations.register
-
-Declare a ``view``::
-
-    @register(PyramidHTTP)
-    class MyController:
-
-        @PyramidHTTP.view()
-        def myview(request):
-            # route name == myview
-            ...
-
-        @PyramidHTTP.view(route_name='myroute')
-        def myotherview(request):
-            # route name == myroute
-            ...
-
-.. note::
-
-    The decorator ``view`` is just a wrapper of `add_view
-    <http://docs.pylonsproject.org/docs/pyramid/en/latest/api/
-    config.html#pyramid.config.Configurator.add_view>`_
-
-    the args already filled by the wraper are:
-
-    * view: is the decorated function
-    * name: the default value is the name of the method or the first args
-
-Declare a ``route``::
-
-    PyramidHTTP.add_route('route name', '/my/path')
-
-.. note::
-
-    The function ``add_route`` is just a wrapper of `add_route
-    <http://docs.pylonsproject.org/docs/pyramid/en/latest/api/
-    config.html#pyramid.config.Configurator.add_route>`_
-
-    The args already filled by the wraper are:
-
-    * name: is the **route name**
-    * pattern: is the path
-
-.. warning::
-
-    It 's important to use the add_route of PyramidHTTP, because
-    when the view are add in configuration, this view check is the
-    **route name** exist in the routes.
-
-
-JSON-RPC controller
-~~~~~~~~~~~~~~~~~~~
-
-Get the ``Type`` of controller::
-
-    from anyblok import Declarations
-    PyramidJsonRPC = Declarations.PyramidJsonRPC
-    register = Declarations.register
-
-Declare a ``rpc method``::
-
-    @register(PyramidJsonRPC)
-    class MyController:
-
-        @PyramidJsonRPC.rpc_method()
-        def mymethod(request):
-            # method name == mymethod
-            ...
-
-        @PyramidJsonRPC.rpc_method('myroute')
-        def myothermethod(request):
-            # method name == myroute
-            ...
-
-.. note::
-
-    The decorator ``rpc_method`` is just a wrapper of `add_jsonrpc_method
-    <http://docs.pylonsproject.org/projects/pyramid-rpc/en/latest/
-    jsonrpc.html#pyramid_rpc.jsonrpc.add_jsonrpc_method>`_
-
-    the args already filled by the wraper are:
-
-    * view: is the decorated method
-    * endpoint: the default value is the name of the method or the first
-        args
-
-Declare a ``route``::
-
-    PyramidJsonRPC.add_route(PyramidJsonRPC.MyController, '/my/path')
-
-.. note::
-
-    The function ``add_route`` is just a wrapper of `add_jsonrpc_endpoint
-    <http://docs.pylonsproject.org/projects/pyramid-rpc/en/latest/
-    jsonrpc.html#pyramid_rpc.jsonrpc.add_jsonrpc_endpoint>`_
-
-    The args already filled by the wraper are:
-
-    * name: is the **route name**
-    * pattern: is the path
-
-.. warning::
-
-    It 's important to use the add_route of PyramidJsonRPC, because
-    when the view are add in configuration, this view check is the
-    **rpc method** exist in the routes.
-
-XML-RPC controller
-~~~~~~~~~~~~~~~~~~
-
-Get the ``Type`` of controller::
-
-    from anyblok import Declarations
-    PyramidXmlRPC = Declarations.PyramidXmlRPC
-    register = Declarations.register
-
-Declare a ``rpc method``::
-
-    @register(PyramidXmlRPC)
-    class MyController:
-
-        @PyramidXmlRPC.rpc_method()
-        def mymethod(request):
-            # method name == mymethod
-            ...
-
-        @PyramidXmlRPC.rpc_method('myroute')
-        def myothermethod(request):
-            # method name == myroute
-            ...
-
-.. note::
-
-    The decorator ``rpc_method`` is just a wrapper of `add_xmlrpc_method
-    <http://docs.pylonsproject.org/projects/pyramid-rpc/en/latest/
-    xmlrpc.html#pyramid_rpc.xmlrpc.add_xmlrpc_method>`_
-
-    the args already filled by the wraper are:
-
-    * view: is the decorated method
-    * endpoint: the default value is the name of the method or the first
-        args
-
-Declare a ``route``::
-
-    PyramidXmlRPC.add_route(PyramidXmlRPC.MyController, '/my/path')
-
-.. note::
-
-    The function ``add_route`` is just a wrapper of `add_xmlrpc_endpoint
-    <http://docs.pylonsproject.org/projects/pyramid-rpc/en/latest/
-    xmlrpc.html#pyramid_rpc.xmlrpc.add_xmlrpc_endpoint>`_
-
-    The args already filled by the wraper are:
-
-    * name: is the **route name**
-    * pattern: is the path
-
-.. warning::
-
-    It 's important to use the add_route of PyramidXmlRPC, because
-    when the view are add in configuration, this view check is the
-    **rpc method** exist in the routes.
-
-Pyramid ``Mixin``
-~~~~~~~~~~~~~~~~~
-
-Mixin is used to define behaviours on the controllers.
-
-
-Declare a ``Mixin``::
-
-    from anyblok import Declarations
-    register = Declarations.register
-    PyramidMixin = Declarations.PyramidMixin
-
-
-    @register(PyramidMixin)
-    class MyMixin:
-        ...
-
-Inherit a ``Mixin`` by a controller::
-
-    @register(PyramidHTTP)
-    class MyController(PyramidMixin.MyMixin):
-        ...
-
-Inherit a ``Mixin`` by another ``Mixin``::
-
-    @register(PyramidMixin)
-    class MyAnotherMixin(PyramidMixin.MyMixin):
-        ...
-
-
-Inheritance
-~~~~~~~~~~~
-
-The conbroller can inherit ``PyramidMixin`` and also Controller of the same
-``Type``::
-
-    @register(PyramidHTTP)
-    class MyController(PyramidHTTP.OtherController):
-        ...
-
-Pyramid ``Core``
-~~~~~~~~~~~~~~~~
-
-The ``Core`` used by the controller are:
-
-* ControllerBase: For all the controller
-* ControllerHTTP
-* ControllerRPC
-* ControllerJsonRPC
-* ControllerXmlRPC
-
-Overload a ``Core``::
-
-    @register(Core)
-    class ControllerBase:
-        ...
-
-Cache
-~~~~~
-
-Add a cache on a controller is as `cache on a model
-<http://doc.anyblok.org/MEMENTO.html#cache>`_.
-
-Declare a cache on a controller::
-
-    @register(PyramidHTTP):
-    class MyController:
-
-        @classmethod_method()
-        def mycachedmethod(cls):
-            ...
-
-Declare a cache on a ``Mixin``::
-
-    @registry(PyramidMixin)
-    class MyMixin:
-
-        @classmethod_method()
-        def mycachedmethod(cls):
-            ...
-
-    @register(PyramidHTTP):
-    class MyController(PyramidMixin.MyMixin):
-        ...
-
-Declare a cache on a ``Core``::
-
-    @registry(Core)
-    class PyramidBase:
-
-        @classmethod_method()
-        def mycachedmethod(cls):
-            ...
-
-    @register(PyramidHTTP):
-    class MyController:
-        ...
-
-.. warning::
-
-    The instance of controller are not the same for each call. Then use
-    ``Declarations.cache`` to cache in only one request else use
-    ``Declarations.classmethod_cache`` to cache a method for all the request
 
 WorkingSet
 ----------
@@ -378,9 +154,66 @@ Anyblok / Pyramid add two function to use callback:
 * `set_callable`: save a callback, the name of the callable is the name of the callback
 * `get_callable`: return a callback in function of this name
 
-for exemple, see the callable `get_registry`::
+for exemple, see the callable `get_db_name`::
 
-    registry = get_callable('get_registry')(request)
+    db_name = get_callable('get_db_name')(request)
+
+Define the name of the database
+-------------------------------
+
+The name of the database determine the registry use by the view.
+
+By default the name of the database come from the ``Configuration`` ``db_name``
+key. But it is possible to define a callback to define the good db name.
+
+Define an AnyBlok init function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In the setup of the package add new entry point::
+
+    setup(
+        ...
+        entry_points={
+            ...
+            'anyblok.init': ['get_db_name=package.path:add_get_db_name'],
+            ...
+        },
+        ...
+    )
+
+In the file ``path`` of the ``package`` add the method ``add_get_db_name``::
+
+    def add_get_db_name():
+        from anyblok_pyramid import set_callable
+
+        @set_callable
+        def get_db_name(request):
+            return ``My db Name``
+
+
+Define the db name in the request path
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is an example to define the good db name in function of the path of the
+method.
+
+This example work if the path id define like this::
+
+    config.add_route('one_route', '/{dbname}/foo/bar')
+
+
+The definition of ``get_db_name`` is::
+
+    def add_get_db_name():
+        from anyblok_pyramid import set_callable
+
+        @set_callable
+        def get_db_name(request):
+            return request.matchdict.get(
+                dbname',
+                Configuration.get('db_name'))
+
+
 
 Authentication and authorization
 --------------------------------
