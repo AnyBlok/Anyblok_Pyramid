@@ -69,8 +69,8 @@ By blok
            ...
 
            @classmethod
-           def update_pyramid_config(cls, config):
-               config.add_route('hello', '/hello/{name})
+           def pyramid_load_config(cls, config):
+               config.add_route('hello', '/hello/{name}')
                config.scan(cls.__module__ + '.views')
 
 
