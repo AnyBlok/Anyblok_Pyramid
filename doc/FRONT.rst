@@ -16,15 +16,15 @@ Information about the AnyBlok / Pyramid project.
 Project Homepage
 ----------------
 
-AnyBlok is hosted on `Bitbucket <http://bitbucket.org>`_ - the main project
-page is at https://bitbucket.org/jssuzanne/anyblok_pyramid. Source code is
-tracked here using `Mercurial <http://mercurial.selenic.com>`_.
+AnyBlok is hosted on `github <http://github.com>`_ - the main project
+page is at https://githusb.com/AnyBlok/AnyBlok_Pyramid. Source code is
+tracked here using `GIT <https://git-scm.com>`_.
 
 Releases and project status are available on Pypi at
 http://pypi.python.org/pypi/anyblok_pyramid.
 
 The most recent published version of this documentation should be at
-http://doc.pyramid.anyblok.org.
+http://doc.anyblok-pyramid.anyblok.org.
 
 Project Status
 --------------
