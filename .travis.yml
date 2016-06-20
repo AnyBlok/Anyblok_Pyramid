@@ -1,0 +1,36 @@
+language: python
+sudo: false
+
+python:
+  - "3.3"
+  - "3.4"
+  - "3.5"
+
+virtualenv:
+  system_site_packages: false
+
+services:
+  - postgresql
+
+install:
+  - pip install psycopg2
+  - pip install anyblok
+  - pip install flake8
+  - pip install coverage
+  - pip install nose
+  - pip install WebTest
+  - pip install coveralls
+  - python setup.py develop
+
+env:
+  global:
+    - ANYBLOK_DATABASE_NAME=travis_ci_test
+    - ANYBLOK_DATABASE_DRIVER=postgresql
+    - ANYBLOK_DATABASE_USER=postgres
+
+script:
+  - psql -c 'create database travis_ci_test;' -U postgres
+  - nosetests anyblok_pyramid/tests -v -s --with-coverage --cover-package=anyblok_pyramid
+  
+after_success:
+  coveralls
