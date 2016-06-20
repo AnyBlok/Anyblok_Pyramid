@@ -14,4 +14,4 @@ AnyBlok / Pyramid make the link between `AnyBlok <http://doc.anyblok.org>`_ and
 
 AnyBlok / Pyramid is released under the terms of the `Mozilla Public License`.
 
-See the `latest documentation <http://docs.pyramid.anyblok.org/>`_
+See the `latest documentation <http://doc.anyblok-pyramid.anyblok.org/>`_
