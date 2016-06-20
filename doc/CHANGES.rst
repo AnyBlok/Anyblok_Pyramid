@@ -12,8 +12,11 @@
 CHANGELOG
 =========
 
-Future
-------
+0.6.2 (2016-06-20)
+------------------
+
+* [FIX] utf-8 encoding in setup, need for readthedocs
+* [REF] move from bitbucket (mercurial) to github (git)
 
 0.6.1 (2016-04-18)
 ------------------
