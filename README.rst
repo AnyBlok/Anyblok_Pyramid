@@ -17,6 +17,11 @@
 .. image:: https://img.shields.io/pypi/v/Anyblok_Pyramid.svg
    :target: https://pypi.python.org/pypi/Anyblok_Pyramid/
    :alt: Version status
+         
+.. image:: https://readthedocs.org/projects/anyblok-pyramid/badge/?version=latest
+    :alt: Documentation Status
+    :scale: 100%
+    :target: https://doc.anyblok-pyramid.anyblok.org/en/latest/?badge=latest
 
 
 AnyBlok / Pyramid
