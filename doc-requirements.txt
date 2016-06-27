@@ -1,4 +1,4 @@
-anyblok==0.2.2
+anyblok
 nose
 WebTest
 sphinx_bootstrap_theme
