@@ -17,18 +17,18 @@ requires = [
 ]
 
 here = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(here, 'README.rst')) as readme:
+with open(os.path.join(here, 'README.rst'), 'r', encoding='utf-8') as readme:
     README = readme.read()
 
 setup(
     name="anyblok_pyramid",
     version=version,
-    author="ean-Sébastien Suzanne",
+    author="Jean-Sébastien Suzanne",
     author_email="jssuzanne@anybox.fr",
     description="Web Server Pyramid for AnyBlok",
     license="MPL2",
     long_description='',
-    url="https://bitbucket.org/jsuzanne/anyblok_pyramid",
+    url="docs.anyblok-pyramid.anyblok.org/" + version,
     packages=find_packages(),
     zip_safe=False,
     include_package_data=True,
