@@ -17,13 +17,17 @@ requires = [
 ]
 
 here = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(here, 'README.rst')) as readme:
+with open(os.path.join(here, 'README.rst'), 'r', encoding='utf-8') as readme:
     README = readme.read()
 
-with open(os.path.join(here, 'doc', 'FRONT.rst')) as front:
+with open(
+    os.path.join(here, 'doc', 'FRONT.rst'), 'r', encoding='utf-8'
+) as front:
     FRONT = front.read()
 
-with open(os.path.join(here, 'doc', 'CHANGES.rst')) as change:
+with open(
+    os.path.join(here, 'doc', 'CHANGES.rst'), 'r', encoding='utf-8'
+) as change:
     CHANGE = change.read()
 
 console_scripts = [
@@ -33,12 +37,12 @@ console_scripts = [
 setup(
     name="anyblok_pyramid",
     version=version,
-    author="ean-Sébastien Suzanne",
+    author="Jean-Sébastien Suzanne",
     author_email="jssuzanne@anybox.fr",
     description="Web Server Pyramid for AnyBlok",
     license="MPL2",
     long_description=README + '\n' + FRONT + '\n' + CHANGE,
-    url="https://bitbucket.org/jsuzanne/anyblok_pyramid",
+    url="http://docs.anyblok-pyramid.anyblok.org/" + version,
     packages=find_packages(),
     zip_safe=False,
     include_package_data=True,
