@@ -1,0 +1,3 @@
+anyblok==0.3.3
+WebTest
+sphinx_bootstrap_theme
