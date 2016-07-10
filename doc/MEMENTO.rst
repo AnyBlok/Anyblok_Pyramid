@@ -145,19 +145,6 @@ the predicate condition is validated. AnyBlok / Pyramid add the predicate
             return Response("Welcome in AnyBlok application, you have %d installed "
                             "bloks" % nb_installed_bloks)
 
-
-WorkingSet
-----------
-
-Anyblok / Pyramid add two function to use callback:
-
-* `set_callable`: save a callback, the name of the callable is the name of the callback
-* `get_callable`: return a callback in function of this name
-
-for exemple, see the callable `get_db_name`::
-
-    db_name = get_callable('get_db_name')(request)
-
 Define the name of the database
 -------------------------------
 
@@ -184,11 +171,14 @@ In the setup of the package add new entry point::
 In the file ``path`` of the ``package`` add the method ``add_get_db_name``::
 
     def add_get_db_name():
-        from anyblok_pyramid import set_callable
+        from anyblok.config import Configuration
 
-        @set_callable
         def get_db_name(request):
             return ``My db Name``
+
+        @Configuration.add('plugins'):
+        def update_plugins(group):
+            group.set_defaults(get_db_name=get_db_name)
 
 
 Define the db name in the request path
@@ -205,13 +195,16 @@ This example work if the path id define like this::
 The definition of ``get_db_name`` is::
 
     def add_get_db_name():
-        from anyblok_pyramid import set_callable
+        from anyblok.config import Configuration
 
-        @set_callable
         def get_db_name(request):
             return request.matchdict.get(
                 dbname',
                 Configuration.get('db_name'))
+
+        @Configuration.add('plugins'):
+        def update_plugins(group):
+            group.set_defaults(get_db_name=get_db_name)
 
 
 
@@ -276,14 +269,6 @@ Add the includeme in the entry point::
             },
             ...,
         )
-
-.. note::
-
-    You can get the session, with the callback get_registry::
-
-        from anyblok_pyramid import get_callable
-        # only if get_registry is implemented for you use case
-        registry = get_callable('get_registry')(request)
 
 .. note::
 
