@@ -5,7 +5,7 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from anyblok.config import Configuration
+from anyblok.config import Configuration, AnyBlokPlugin
 from .release import version
 import os
 
@@ -22,6 +22,10 @@ Configuration.applications.update({
         'configuration_groups': ['gunicorn', 'database'],
     },
 })
+
+
+def get_db_name(request):
+    return Configuration.get('db_name')
 
 
 @Configuration.add('preload', label="Preload")
@@ -98,3 +102,11 @@ def add_configuration_file(parser):
     parser.add_argument('--without-auto-migration',
                         dest='withoutautomigration',
                         action='store_true')
+
+
+@Configuration.add('plugins')
+def update_plugins(group):
+    group.add_argument('--get-db-name-plugin',
+                       dest='get_db_name', type=AnyBlokPlugin,
+                       default='anyblok_pyramid.config:get_db_name',
+                       help="get_db_name function to use")

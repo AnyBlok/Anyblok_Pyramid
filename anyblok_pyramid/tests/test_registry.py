@@ -8,7 +8,7 @@
 from .testcase import PyramidDBTestCase
 from anyblok.config import Configuration
 from pyramid.response import Response
-from anyblok_pyramid import set_callable, get_db_name
+from anyblok_pyramid.config import get_db_name
 
 
 def _get_db_name(request):
@@ -23,7 +23,7 @@ class TestRegistry(PyramidDBTestCase):
 
     def tearDown(self):
         super(TestRegistry, self).tearDown()
-        set_callable(get_db_name)
+        Configuration.update(get_db_name=get_db_name)
 
     def add_route_and_views(self, config):
         config.add_route('dbname', '/test/')
@@ -36,24 +36,24 @@ class TestRegistry(PyramidDBTestCase):
         self.assertEqual(Configuration.get('db_name'), res.body.decode('utf8'))
 
     def test_registry_by_wrong_name(self):
-        @set_callable
-        def get_db_name(request):
+        def __get_db_name(request):
             return 'wrong_db_name'
 
+        Configuration.update(get_db_name=__get_db_name)
         self.includemes.append(self.add_route_and_views)
         webserver = self.init_web_server()
         res = webserver.get('/test/', status=200)
         self.assertFalse(res.body)
 
     def test_registry_by_path(self):
-        @set_callable
-        def get_db_name(request):
+        def __get_db_name(request):
             return request.matchdict['dbname']
 
         def add_route_and_views(config):
             config.add_route('dbname', '/test/{dbname}/')
             config.add_view(_get_db_name, route_name='dbname')
 
+        Configuration.update(get_db_name=__get_db_name)
         self.includemes.append(add_route_and_views)
         webserver = self.init_web_server()
         res = webserver.get('/test/%s/' % Configuration.get('db_name'),
