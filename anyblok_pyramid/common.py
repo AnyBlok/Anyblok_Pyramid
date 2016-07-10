@@ -8,7 +8,6 @@
 from anyblok.config import Configuration
 from .anyblok import AnyBlokZopeTransactionExtension
 from anyblok.registry import RegistryManager
-from sqlalchemy_utils.functions import database_exists
 from logging import getLogger
 
 logger = getLogger(__name__)
@@ -24,6 +23,7 @@ def get_registry_for(dbname):
 def preload_databases():
     dbnames = Configuration.get('db_names') or []
     dbname = Configuration.get('db_name')
+    Registry = Configuration.get('Registry')
     if dbname not in dbnames:
         dbnames.append(dbname)
 
@@ -31,9 +31,8 @@ def preload_databases():
     dbnames = [x for x in dbnames if x]
     logger.info("Preload the databases : %s", ', '.join(dbnames))
     for dbname in dbnames:
-        url = Configuration.get_url(db_name=dbname)
         logger.info("Preload the database : %r", dbname)
-        if database_exists(url):
+        if Registry.db_exists(db_name=dbname):
             registry = get_registry_for(dbname)
             registry.commit()
             registry.session.close()
