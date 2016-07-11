@@ -12,8 +12,8 @@
 CHANGELOG
 =========
 
-Future
-------
+0.7.0 (2016-07-11)
+------------------
 
 * [FIX] Adapte for new release of AnyBlok 0.9.0
 * [Add] Plugin get_db_name
