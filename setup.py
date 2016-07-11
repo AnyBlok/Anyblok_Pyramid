@@ -51,7 +51,7 @@ setup(
     description="Web Server Pyramid for AnyBlok",
     license="MPL2",
     long_description=README + '\n' + FRONT + '\n' + CHANGE,
-    url="doc.anyblok-pyramid.anyblok.org/" + version,
+    url="http://docs.anyblok-pyramid.anyblok.org/" + version,
     packages=find_packages(),
     zip_safe=False,
     include_package_data=True,
