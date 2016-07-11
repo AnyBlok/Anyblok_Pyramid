@@ -5,30 +5,13 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from anyblok.config import Configuration
 from anyblok.blok import BlokManager
 import inspect
 
 
-callables = {}
-
-
-def set_callable(c):
-    callables[c.__name__] = c
-    return c
-
-
-def get_callable(k):
-    return callables[k]
-
-
-def anyblok_init_config():
+def anyblok_init_config(unittest=False):
+    from anyblok import config  # noqa import anyblok.config
     from . import config  # noqa import config definition
-
-
-@set_callable
-def get_db_name(request):
-    return Configuration.get('db_name')
 
 
 class AnyBlokPyramidException(Exception):

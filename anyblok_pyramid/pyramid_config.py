@@ -10,9 +10,7 @@ from pyramid.config import Configurator as PConfigurator
 from anyblok.blok import BlokManager
 from anyblok.config import Configuration
 from pkg_resources import iter_entry_points
-from sqlalchemy_utils.functions import database_exists
 from .common import get_registry_for
-from . import get_callable
 from logging import getLogger
 logger = getLogger(__name__)
 
@@ -39,9 +37,8 @@ class AnyBlokRequest:
             The db_name must be defined
 
         """
-        dbname = get_callable('get_db_name')(self.request)
-        url = Configuration.get_url(db_name=dbname)
-        if database_exists(url):
+        dbname = Configuration.get('get_db_name')(self.request)
+        if Configuration.get('Registry').db_exists(db_name=dbname):
             return get_registry_for(dbname)
         else:
             return None

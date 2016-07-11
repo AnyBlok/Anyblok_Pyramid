@@ -12,6 +12,14 @@
 CHANGELOG
 =========
 
+Future
+------
+
+* [FIX] Adapte for new release of AnyBlok 0.9.0
+* [Add] Plugin get_db_name
+* [ADD] some unittest
+* [REF] Update doc
+
 0.6.3 (2016-06-20)
 ------------------
 

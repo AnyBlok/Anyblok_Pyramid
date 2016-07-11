@@ -10,7 +10,7 @@ import os
 version = '0.6.3'
 
 requires = [
-    'anyblok',
+    'anyblok>=0.9.0',
     'pyramid',
     'pyramid_tm',
     'zope.sqlalchemy',

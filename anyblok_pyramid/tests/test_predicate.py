@@ -7,7 +7,8 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from .testcase import PyramidDBTestCase
 from pyramid.response import Response
-from anyblok_pyramid import set_callable, get_db_name
+from anyblok_pyramid.config import get_db_name
+from anyblok.config import Configuration
 
 
 def uninstalled(request):
@@ -27,7 +28,7 @@ class TestViewPredicate(PyramidDBTestCase):
 
     def tearDown(self):
         super(TestViewPredicate, self).tearDown()
-        set_callable(get_db_name)
+        Configuration.update(get_db_name=get_db_name)
 
     def add_route_and_views(self, config):
         config.add_route('test', '/test/')
@@ -75,10 +76,10 @@ class TestViewPredicate(PyramidDBTestCase):
         webserver.get('/test/', status=200)
 
     def test_need_anyblok_registry_ko(self):
-        @set_callable
-        def get_db_name(request):
+        def __get_db_name(request):
             return 'wrong_db_name'
 
+        Configuration.update(get_db_name=__get_db_name)
         self.includemes.append(self.add_route_and_views2)
         webserver = self.init_web_server()
         webserver.get('/test/', status=404)
@@ -86,10 +87,10 @@ class TestViewPredicate(PyramidDBTestCase):
     def test_need_anyblok_registry_ok2(self):
         self.need_anyblok_registry = False
 
-        @set_callable
-        def get_db_name(request):
+        def __get_db_name(request):
             return 'wrong_db_name'
 
+        Configuration.update(get_db_name=__get_db_name)
         self.includemes.append(self.add_route_and_views2)
         webserver = self.init_web_server()
         webserver.get('/test/', status=200)
@@ -104,7 +105,7 @@ class TestRoutePredicate(PyramidDBTestCase):
 
     def tearDown(self):
         super(TestRoutePredicate, self).tearDown()
-        set_callable(get_db_name)
+        Configuration.update(get_db_name=get_db_name)
 
     def add_route_and_views(self, config):
         config.add_route('test', '/test/', installed_blok=self.installed_blok)
@@ -146,10 +147,10 @@ class TestRoutePredicate(PyramidDBTestCase):
         webserver.get('/test/', status=200)
 
     def test_need_anyblok_registry_ko(self):
-        @set_callable
-        def get_db_name(request):
+        def __get_db_name(request):
             return 'wrong_db_name'
 
+        Configuration.update(get_db_name=__get_db_name)
         self.includemes.append(self.add_route_and_views2)
         webserver = self.init_web_server()
         webserver.get('/test/', status=404)
@@ -157,10 +158,10 @@ class TestRoutePredicate(PyramidDBTestCase):
     def test_need_anyblok_registry_ok2(self):
         self.need_anyblok_registry = False
 
-        @set_callable
-        def get_db_name(request):
+        def __get_db_name(request):
             return 'wrong_db_name'
 
+        Configuration.update(get_db_name=__get_db_name)
         self.includemes.append(self.add_route_and_views2)
         webserver = self.init_web_server()
         webserver.get('/test/', status=200)
