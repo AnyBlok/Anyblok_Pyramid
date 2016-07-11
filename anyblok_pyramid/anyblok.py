@@ -148,8 +148,8 @@ def join_transaction(session, initial_state=STATUS_ACTIVE,
 def mark_changed(session, transaction_manager=zope_transaction.manager,
                  keep_session=False):
     session_id = id(session)
-    msg = "Session already registered as read only"
-    assert _SESSION_STATE.get(session_id, None) is not STATUS_READONLY, msg
+    assert (_SESSION_STATE.get(session_id, None) is not STATUS_READONLY,
+            "Session already registered as read only")
     join_transaction(session, STATUS_CHANGED, transaction_manager, keep_session)
     _SESSION_STATE[session_id] = STATUS_CHANGED
 
@@ -174,9 +174,6 @@ class AnyBlokZopeTransactionExtension(ZopeTransactionExtension):
         mark_changed(session, self.transaction_manager, self.keep_session)
 
     def before_commit(self, session):
-        condition = (
-            session.transaction.nested or
-            self.transaction_manager.get().status == ZopeStatus.COMMITTING
-        )
-        message = "Transaction must be committed using the transaction manager"
-        assert condition, message
+        assert (session.transaction.nested or
+                self.transaction_manager.get().status == ZopeStatus.COMMITTING,
+                "Transaction must be committed using the transaction manager")
