@@ -29,6 +29,7 @@ env:
     - ANYBLOK_DATABASE_USER=postgres
 
 script:
+  - flake8 anyblok_pyramid --ignore F999
   - psql -c 'create database travis_ci_test;' -U postgres
   - nosetests anyblok_pyramid/tests -v -s --with-coverage --cover-package=anyblok_pyramid
   
