@@ -41,34 +41,34 @@ class TestViewPredicate(PyramidDBTestCase):
         config.add_view(installed, route_name='test',
                         need_anyblok_registry=self.need_anyblok_registry)
 
-    def assetOK(self):
+    def assertOK(self):
         resp = self.webserver.get('/test/', status=200)
         self.assertEqual(resp.body.decode('utf8'), 'ok')
 
-    def assetKO(self):
+    def assertKO(self):
         resp = self.webserver.get('/test/', status=200)
         self.assertEqual(resp.body.decode('utf8'), 'ko')
 
     def test_installed_blok(self):
         self.includemes.append(self.add_route_and_views)
         self.init_registry(None)
-        self.assetOK()
+        self.assertOK()
 
     def test_uninstalled_blok(self):
         self.installed_blok = 'anyblok-io'
         self.includemes.append(self.add_route_and_views)
         self.init_registry(None)
-        self.assetKO()
+        self.assertKO()
 
     def test_before_and_after_install_blok(self):
         self.installed_blok = 'anyblok-io'
         self.includemes.append(self.add_route_and_views)
         registry = self.init_registry(None)
-        self.assetKO()
+        self.assertKO()
         registry.upgrade(install=['anyblok-io'])
-        self.assetOK()
+        self.assertOK()
         registry.upgrade(uninstall=['anyblok-io'])
-        self.assetKO()
+        self.assertKO()
 
     def test_need_anyblok_registry_ok(self):
         self.includemes.append(self.add_route_and_views2)
@@ -116,14 +116,14 @@ class TestRoutePredicate(PyramidDBTestCase):
         config.add_view(installed, route_name='test',
                         need_anyblok_registry=self.need_anyblok_registry)
 
-    def assetOK(self):
+    def assertOK(self):
         resp = self.webserver.get('/test/', status=200)
         self.assertEqual(resp.body.decode('utf8'), 'ok')
 
     def test_installed_blok(self):
         self.includemes.append(self.add_route_and_views)
         self.init_registry(None)
-        self.assetOK()
+        self.assertOK()
 
     def test_uninstalled_blok(self):
         self.installed_blok = 'anyblok-io'
@@ -137,7 +137,7 @@ class TestRoutePredicate(PyramidDBTestCase):
         registry = self.init_registry(None)
         self.webserver.get('/test/', status=404)
         registry.upgrade(install=['anyblok-io'])
-        self.assetOK()
+        self.assertOK()
         registry.upgrade(uninstall=['anyblok-io'])
         self.webserver.get('/test/', status=404)
 
