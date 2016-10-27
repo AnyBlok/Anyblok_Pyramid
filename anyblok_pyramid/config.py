@@ -104,7 +104,7 @@ def add_configuration_file(parser):
                         action='store_true')
 
 
-@Configuration.add('plugins')
+@Configuration.add('plugins', must_be_loaded_by_unittest=True)
 def update_plugins(group):
     group.add_argument('--get-db-name-plugin',
                        dest='get_db_name', type=AnyBlokPlugin,
