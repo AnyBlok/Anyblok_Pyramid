@@ -12,8 +12,8 @@
 CHANGELOG
 =========
 
-0.7.1
------
+0.7.1 (2016-12-05)
+------------------
 
 * [FIX] add pluggins in autoload configuration for unittest
 * [FIX] type replace asset by assert
