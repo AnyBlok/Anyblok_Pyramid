@@ -54,6 +54,9 @@ class Config(GunicornConfig):
 
         _configuration_groups = description.pop('configuration_groups',
                                                 ['gunicorn', 'database'])
+        if 'plugins' not in _configuration_groups:
+            _configuration_groups.append('plugins')
+
         configuration_groups = set(self.configuration_groups or []).union(
             _configuration_groups)
         Configuration._load(parser, configuration_groups,
