@@ -17,6 +17,7 @@ CHANGELOG
 
 * [FIX] add pluggins in autoload configuration for unittest
 * [FIX] type replace asset by assert
+* [FIX] fix gunicorn script, load the plugins config part
 
 0.7.0 (2016-07-11)
 ------------------
