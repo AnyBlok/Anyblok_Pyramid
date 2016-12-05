@@ -71,11 +71,11 @@ class WSGIApplication(Application):
 
     def __init__(self, application, configuration_groups=None):
         self.configuration_groups = configuration_groups
+        load_init_function_from_entry_points()
         conf = Configuration.applications.get(application, {})
         usage = conf.get('usage')
         prog = conf.get('prog')
         self.application = application
-        load_init_function_from_entry_points()
         super(WSGIApplication, self).__init__(usage=usage, prog=prog)
 
     def load_default_config(self):
