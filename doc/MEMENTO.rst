@@ -304,3 +304,15 @@ In the case where you need to return json value you can format the data with:
         },
         ...,
     )
+
+ .. note::
+
+    Since **0.7.2**, Some adapter have already add in the module ``anyblok_pyramid.adapter``.
+
+    ::
+
+        from anyblok_pyramid.adapter import datetime_adapter
+        from pyramid.renderers import JSON
+        json_renderer = JSON()
+        json_renderer.add_adapter(datetime, datetime_adapter)
+        config.add_renderer('json', json_renderer)

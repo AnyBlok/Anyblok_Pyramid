@@ -58,7 +58,7 @@ setup(
     install_requires=requires,
     tests_require=requires + ['nose', 'WebTest'],
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
@@ -68,7 +68,6 @@ setup(
         'Framework :: Pyramid',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Internet :: WWW/HTTP :: HTTP Servers',
-        'Topic :: Internet :: WWW/HTTP :: Session',
         'Topic :: Internet :: WWW/HTTP :: WSGI :: Server',
         'License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)',
     ],

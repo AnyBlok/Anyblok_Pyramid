@@ -43,6 +43,26 @@ pyramid_config.includeme
 .. autofunction:: static_paths
     :noindex:
 
+anyblok_pyramid.adapter module
+------------------------------
+
+.. automodule:: anyblok_pyramid.adapter
+
+.. autofunction:: datetime_adapter
+    :noindex:
+
+.. autofunction:: date_adapter
+    :noindex:
+
+.. autofunction:: uuid_adapter
+    :noindex:
+
+.. autofunction:: bytes_adapter
+    :noindex:
+
+.. autofunction:: decimal_adapter
+    :noindex:
+
 anyblok_pyramid.scripts module
 ------------------------------
 
