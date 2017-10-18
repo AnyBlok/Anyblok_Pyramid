@@ -13,8 +13,8 @@
 CHANGELOG
 =========
 
-futur
------
+0.7.2 (2017-10-18)
+------------------
 
 * [ADD] Some apdater to convert to json
 
