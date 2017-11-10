@@ -18,6 +18,7 @@ Futur
 
 * [ADD]: add ``dramatiq-broker`` in configuration groups of pyramid and gunicorn
   apps
+* [DEL] Remove configuration group definition ``preload``
 
 0.7.2 (2017-10-18)
 ------------------
