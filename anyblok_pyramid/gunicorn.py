@@ -15,7 +15,10 @@ from anyblok.blok import BlokManager
 from .pyramid_config import Configurator
 import argparse
 import six
-from anyblok import load_init_function_from_entry_points
+from anyblok import (
+    load_init_function_from_entry_points,
+    configuration_post_load,
+)
 from .common import preload_databases
 from logging import getLogger
 logger = getLogger(__name__)
@@ -96,6 +99,8 @@ class WSGIApplication(Application):
                 value = Configuration.get(name)
                 if value:
                     self.cfg.settings[name].set(value)
+
+        configuration_post_load()
 
     def load(self):
         BlokManager.load()

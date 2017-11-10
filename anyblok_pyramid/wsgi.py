@@ -13,7 +13,10 @@ from anyblok_pyramid.pyramid_config import Configurator
 from anyblok.config import Configuration
 from os import environ, path
 from appdirs import AppDirs
-from anyblok import load_init_function_from_entry_points
+from anyblok import (
+    load_init_function_from_entry_points,
+    configuration_post_load,
+)
 
 if BlokManager.bloks:
     # AnyBlok already load, the state are not sure, better to stop here
@@ -35,6 +38,7 @@ if configfile:
 if 'logging_level' in Configuration.configuration:
     Configuration.initialize_logging()
 
+configuration_post_load()
 BlokManager.load()
 preload_databases()
 config = Configurator()

@@ -12,7 +12,10 @@ from anyblok.scripts import format_configuration
 from anyblok.config import Configuration
 from .pyramid_config import Configurator
 import sys
-from anyblok import load_init_function_from_entry_points
+from anyblok import (
+    load_init_function_from_entry_points,
+    configuration_post_load,
+)
 from .common import preload_databases
 from logging import getLogger
 logger = getLogger(__name__)
@@ -29,6 +32,7 @@ def anyblok_wsgi(application, configuration_groups, **kwargs):
     load_init_function_from_entry_points()
     Configuration.load(application,
                        configuration_groups=configuration_groups, **kwargs)
+    configuration_post_load()
     BlokManager.load()
     config = Configurator()
     config.include_from_entry_point()
