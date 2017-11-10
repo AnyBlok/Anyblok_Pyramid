@@ -13,6 +13,12 @@
 CHANGELOG
 =========
 
+Futur
+-----
+
+* [ADD]: add ``dramatiq-broker`` in configuration groups of pyramid and gunicorn
+  apps
+
 0.7.2 (2017-10-18)
 ------------------
 

@@ -14,12 +14,11 @@ Configuration.applications.update({
     'pyramid': {
         'prog': 'AnyBlok simple wsgi app, version %r' % version,
         'description': "WSGI for test your AnyBlok / Pyramid app",
-        'configuration_groups': ['config', 'database'],
     },
     'gunicorn': {
         'prog': 'AnyBlok gunicorn wsgi app, version %r' % version,
         'description': "GUNICORN for test your AnyBlok / Pyramid app",
-        'configuration_groups': ['gunicorn', 'database'],
+        'configuration_groups': ['gunicorn', 'database', 'dramatiq-broker'],
     },
 })
 
