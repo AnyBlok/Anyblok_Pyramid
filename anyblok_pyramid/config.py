@@ -18,7 +18,7 @@ Configuration.applications.update({
     'gunicorn': {
         'prog': 'AnyBlok gunicorn wsgi app, version %r' % version,
         'description': "GUNICORN for test your AnyBlok / Pyramid app",
-        'configuration_groups': ['gunicorn', 'database', 'dramatiq-broker'],
+        'configuration_groups': ['gunicorn', 'database'],
     },
 })
 
