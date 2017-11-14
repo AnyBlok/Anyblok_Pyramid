@@ -16,8 +16,6 @@ CHANGELOG
 Futur
 -----
 
-* [ADD]: add ``dramatiq-broker`` in configuration groups of pyramid and gunicorn
-  apps
 * [DEL] Remove configuration group definition ``preload``
 * [REF] use ``configuration_post_load`` function to initialize services
 
