@@ -13,8 +13,8 @@
 CHANGELOG
 =========
 
-Futur
------
+0.8.0 (2017-10-14)
+------------------
 
 * [DEL] Remove configuration group definition ``preload``
 * [REF] use ``configuration_post_load`` function to initialize services
