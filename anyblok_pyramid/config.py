@@ -14,7 +14,6 @@ Configuration.applications.update({
     'pyramid': {
         'prog': 'AnyBlok simple wsgi app, version %r' % version,
         'description': "WSGI for test your AnyBlok / Pyramid app",
-        'configuration_groups': ['config', 'database'],
     },
     'gunicorn': {
         'prog': 'AnyBlok gunicorn wsgi app, version %r' % version,
@@ -26,12 +25,6 @@ Configuration.applications.update({
 
 def get_db_name(request):
     return Configuration.get('db_name')
-
-
-@Configuration.add('preload', label="Preload")
-def define_preload_option(group):
-    group.add_argument('--databases', dest='db_names', nargs="+",
-                       help='List of the database allow to be load')
 
 
 @Configuration.add('wsgi', label="WSGI")
