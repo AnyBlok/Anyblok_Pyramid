@@ -13,8 +13,8 @@
 CHANGELOG
 =========
 
-0.8.1
------
+0.8.1 (2017-11-28)
+------------------
 
 * [REF] replace the overload of ``init_registry`` by ``init_registry_with_bloks``
 
