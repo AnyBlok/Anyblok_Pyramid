@@ -29,8 +29,9 @@ class PyramidTestCase:
 
 class PyramidDBTestCase(PyramidTestCase, DBTestCase):
 
-    def init_registry(self, function, **kwargs):
-        res = super(PyramidDBTestCase, self).init_registry(function, **kwargs)
+    def init_registry_with_bloks(self, *args, **kwargs):
+        res = super(PyramidDBTestCase, self).init_registry_with_bloks(
+            *args, **kwargs)
         self.webserver = self.init_web_server()
         return res
 
