@@ -85,6 +85,7 @@ class AnyBlokSessionDataManager:
         return self._savepoint
 
     def _savepoint(self):
+        self.registry.System.Cache.clear_invalidate_cache()
         return AnyBlokSessionSavepoint(self.registry)
 
     def should_retry(self, error):

@@ -13,6 +13,11 @@
 CHANGELOG
 =========
 
+0.8.2
+-----
+
+* [FIX] anyblok cache invalidation
+
 0.8.1 (2017-11-28)
 ------------------
 
