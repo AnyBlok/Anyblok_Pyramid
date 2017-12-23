@@ -2,6 +2,7 @@
 # This file is a part of the AnyBlok / Pyramid project
 #
 #    Copyright (C) 2015 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
+#    Copyright (C) 2017 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
 #
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
@@ -20,6 +21,7 @@ from anyblok.environment import EnvironmentManager
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm.exc import ConcurrentModificationError
 from sqlalchemy.exc import DBAPIError
+from sqlalchemy import event
 
 
 class AnyBlokSessionDataManager:
@@ -178,3 +180,18 @@ class AnyBlokZopeTransactionExtension(ZopeTransactionExtension):
         assert (session.transaction.nested or  # noqa
                 self.transaction_manager.get().status == ZopeStatus.COMMITTING,
                 "Transaction must be committed using the transaction manager")
+
+
+def register(session, initial_state=STATUS_ACTIVE,
+             transaction_manager=zope_transaction.manager, keep_session=False):
+    ext = AnyBlokZopeTransactionExtension(
+        initial_state=initial_state,
+        transaction_manager=transaction_manager,
+        keep_session=keep_session,
+    )
+    event.listen(session, "after_begin", ext.after_begin)
+    event.listen(session, "after_attach", ext.after_attach)
+    event.listen(session, "after_flush", ext.after_flush)
+    event.listen(session, "after_bulk_update", ext.after_bulk_update)
+    event.listen(session, "after_bulk_delete", ext.after_bulk_delete)
+    event.listen(session, "before_commit", ext.before_commit)
