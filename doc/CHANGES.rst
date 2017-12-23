@@ -13,10 +13,11 @@
 CHANGELOG
 =========
 
-0.8.2
------
+0.8.2 (2017-12-23)
+------------------
 
 * [FIX] anyblok cache invalidation
+* [FIX] replace SQLAlchemy deprecated extension by session events
 
 0.8.1 (2017-11-28)
 ------------------
