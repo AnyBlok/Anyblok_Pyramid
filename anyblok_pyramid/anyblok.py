@@ -32,13 +32,13 @@ class AnyBlokSessionDataManager:
         self.registry = session._query_cls.registry
         self.transaction = self.registry.session.transaction
         transaction_manager.get().join(self)
-        _SESSION_STATE[id(session)] = status
+        _SESSION_STATE[session] = status
         self.state = 'init'
         self.keep_session = keep_session
 
     def _finish(self, final_state):
         assert self.transaction is not None
-        del _SESSION_STATE[id(self.registry.session)]
+        del _SESSION_STATE[self.registry.session]
         registry = self.registry
         self.transaction = self.registry = None
         self.state = final_state
@@ -57,7 +57,7 @@ class AnyBlokSessionDataManager:
         self.registry.session.flush()
 
     def commit(self, trans):
-        status = _SESSION_STATE[id(self.registry.session)]
+        status = _SESSION_STATE[self.registry.session]
         if status is not STATUS_INVALIDATED:
             if self.registry.session.expire_on_commit:
                 self.registry.session.expire_all()
@@ -139,7 +139,7 @@ class AnyBlokSessionSavepoint:
 def join_transaction(session, initial_state=STATUS_ACTIVE,
                      transaction_manager=zope_transaction.manager,
                      keep_session=False):
-    if _SESSION_STATE.get(id(session), None) is None:
+    if _SESSION_STATE.get(session, None) is None:
         if session.twophase:
             DataManager = AnyBlokTwoPhaseSessionDataManager
         else:
@@ -150,7 +150,7 @@ def join_transaction(session, initial_state=STATUS_ACTIVE,
 
 def mark_changed(session, transaction_manager=zope_transaction.manager,
                  keep_session=False):
-    session_id = id(session)
+    session_id = session
     assert _SESSION_STATE.get(session_id, None) is not STATUS_READONLY, (
         "Session already registered as read only")
     join_transaction(session, STATUS_CHANGED, transaction_manager, keep_session)
