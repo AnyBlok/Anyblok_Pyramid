@@ -13,6 +13,11 @@
 CHANGELOG
 =========
 
+0.9.0
+-----
+
+* [ADD] Authentication configuration
+
 0.8.2 (2017-12-23)
 ------------------
 

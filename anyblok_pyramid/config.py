@@ -37,6 +37,96 @@ def define_wsgi_option(group):
         default=os.environ.get('ANYBLOK_PYRAMID_WSGI_PORT', 5000))
 
 
+@Configuration.add('auth', label="Authentication and Authorization",
+                   must_be_loaded_by_unittest=True)
+def define_auth_option(group):
+    group.add_argument(
+        '--pyramid-authentication-method', type=AnyBlokPlugin,
+        default='pyramid.authentication:AuthTktAuthenticationPolicy',
+        help="authentication function to use")
+    group.add_argument(
+        '--pyramid-authentication-debug',
+        default=os.environ.get('ANYBLOK_PYRAMID_AUTHENTICATION_DEBUG', False),
+        help=(
+            "If debug is True, log messages to the Pyramid debug logger about "
+            "the results of various authentication stepsn"
+        ),
+        action='store_true')
+    group.add_argument(
+        '--pyramid-authentication-callback', type=AnyBlokPlugin,
+        default='anyblok_pyramid.security:group_finder',
+        help=(
+            "A callback passed the userid and the request, expected to return "
+            "None if the userid doesn’t exist or a sequence of principal "
+            "identifiers (possibly empty) if the user does exist. If callback "
+            "is None, the userid will be assumed to exist with no principals"
+        ))
+
+    # AuthTktAuthenticationPolicy
+    group.add_argument(
+        '--pyramid-authtkt-secret',
+        default=os.environ.get('ANYBLOK_PYRAMID_AUTHTKT_SECRET', 'secret'),
+        help=(
+            "The secret (a string) used for auth_tkt cookie signing. This "
+            "value should be unique across all values provided to Pyramid "
+            "for various subsystem secrets"
+        ))
+    group.add_argument(
+        '--pyramid-authtkt-cookie-name',
+        default=os.environ.get('ANYBLOK_PYRAMID_AUTHTKT_COOKIE_NAME', None),
+        help="The cookie name used")
+    group.add_argument(
+        '--pyramid-authtkt-unsecure',
+        default=os.environ.get('ANYBLOK_PYRAMID_AUTHTKT_UNSECURE', False),
+        help="Only send the cookie back over an unsecure conn",
+        action='store_true')
+    group.add_argument(
+        '--pyramid-authtkt-timeout', type=int,
+        default=os.environ.get('ANYBLOK_PYRAMID_AUTHTKT_TIMEOUT', None),
+        help=(
+            "Maximum number of seconds which a newly issued ticket will be "
+            "considered valid. After this amount of time, the ticket will "
+            "expire (effectively logging the user out). If this value is None"
+            ", the ticket never expires"
+        ))
+    group.add_argument(
+        '--pyramid-authtkt-max-age', type=int,
+        default=os.environ.get('ANYBLOK_PYRAMID_AUTHTKT_MAX_AGE', None),
+        help=(
+            "Maximum number of seconds which a newly issued ticket will be "
+            "considered valid. After this amount of time, the ticket will "
+            "expire (effectively logging the user out). If this value is None"
+            ", the ticket never expires"
+        ))
+
+    # RemoteUserAuthenticationPolicy
+    group.add_argument(
+        '--pyramid-remoteuser-environ-key',
+        default=os.environ.get('ANYBLOK_PYRAMID_REMOTEUSER_ENVIRON_KEY',
+                               'REMOTE_USER'),
+        help="The key in the WSGI environ which provides the userid")
+
+    # SessionAuthenticationPolicy
+    group.add_argument(
+        '--pyramid-session-prefix',
+        default=os.environ.get('ANYBLOK_PYRAMID_SESSION_PREFIX', 'auth'),
+        help=(
+            "A prefix used when storing the authentication parameters in the "
+            "session"
+        ))
+
+    # BasicAuthAuthenticationPolicy
+    group.add_argument(
+        '--pyramid-basicauth-check', type=AnyBlokPlugin,
+        default='anyblok_pyramid.security:check_user',
+        help=(
+            "A callback function passed a username, password and request, in "
+            "that order as positional arguments. Expected to return None if "
+            "the userid doesn’t exist or a sequence of principal identifiers "
+            "(possibly empty) if the user does exist"
+        ))
+
+
 @Configuration.add('pyramid-debug', label="Pyramid")
 def define_wsgi_debug_option(group):
     group.add_argument('--pyramid-reload-all', dest='pyramid.reload_all',

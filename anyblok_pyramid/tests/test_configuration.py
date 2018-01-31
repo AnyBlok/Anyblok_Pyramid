@@ -7,6 +7,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok_pyramid.config import (
     define_wsgi_option,
+    define_auth_option,
     define_wsgi_debug_option,
     add_configuration_file,
     update_plugins
@@ -25,6 +26,7 @@ class TestArgsParseOption(TestCase):
         cls.configuration = {}
         cls.function = {
             'define_wsgi_option': define_wsgi_option,
+            'define_auth_option': define_auth_option,
             'define_wsgi_debug_option': define_wsgi_debug_option,
             'add_configuration_file': add_configuration_file,
             'update_plugins': update_plugins,
@@ -32,6 +34,9 @@ class TestArgsParseOption(TestCase):
 
     def test_define_wsgi_option(self):
         self.function['define_wsgi_option'](self.parser)
+
+    def test_define_auth_option(self):
+        self.function['define_auth_option'](self.parser)
 
     def test_define_wsgi_debug_option(self):
         self.function['define_wsgi_debug_option'](self.parser)
