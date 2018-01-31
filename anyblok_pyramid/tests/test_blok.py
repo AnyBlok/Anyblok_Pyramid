@@ -15,6 +15,6 @@ class TestPyramidBlok(PyramidDBTestCase):
     def test_current_blok(self):
         registry = self.init_registry(None)
         self.webserver.get('/hello/JS/', status=404)
-        registry.upgrade(install=('test-pyramid-blok1',))
+        registry.upgrade(install=('test-pyramid1',))
         resp = self.webserver.get('/hello/JS/', status=200)
         self.assertEqual(resp.body.decode('utf8'), 'Hello JS !!!')

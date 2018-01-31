@@ -1,13 +1,14 @@
 # This file is a part of the AnyBlok / Pyramid project
 #
 #    Copyright (C) 2015 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
+#    Copyright (C) 2018 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
 #
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 from setuptools import setup, find_packages
 import os
-version = '0.8.2'
+version = '0.9.0'
 
 requires = [
     'anyblok>=0.9.0',
@@ -79,8 +80,7 @@ setup(
         'anyblok_pyramid.includeme': anyblok_pyramid_includeme,
         'anyblok.init': anyblok_init,
         'test_bloks': [
-            'test-pyramid-blok1=anyblok_pyramid.test_bloks.test_pyramid_blok1:'
-            'TestPyramidBlok',
+            'test-pyramid1=anyblok_pyramid.test_bloks.test1:Test',
         ]
     },
     extras_require={},

@@ -8,7 +8,7 @@
 from anyblok.blok import Blok
 
 
-class TestPyramidBlok(Blok):
+class Test(Blok):
 
     version = '1.0.0'
 
