@@ -15,9 +15,8 @@ Contents:
    MEMENTO.rst
    CODE.rst
    UNITTEST.rst
-   ROADMAP.rst
    CHANGES.rst
-   LICENSE.rst
+   ../LICENSE
 
 
 Indices and tables
