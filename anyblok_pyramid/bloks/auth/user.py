@@ -24,18 +24,18 @@ class User:
         return self.first_name + ' ' + self.last_name.upper()
 
     @classmethod
-    def get_groups(self, login):
+    def get_groups(cls, login):
         # cache the method
         return login
 
     @classmethod
-    def get_acl(self, login, ressource, **params):
+    def get_acl(cls, login, ressource, **params):
         # cache the method
         return [(Allow, login, ALL_PERMISSIONS)]
 
     @classmethod
-    def format_login_params(cls, **params):
-        return params
+    def format_login_params(cls, request):
+        return request.json_body
 
     @classmethod
     def check_login(cls, login=None, password=None, **kwargs):

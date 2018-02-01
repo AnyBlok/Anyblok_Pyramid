@@ -21,9 +21,9 @@ class Auth:
         self.request = request
         self.User = request.anyblok.registry.User
 
-    @view_config(route_name='login')
+    @view_config(route_name='login', renderer="JSON")
     def login(self):
-        params = self.User.format_login_params(**dict(self.request.params))
+        params = self.User.format_login_params(self.request)
         if self.User.check_login(**params):
             login = params['login']
             headers = remember(self.request, login)
