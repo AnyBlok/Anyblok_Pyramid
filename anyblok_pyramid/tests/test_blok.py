@@ -18,3 +18,18 @@ class TestPyramidBlok(PyramidDBTestCase):
         registry.upgrade(install=('test-pyramid1',))
         resp = self.webserver.get('/hello/JS/', status=200)
         self.assertEqual(resp.body.decode('utf8'), 'Hello JS !!!')
+
+    def test_simple_crud_security(self):
+        registry = self.init_registry(None)
+        registry.upgrade(install=('test-pyramid2',))
+        self.webserver.get('/bloks', status=403)
+        self.webserver.get('/blok/auth', status=403)
+        self.webserver.post('/login', {'login': 'viewer', 'password': ''},
+                            status=302)
+        self.webserver.get('/bloks', status=200)
+        self.webserver.get('/blok/auth', status=403)
+        self.webserver.post('/logout', {}, status=302)
+        self.webserver.post('/login', {'login': 'admin', 'password': ''},
+                            status=302)
+        self.webserver.get('/bloks', status=200)
+        self.webserver.get('/blok/auth', status=200)

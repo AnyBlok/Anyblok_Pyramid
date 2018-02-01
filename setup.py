@@ -81,7 +81,8 @@ setup(
         'anyblok.init': anyblok_init,
         'test_bloks': [
             'test-pyramid1=anyblok_pyramid.test_bloks.test1:Test',
-        ]
+            'test-pyramid2=anyblok_pyramid.test_bloks.test2:Test',
+        ],
     },
     extras_require={},
 )
