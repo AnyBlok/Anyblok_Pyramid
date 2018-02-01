@@ -27,6 +27,6 @@ class Test(Blok):
     def pyramid_load_config(cls, config):
         config.add_route('bloks', '/bloks',
                          factory=AnyBlokRessourceFactory('Model.System.Blok'))
-        config.add_route('blok', '/blok/{name}/',
+        config.add_route('blok', '/blok/{name}',
                          factory=AnyBlokRessourceFactory('Model.System.Blok'))
         config.scan(cls.__module__ + '.views')

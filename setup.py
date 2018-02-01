@@ -79,6 +79,9 @@ setup(
         ],
         'anyblok_pyramid.includeme': anyblok_pyramid_includeme,
         'anyblok.init': anyblok_init,
+        'bloks': [
+            'auth=anyblok_pyramid.bloks.auth:Auth',
+        ],
         'test_bloks': [
             'test-pyramid1=anyblok_pyramid.test_bloks.test1:Test',
             'test-pyramid2=anyblok_pyramid.test_bloks.test2:Test',

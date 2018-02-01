@@ -19,6 +19,7 @@ CHANGELOG
 
 * [FIX] commited session with pyramid
 * [ADD] Authentication configuration
+* [ADD] **auth** blok
 
 0.8.2 (2017-12-23)
 ------------------

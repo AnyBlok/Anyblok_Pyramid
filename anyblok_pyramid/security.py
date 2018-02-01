@@ -5,6 +5,8 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+from pyramid.httpexceptions import HTTPUnauthorized
+from pyramid.security import Deny, Everyone, ALL_PERMISSIONS
 
 
 def group_finder(userid, request):
@@ -31,3 +33,32 @@ def check_user(userid, password, request):
         )
 
     return None
+
+
+def AnyBlokRessourceFactory(ressource):
+
+    def __acl__(self):
+        if not hasattr(self, 'registry'):
+            raise HTTPUnauthorized("ACL have not get AnyBlok registry")
+
+        userid = self.request.authenticated_userid
+        if userid:
+            return self.registry.User.get_acl(
+                userid, self.__ressource__,
+                **dict(self.request.matchdict)
+            )
+
+        return [(Deny, Everyone, ALL_PERMISSIONS)]
+
+    return type('RessourceFactory', (RootFactory,), {
+        '__acl__': __acl__,
+        '__ressource__': ressource,
+    })
+
+
+class RootFactory:
+
+    def __init__(self, request):
+        self.request = request
+        if hasattr(request, 'anyblok'):
+            self.registry = request.anyblok.registry

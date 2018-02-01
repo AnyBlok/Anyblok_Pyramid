@@ -73,11 +73,12 @@ def define_auth_option(group):
         ))
     group.add_argument(
         '--pyramid-authtkt-cookie-name',
-        default=os.environ.get('ANYBLOK_PYRAMID_AUTHTKT_COOKIE_NAME', None),
+        default=os.environ.get('ANYBLOK_PYRAMID_AUTHTKT_COOKIE_NAME',
+                               'auth_tkt'),
         help="The cookie name used")
     group.add_argument(
-        '--pyramid-authtkt-unsecure',
-        default=os.environ.get('ANYBLOK_PYRAMID_AUTHTKT_UNSECURE', False),
+        '--pyramid-authtkt-secure',
+        default=os.environ.get('ANYBLOK_PYRAMID_AUTHTKT_SECURE', False),
         help="Only send the cookie back over an unsecure conn",
         action='store_true')
     group.add_argument(
