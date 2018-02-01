@@ -11,19 +11,19 @@ class Bloks:
     @view_config(route_name='bloks', renderer="json",
                  request_method='GET', permission="read")
     def get_all(self):
-        return self.registry.System.Blok.query().all().to_dict(
-                'name', 'author', 'version')
+        bloks = self.registry.System.Blok.query().all()
+        return bloks.to_dict('name', 'author', 'version')
 
     @view_config(route_name='blok', renderer="json",
                  request_method='GET', permission="read")
     def get_one(self):
-        return self.registry.System.Blok.query().filter_by(
-            name=self.request.matchdict['name']).one().to_dict(
-                'name', 'author', 'version')
+        blok = self.registry.System.Blok.query().filter_by(
+            name=self.request.matchdict['name']).one()
+        return blok.to_dict('name', 'author', 'version')
 
     @view_config(route_name='blok', renderer="json",
                  request_method='PUT', permission="write")
     def put_one(self):
-        return self.registry.System.Blok.query().filter_by(
-            name=self.request.matchdict['name']).one().to_dict(
-                'name', 'author', 'version')
+        blok = self.registry.System.Blok.query().filter_by(
+            name=self.request.matchdict['name']).one()
+        return blok.to_dict('name', 'author', 'version')
