@@ -42,6 +42,9 @@ script:
   - flake8 anyblok_pyramid --ignore F999
   - psql -c 'create database travis_ci_test;' -U postgres
   - nosetests anyblok_pyramid/tests -v -s --with-coverage --cover-package=anyblok_pyramid
+  - psql -c 'drop database travis_ci_test;' -U postgres
+  - anyblok_createdb --install-all-bloks
+  - nosetests anyblok_pyramid/bloks --with-anyblok-bloks -v -s --with-coverage --cover-package=anyblok_pyramid
   
 after_success:
   coveralls
