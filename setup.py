@@ -15,6 +15,7 @@ requires = [
     'pyramid',
     'pyramid_tm',
     'zope.sqlalchemy',
+    'passlib',
 ]
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -81,6 +82,7 @@ setup(
         'anyblok.init': anyblok_init,
         'bloks': [
             'auth=anyblok_pyramid.bloks.auth:Auth',
+            'auth-password=anyblok_pyramid.bloks.password:Password',
         ],
         'test_bloks': [
             'test-pyramid1=anyblok_pyramid.test_bloks.test1:Test',

@@ -22,6 +22,8 @@ Configuration.applications.update({
     },
 })
 
+Configuration.add_configuration_groups('nose', ['auth'])
+
 
 def get_db_name(request):
     return Configuration.get('db_name')
