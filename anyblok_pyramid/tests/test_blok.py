@@ -24,7 +24,7 @@ class TestPyramidBlok(PyramidDBTestCase):
         registry.upgrade(install=('test-pyramid2',))
         self.webserver.get('/bloks', status=403)
         self.webserver.get('/blok/auth', status=403)
-        resp = self.webserver.post(
+        resp = self.webserver.post_json(
             '/login', {'login': 'viewer', 'password': ''},
             status=302)
         headers = resp.headers
@@ -35,7 +35,7 @@ class TestPyramidBlok(PyramidDBTestCase):
         headers = resp.headers
         self.webserver.get('/bloks', status=403, headers=headers)
         self.webserver.get('/blok/auth', status=403, headers=headers)
-        resp = self.webserver.post(
+        resp = self.webserver.post_json(
             '/login', {'login': 'admin', 'password': ''},
             status=302)
         headers = resp.headers
