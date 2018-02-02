@@ -16,7 +16,7 @@ def group_finder(userid, request):
     :param request: request from pyramid
     """
     if hasattr(request, 'anyblok') and request.anyblok:
-        return request.anyblok.registry.User.get_groups(userid)
+        return request.anyblok.registry.User.get_roles(userid)
 
     return userid
 

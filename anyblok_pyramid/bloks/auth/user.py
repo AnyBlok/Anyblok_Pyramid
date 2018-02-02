@@ -26,10 +26,11 @@ class User:
     @classmethod
     def get_roles(cls, login):
         # cache the method
-        user = cls.query().filter(cls.login == login).one()
         roles = [login]
-        for role in user.roles:
-            roles.extend(role.roles_name)
+        user = cls.query().filter(cls.login == login).one_or_none()
+        if user:
+            for role in user.roles:
+                roles.extend(role.roles_name)
 
         return list(set(roles))
 
