@@ -8,7 +8,7 @@
 from anyblok.common import python_version
 
 if python_version() >= (3, 5):
-    MainException = RecursionError
+    MainException = RecursionError  # noqa
 else:
     MainException = RuntimeError
 
