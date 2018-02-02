@@ -19,11 +19,14 @@ class Auth(Blok):
     @classmethod
     def import_declaration_module(cls):
         from . import user  # noqa
+        from . import role  # noqa
 
     @classmethod
     def reload_declaration_module(cls, reload):
         from . import user
         reload(user)
+        from . import role
+        reload(role)
 
     @classmethod
     def pyramid_load_config(cls, config):

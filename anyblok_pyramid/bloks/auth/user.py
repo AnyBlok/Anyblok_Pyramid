@@ -24,9 +24,14 @@ class User:
         return self.first_name + ' ' + self.last_name.upper()
 
     @classmethod
-    def get_groups(cls, login):
+    def get_roles(cls, login):
         # cache the method
-        return login
+        user = cls.query().filter(cls.login == login).one()
+        roles = [login]
+        for role in user.roles:
+            roles.extend(role.roles_name)
+
+        return list(set(roles))
 
     @classmethod
     def get_acl(cls, login, ressource, **params):
