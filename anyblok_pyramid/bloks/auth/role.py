@@ -9,7 +9,7 @@ from anyblok import Declarations
 from anyblok.column import String
 from anyblok.relationship import Many2Many
 from anyblok.field import Function
-from .exceptions import RecursionRoleError
+from .exceptions import RecursionRoleError, MainException
 
 
 User = Declarations.Model.User
@@ -38,5 +38,5 @@ class Role:
     def before_update_orm_event(cls, mapper, connection, target):
         try:
             target.get_all_roles_name()
-        except RecursionError:
+        except MainException:
             raise RecursionRoleError()
