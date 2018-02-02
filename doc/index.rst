@@ -16,7 +16,7 @@ Contents:
    CODE.rst
    UNITTEST.rst
    CHANGES.rst
-   ../LICENSE
+   LICENSE.rst
 
 
 Indices and tables
