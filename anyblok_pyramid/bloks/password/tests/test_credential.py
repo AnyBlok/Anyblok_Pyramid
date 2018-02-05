@@ -11,17 +11,12 @@ from pyramid.httpexceptions import HTTPUnauthorized
 
 class TestCredential(PyramidBlokTestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        super(TestCredential, cls).setUpClass()
-        cls.User = cls.registry.User
-        cls.CredentialStore = cls.registry.User.CredentialStore
-        cls.User.insert(login='user.1', first_name="User", last_name="1")
-        cls.CredentialStore.insert(login='user.1', password="P1")
-
     def setUp(self):
-        # to load pyramid configuration
         super(TestCredential, self).setUp()
+        self.User = self.registry.User
+        self.CredentialStore = self.registry.User.CredentialStore
+        self.User.insert(login='user.1', first_name="User", last_name="1")
+        self.CredentialStore.insert(login='user.1', password="P1")
 
     def test_check_login_ok(self):
         self.assertEqual(

@@ -83,6 +83,7 @@ setup(
         'bloks': [
             'auth=anyblok_pyramid.bloks.auth:Auth',
             'auth-password=anyblok_pyramid.bloks.password:Password',
+            'authorization=anyblok_pyramid.bloks.authorization:Authorization',
         ],
         'test_bloks': [
             'test-pyramid1=anyblok_pyramid.test_bloks.test1:Test',
