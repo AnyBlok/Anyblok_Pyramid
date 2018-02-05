@@ -28,7 +28,8 @@ class Authorization:
     primary_keys = Json(default={})
     filter = Json(default={})
 
-    role = String(foreign_key=User.Role.use('name').options(ondelete='cascade'))
+    role = Many2One(
+        model=User.Role, foreign_key_options={'ondelete': 'cascade'})
     login = String(foreign_key=User.use('login').options(ondelete="cascade"))
     user = Many2One(model=User)
 

@@ -16,9 +16,9 @@ class TestAuthorizationValidation(BlokTestCase):
         self.user = self.registry.User.insert(
             login='jssuzanne', first_name='Jean-Sébastien',
             last_name='Suzanne')
-        role = self.registry.User.Role.insert(
+        self.role = self.registry.User.Role.insert(
             name='admin', label='Administrator')
-        role.users.append(self.user)
+        self.role.users.append(self.user)
 
     def get_entry_value(self):
         return dict(
@@ -26,7 +26,7 @@ class TestAuthorizationValidation(BlokTestCase):
             model='Model.System.Blok',
             primary_keys={'name': 'authorization'},
             filter={'state': 'installed'},
-            role='admin',
+            role=self.role,
             login='jssuzanne',
         )
 

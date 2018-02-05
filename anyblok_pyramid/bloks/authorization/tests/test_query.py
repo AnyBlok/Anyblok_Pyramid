@@ -244,3 +244,23 @@ class TestQuery(BlokTestCase):
             }
         )
         self.assertEqual(query.count(), 2)
+
+    def test_with_relationship(self):
+        user = self.registry.User.insert(login="jssuzanne", first_name="js",
+                                         last_name="suzanne")
+        role = self.registry.User.Role.insert(name='admin', label="Admin")
+        role.users.append(user)
+        authorization = self.registry.User.Authorization.insert(
+            resource='test', role=role)
+        query = self.registry.User.Authorization.query().condition_filter(
+            dict(
+                left_condition='Authorization.role.users.name',
+                operator='=',
+                right_value='jssuzanne',
+            ),
+            {
+                'Authorization': self.registry.User.Authorization
+            }
+        )
+        self.assertEqual(query.count(), 1)
+        self.assertIs(query.one(), authorization)
