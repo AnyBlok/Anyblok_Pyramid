@@ -27,11 +27,3 @@ class TestCredential(PyramidBlokTestCase):
     def test_check_login_ko(self):
         with self.assertRaises(HTTPUnauthorized):
             self.User.check_login(login="user.1", password="P2")
-
-    def test_view_login_ok(self):
-        self.webserver.post_json(
-            '/login', dict(login="user.1", password="P1"), status=302)
-
-    def test_view_login_ko(self):
-        self.webserver.post_json(
-            '/login', dict(login="user.1", password="P2"), status=401)

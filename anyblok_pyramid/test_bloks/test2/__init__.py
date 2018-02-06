@@ -31,7 +31,7 @@ class Test(Blok):
         config.add_route('blok', '/blok/{name}',
                          factory=AnyBlokResourceFactory('Model.System.Blok'))
         config.add_route('login', '/login', request_method='POST')
-        config.add_view(view=login, name='login', renderer="JSON")
+        config.add_view(view=login, route_name='login', renderer="JSON")
         config.add_route('logout', '/logout', request_method='POST')
-        config.add_view(view=logout, name='logout')
+        config.add_view(view=logout, route_name='logout')
         config.scan(cls.__module__ + '.views')
