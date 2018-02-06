@@ -7,6 +7,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok.blok import Blok
 from anyblok_pyramid.security import AnyBlokResourceFactory
+from anyblok_pyramid.bloks.auth.views import login, logout
 
 
 class Test(Blok):
@@ -29,4 +30,8 @@ class Test(Blok):
                          factory=AnyBlokResourceFactory('Model.System.Blok'))
         config.add_route('blok', '/blok/{name}',
                          factory=AnyBlokResourceFactory('Model.System.Blok'))
+        config.add_route('login', '/login', request_method='POST')
+        config.add_view(view=login, name='login', renderer="JSON")
+        config.add_route('logout', '/logout', request_method='POST')
+        config.add_view(view=logout, name='logout')
         config.scan(cls.__module__ + '.views')

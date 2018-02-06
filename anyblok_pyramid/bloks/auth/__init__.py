@@ -37,7 +37,3 @@ class Auth(Blok):
         authz_policy = ACLAuthorizationPolicy()
         config.set_authorization_policy(authz_policy)
         config.set_root_factory(RootFactory)
-        # default path
-        config.add_route('login', '/login', request_method='POST')
-        config.add_route('logout', '/logout', request_method='POST')
-        config.scan(cls.__module__ + '.views')
