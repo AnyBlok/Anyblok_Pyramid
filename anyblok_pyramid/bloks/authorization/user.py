@@ -12,7 +12,7 @@ from anyblok import Declarations
 class User:
 
     @classmethod
-    def get_acl(cls, login, ressource, **params):
+    def get_acl(cls, login, resource, **params):
         # cache the method
         Authorization = cls.registry.User.Authorization
-        return Authorization.get_acl(login, ressource, params)
+        return Authorization.get_acl(login, resource, params)

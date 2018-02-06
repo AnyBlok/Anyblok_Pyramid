@@ -35,7 +35,7 @@ class TestAuthorizationValidation(BlokTestCase):
         authorization = self.registry.User.Authorization.insert(**vals)
         self.assertIs(authorization.user, self.user)
 
-    def test_without_ressource_and_model(self):
+    def test_without_resource_and_model(self):
         vals = self.get_entry_value()
         del vals['resource']
         del vals['model']

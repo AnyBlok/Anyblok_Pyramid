@@ -35,7 +35,7 @@ class User:
         return list(set(roles))
 
     @classmethod
-    def get_acl(cls, login, ressource, **params):
+    def get_acl(cls, login, resource, **params):
         # cache the method
         return [(Allow, login, ALL_PERMISSIONS)]
 

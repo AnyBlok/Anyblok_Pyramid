@@ -35,7 +35,7 @@ def check_user(userid, password, request):
     return None
 
 
-def AnyBlokRessourceFactory(ressource):
+def AnyBlokResourceFactory(resource):
 
     def __acl__(self):
         if not hasattr(self, 'registry'):
@@ -44,15 +44,15 @@ def AnyBlokRessourceFactory(ressource):
         userid = self.request.authenticated_userid
         if userid:
             return self.registry.User.get_acl(
-                userid, self.__ressource__,
+                userid, self.__resource__,
                 **dict(self.request.matchdict)
             )
 
         return [(Deny, Everyone, ALL_PERMISSIONS)]
 
-    return type('RessourceFactory', (RootFactory,), {
+    return type('ResourceFactory', (RootFactory,), {
         '__acl__': __acl__,
-        '__ressource__': ressource,
+        '__resource__': resource,
     })
 
 

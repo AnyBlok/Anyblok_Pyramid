@@ -17,7 +17,7 @@ class User:
         return login
 
     @classmethod
-    def get_acl(self, login, ressource, **params):
+    def get_acl(self, login, resource, **params):
         return [
             (Allow, Authenticated, 'read'),
             (Allow, 'admin', 'write'),
