@@ -14,7 +14,7 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 
-def get_registry_for(dbname, loadwithoutmigration):
+def get_registry_for(dbname, loadwithoutmigration=True):
     settings = {
         'anyblok.session.event': [register],
     }
