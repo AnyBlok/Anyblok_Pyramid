@@ -43,7 +43,7 @@ def anyblok_wsgi(application, configuration_groups, **kwargs):
 
     app = config.make_wsgi_app()
     server = make_server(wsgi_host, wsgi_port, app)
-    preload_databases()
+    preload_databases(loadwithoutmigration=False)
 
     logger.info("Serve forever on %r:%r" % (wsgi_host, wsgi_port))
     server.serve_forever()
