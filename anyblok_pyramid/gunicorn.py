@@ -26,10 +26,8 @@ logger = getLogger(__name__)
 
 class Config(GunicornConfig):
 
-    def __init__(self, usage=None, prog=None, application=None,
-                 configuration_groups=None):
+    def __init__(self, usage=None, prog=None, application=None):
         super(Config, self).__init__(usage=usage, prog=prog)
-        self.configuration_groups = configuration_groups
         self.application = application
 
     def parser(self):
@@ -55,15 +53,12 @@ class Config(GunicornConfig):
         else:
             description.update(Configuration.applications['default'])
 
-        _configuration_groups = description.pop('configuration_groups',
-                                                ['gunicorn', 'database'])
-        if 'plugins' not in _configuration_groups:
-            _configuration_groups.append('plugins')
+        configuration_groups = description.pop('configuration_groups',
+                                               ['gunicorn', 'database'])
+        if 'plugins' not in configuration_groups:
+            configuration_groups.append('plugins')
 
-        configuration_groups = set(self.configuration_groups or []).union(
-            _configuration_groups)
-        Configuration._load(parser, configuration_groups,
-                            ('AnyBlok', 'bloks'))
+        Configuration._load(parser, configuration_groups)
         return parser
 
     def set(self, name, value):
@@ -75,8 +70,7 @@ class Config(GunicornConfig):
 
 class WSGIApplication(Application):
 
-    def __init__(self, application, configuration_groups=None):
-        self.configuration_groups = configuration_groups
+    def __init__(self, application):
         load_init_function_from_entry_points()
         conf = Configuration.applications.get(application, {})
         usage = conf.get('usage')
@@ -86,11 +80,10 @@ class WSGIApplication(Application):
 
     def load_default_config(self):
         self.cfg = Config(self.usage, prog=self.prog,
-                          application=self.application,
-                          configuration_groups=self.configuration_groups)
+                          application=self.application)
 
     def init(self, parser, opts, args):
-        Configuration.parse_options(opts, ('gunicorn',))
+        Configuration.parse_options(opts)
 
         # get the configuration save in AnyBlok configuration in
         # gunicorn configuration

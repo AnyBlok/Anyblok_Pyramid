@@ -33,7 +33,7 @@ Configuration.parse_configfile(path.join(ad.user_config_dir, 'conf.cfg'), ())
 # load config file in environment variable
 configfile = environ.get('ANYBLOK_CONFIGFILE')
 if configfile:
-    Configuration.parse_configfile(configfile, ())
+    Configuration.parse_configfile(configfile)
 
 if 'logging_level' in Configuration.configuration:
     Configuration.initialize_logging()

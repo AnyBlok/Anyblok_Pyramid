@@ -8,7 +8,6 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from wsgiref.simple_server import make_server
 from anyblok.blok import BlokManager
-from anyblok.scripts import format_configuration
 from anyblok.config import Configuration
 from .pyramid_config import Configurator
 import sys
@@ -21,17 +20,11 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 
-def anyblok_wsgi(application, configuration_groups, **kwargs):
+def wsgi():
+    """Simple wsgi server for dev
     """
-    :param application: name of the application
-    :param configuration_groups: list configuration groupe to load
-    :param \**kwargs: ArgumentParser named arguments
-    """
-    format_configuration(configuration_groups, 'preload',
-                         'pyramid-debug', 'wsgi', 'auth')
     load_init_function_from_entry_points()
-    Configuration.load(application,
-                       configuration_groups=configuration_groups, **kwargs)
+    Configuration.load('pyramid')
     configuration_post_load()
     BlokManager.load()
     config = Configurator()
@@ -49,10 +42,6 @@ def anyblok_wsgi(application, configuration_groups, **kwargs):
     server.serve_forever()
 
 
-def wsgi():
-    anyblok_wsgi('pyramid', ['logging'])
-
-
 def gunicorn_anyblok_wsgi(application, configuration_groups, **kwargs):
     try:
         import gunicorn  # noqa
@@ -60,11 +49,8 @@ def gunicorn_anyblok_wsgi(application, configuration_groups, **kwargs):
         logger.error("No gunicorn installed")
         sys.exit(1)
 
-    format_configuration(configuration_groups,
-                         'preload', 'pyramid-debug', 'auth')
     from .gunicorn import WSGIApplication
-    WSGIApplication(application,
-                    configuration_groups=configuration_groups).run()
+    WSGIApplication('gunicorn').run()
 
 
 def gunicorn_wsgi():
