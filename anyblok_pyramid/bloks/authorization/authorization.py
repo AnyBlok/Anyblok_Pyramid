@@ -9,6 +9,8 @@ from anyblok import Declarations
 from anyblok.column import Integer, String, Json
 from anyblok.relationship import Many2One
 from .exceptions import AuthorizationValidationException
+from pyramid.security import Allow, Deny, ALL_PERMISSIONS
+from sqlalchemy import or_
 
 
 User = Declarations.Model.User
@@ -41,9 +43,35 @@ class Authorization:
     @classmethod
     def get_acl(cls, login, resource, **params):
         # cache the method
-        pass
+        query = cls.query()
+        query = query.filter(
+            or_(cls.resource == resource, cls.model == resource))
         # Authorization = cls.registry.User.Authorization
         # return Authorization.get_acl(login, resource, params)
+        res = []
+        for self in query.all():
+            allow_perms = []
+            deny_perms = []
+            for perm in ('create', 'read', 'update', 'delete'):
+                p = getattr(self, 'perm_' + perm)
+                ismatched = True
+                if 'condition' in p:
+                    #TODO
+                    pass
+
+                if p.get('matched' if ismatched else 'unmatched') is True:
+                    allow_perms.append(perm)
+                elif p.get('matched' if ismatched else 'unmatched') is False:
+                    deny_perms.append(perm)
+
+            if len(allow_perms):
+                res.append((Allow, login, allow_perms))
+
+            if len(deny_perms):
+                res.append((Deny, login, deny_perms))
+
+        res.append((Deny, login, ALL_PERMISSIONS))
+        return res
 
     @classmethod
     def before_insert_orm_event(cls, mapper, connection, target):
