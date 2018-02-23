@@ -56,7 +56,7 @@ class Authorization:
                 p = getattr(self, 'perm_' + perm)
                 ismatched = True
                 if 'condition' in p:
-                    #TODO
+                    # TODO
                     pass
 
                 if p.get('matched' if ismatched else 'unmatched') is True:
