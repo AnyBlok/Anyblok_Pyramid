@@ -8,6 +8,7 @@
 from anyblok import Declarations
 from anyblok.column import Integer, String, Json
 from anyblok.relationship import Many2One
+from anyblok.field import Function
 from .exceptions import AuthorizationValidationException
 from pyramid.security import Allow, Deny, ALL_PERMISSIONS
 from sqlalchemy import or_
@@ -28,47 +29,110 @@ class Authorization:
             ondelete="cascade")
     )
     primary_keys = Json(default={})
-    filter = Json(default={})
+    filter = Json(default={})  # next step
 
     role = Many2One(
         model=User.Role, foreign_key_options={'ondelete': 'cascade'})
     login = String(foreign_key=User.use('login').options(ondelete="cascade"))
     user = Many2One(model=User)
+    perms = Json(default={})
 
-    perm_create = Json(default={})
-    perm_read = Json(default={})
-    perm_update = Json(default={})
-    perm_delete = Json(default={})
+    perm_create = Function(
+        fget='get_perm_create', fset='set_perm_create', fexp='exp_perm_create'
+    )
+    perm_read = Function(fget='get_perm_read', fset='set_perm_read')
+    perm_update = Function(fget='get_perm_update', fset='set_perm_update')
+    perm_delete = Function(fget='get_perm_delete', fset='set_perm_delete')
+
+    def get_perm(self, perm):
+        return self.perms.get(perm, {})
+
+    def set_perm(self, perm, value):
+        if self.perms is None:
+            self.perms = {}
+
+        self.perms[perm] = value
+
+    def get_perm_create(self):
+        return self.get_perm('create')
+
+    def set_perm_create(self, value):
+        return self.set_perm('create', value)
+
+    def get_perm_read(self):
+        return self.get_perm('read')
+
+    def set_perm_read(self, value):
+        return self.set_perm('read', value)
+
+    def get_perm_update(self):
+        return self.get_perm('update')
+
+    def set_perm_update(self, value):
+        return self.set_perm('update', value)
+
+    def get_perm_delete(self):
+        return self.get_perm('delete')
+
+    def set_perm_delete(self, value):
+        return self.set_perm('delete', value)
+
+    @classmethod
+    def get_acl_filter_model(cls):
+        return {
+            'User': cls.registry.User,
+            'Role': cls.registry.User.Role,
+        }
 
     @classmethod
     def get_acl(cls, login, resource, **params):
         # cache the method
+        User = cls.registry.User
+        Role = cls.registry.User.Role
+
         query = cls.query()
         query = query.filter(
             or_(cls.resource == resource, cls.model == resource))
-        # Authorization = cls.registry.User.Authorization
-        # return Authorization.get_acl(login, resource, params)
+        query = query.order_by(cls.order)
+        Q1 = query.filter(cls.login == login)
+        Q2 = query.join(cls.role).filter(Role.name.in_(User.get_roles(login)))
         res = []
-        for self in query.all():
-            allow_perms = []
-            deny_perms = []
-            for perm in ('create', 'read', 'update', 'delete'):
-                p = getattr(self, 'perm_' + perm)
-                ismatched = True
-                if 'condition' in p:
-                    # TODO
-                    pass
+        for query in (Q1, Q2):
+            for self in query.all():
+                allow_perms = []
+                deny_perms = []
+                perms = list((self.perms or {}).keys())
+                perms.sort()
+                for perm in perms:
+                    p = getattr(self, 'perm_' + perm)
+                    query = User.query()
+                    query = query.filter(User.login == login)
+                    query = query.join(User.roles)
+                    if self.filter:
+                        query = query.condition_filter(
+                            self.filter,
+                            cls.get_acl_filter_model()
+                        )
 
-                if p.get('matched' if ismatched else 'unmatched') is True:
-                    allow_perms.append(perm)
-                elif p.get('matched' if ismatched else 'unmatched') is False:
-                    deny_perms.append(perm)
+                    if 'condition' in p:
+                        query = query.condition_filter(
+                            p['condition'],
+                            cls.get_acl_filter_model()
+                        )
 
-            if len(allow_perms):
-                res.append((Allow, login, allow_perms))
+                    ismatched = True if query.count() else False
+                    if p.get('matched' if ismatched else 'unmatched') is True:
+                        allow_perms.append(perm)
+                    elif (
+                        p.get('matched' if ismatched else 'unmatched') is False
+                    ):
+                        deny_perms.append(perm)
 
-            if len(deny_perms):
-                res.append((Deny, login, deny_perms))
+                if len(allow_perms):
+                    res.append((Allow, login, allow_perms))
+
+                if len(deny_perms):
+                    res.append((Deny, login, deny_perms))
 
         res.append((Deny, login, ALL_PERMISSIONS))
         return res
@@ -82,7 +146,7 @@ class Authorization:
         target.check_validity()
 
     def check_validity(self):
-        if not (self.role or self.login or self.user):
+        if not (self.role or self.login or self.user or self.role_name):
             raise AuthorizationValidationException(
                 "No role and login to apply in the authorization (%s)" % self)
 
