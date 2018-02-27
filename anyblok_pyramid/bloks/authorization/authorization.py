@@ -8,7 +8,7 @@
 from anyblok import Declarations
 from anyblok.column import Integer, String, Json
 from anyblok.relationship import Many2One
-from anyblok.field import Function
+from anyblok.field import JsonRelated
 from .exceptions import AuthorizationValidationException
 from pyramid.security import Allow, Deny, ALL_PERMISSIONS
 from sqlalchemy import or_
@@ -37,45 +37,10 @@ class Authorization:
     user = Many2One(model=User)
     perms = Json(default={})
 
-    perm_create = Function(
-        fget='get_perm_create', fset='set_perm_create', fexp='exp_perm_create'
-    )
-    perm_read = Function(fget='get_perm_read', fset='set_perm_read')
-    perm_update = Function(fget='get_perm_update', fset='set_perm_update')
-    perm_delete = Function(fget='get_perm_delete', fset='set_perm_delete')
-
-    def get_perm(self, perm):
-        return self.perms.get(perm, {})
-
-    def set_perm(self, perm, value):
-        if self.perms is None:
-            self.perms = {}
-
-        self.perms[perm] = value
-
-    def get_perm_create(self):
-        return self.get_perm('create')
-
-    def set_perm_create(self, value):
-        return self.set_perm('create', value)
-
-    def get_perm_read(self):
-        return self.get_perm('read')
-
-    def set_perm_read(self, value):
-        return self.set_perm('read', value)
-
-    def get_perm_update(self):
-        return self.get_perm('update')
-
-    def set_perm_update(self, value):
-        return self.set_perm('update', value)
-
-    def get_perm_delete(self):
-        return self.get_perm('delete')
-
-    def set_perm_delete(self, value):
-        return self.set_perm('delete', value)
+    perm_create = JsonRelated(json_column='perms', keys=['create'])
+    perm_read = JsonRelated(json_column='perms', keys=['read'])
+    perm_update = JsonRelated(json_column='perms', keys=['update'])
+    perm_delete = JsonRelated(json_column='perms', keys=['delete'])
 
     @classmethod
     def get_acl_filter_model(cls):
