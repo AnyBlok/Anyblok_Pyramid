@@ -14,8 +14,8 @@
 CHANGELOG
 =========
 
-0.9.0
------
+0.9.0 (2018-02-27)
+------------------
 
 * [FIX] commited session with pyramid
 * [ADD] Authentication configuration
