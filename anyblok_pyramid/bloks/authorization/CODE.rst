@@ -27,3 +27,14 @@
     :undoc-members:                                                             
     :show-inheritance:
     :noindex:
+
+**Exceptions**
+~~~~~~~~~~~~~~
+
+.. automodule:: anyblok_pyramid.bloks.authorization.exceptions
+
+.. autoanyblok-declaration:: AuthorizationValidationException
+    :members:                                                                   
+    :undoc-members:                                                             
+    :show-inheritance:
+    :noindex:
