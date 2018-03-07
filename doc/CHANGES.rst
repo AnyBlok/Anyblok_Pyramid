@@ -21,6 +21,7 @@ CHANGELOG
 * [ADD] Authentication configuration
 * [ADD] **auth** blok
 * [ADD] **auth-password** blok
+* [ADD] **authorization** blok
 * [FIX] console script whith gunicorn and wsgi server
   Put all the serveur in loadwithoutmigration=True, AnyBlok can add some
   lock during the migration and must do in specal action

@@ -12,6 +12,7 @@ from anyblok.column import String, Password
 
 @Declarations.register(Declarations.Model.User)
 class CredentialStore:
+    """Save in table login / password"""
     login = String(
         primary_key=True, nullable=False,
         foreign_key=Declarations.Model.User.use('login').options(
@@ -26,6 +27,13 @@ class User:
 
     @classmethod
     def check_login(cls, login=None, password=None, **kwargs):
+        """Overwrite the method to check if the user exist and
+        the password gave is the same sa the password stored
+
+        :param login: str
+        :param password: str
+        :exception: HTTPUnauthorized
+        """
         Credential = cls.registry.User.CredentialStore
         credential = Credential.query().filter(
             Credential.login == login

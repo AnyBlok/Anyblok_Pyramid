@@ -15,6 +15,9 @@ from anyblok.config import Configuration
 
 
 def getAuthenticationPolicy():
+    """Return the authentication policy in function method
+    in configuration
+    """
     method = Configuration.get('pyramid_authentication_method')
     if method is AuthTktAuthenticationPolicy:
         return getAuthTktAuthenticationPolicy()
@@ -29,6 +32,7 @@ def getAuthenticationPolicy():
 
 
 def getAuthTktAuthenticationPolicy():
+    """Define the authentication policy for Tkt"""
     return AuthTktAuthenticationPolicy(
         Configuration.get('pyramid_authtkt_secret'),
         callback=Configuration.get('pyramid_authentication_callback'),
@@ -41,6 +45,7 @@ def getAuthTktAuthenticationPolicy():
 
 
 def getRemoteUserAuthenticationPolicy():
+    """Define the authentication policy for remote user server"""
     return RemoteUserAuthenticationPolicy(
         environ_key=Configuration.get('pyramid_remoteuser_environ_key'),
         callback=Configuration.get('pyramid_authentication_callback'),
@@ -49,6 +54,7 @@ def getRemoteUserAuthenticationPolicy():
 
 
 def getSessionAuthenticationPolicy():
+    """Define the authentication policy for a session"""
     return SessionAuthenticationPolicy(
         prefix=Configuration.get('pyramid_session_prefix'),
         callback=Configuration.get('pyramid_authentication_callback'),
@@ -57,6 +63,7 @@ def getSessionAuthenticationPolicy():
 
 
 def getBasicAuthAuthenticationPolicy():
+    """Define the authentication policy for a basic auth"""
     return BasicAuthAuthenticationPolicy(
         Configuration.get('pyramid_basicauth_check'),
         debug=Configuration.get('pyramid_authentication_debug')

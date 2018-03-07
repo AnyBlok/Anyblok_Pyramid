@@ -272,7 +272,8 @@ Add the includeme in the entry point::
 
 .. note::
 
-    You can merge the authorization of Pyramid and the authorization of AnyBlok
+    Since **0.9.0** ``AnyBlok / Pyramid`` add Blok Authentication and Authorization
+    It is on solution to get the Auth(s) in yours applications, but not a requirement.
 
 JSON adapter
 ------------

@@ -19,6 +19,7 @@ User = Declarations.Model.User
 
 @Declarations.register(User)
 class Authorization:
+    """Store the autorization rules"""
 
     id = Integer(primary_key=True)
     order = Integer(default=100, nullable=False)
@@ -44,6 +45,7 @@ class Authorization:
 
     @classmethod
     def get_acl_filter_model(cls):
+        """Return the Model to use to check the permission"""
         return {
             'User': cls.registry.User,
             'Role': cls.registry.User.Role,
@@ -51,6 +53,11 @@ class Authorization:
 
     @classmethod
     def get_acl(cls, login, resource, **params):
+        """Return the Pyramid ACL in function of the resource and user
+
+        :param login: str, login of the user
+        :param resource: str, name of the resource
+        """
         # cache the method
         User = cls.registry.User
         Role = cls.registry.User.Role
@@ -69,7 +76,7 @@ class Authorization:
                 perms = list((self.perms or {}).keys())
                 perms.sort()
                 for perm in perms:
-                    p = getattr(self, 'perm_' + perm)
+                    p = self.perms[perm]
                     query = User.query()
                     query = query.filter(User.login == login)
                     query = query.join(User.roles)
@@ -111,6 +118,10 @@ class Authorization:
         target.check_validity()
 
     def check_validity(self):
+        """Check at the insert or update that all rule match
+
+        :exception: AuthorizationValidationException
+        """
         if not (self.role or self.login or self.user or self.role_name):
             raise AuthorizationValidationException(
                 "No role and login to apply in the authorization (%s)" % self)

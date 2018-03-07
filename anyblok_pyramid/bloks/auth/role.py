@@ -17,6 +17,7 @@ User = Declarations.Model.User
 
 @Declarations.register(User)
 class Role:
+    """Role, allow to group some authorization for an user"""
 
     name = String(primary_key=True, nullable=False)
     label = String(nullable=False)
@@ -25,6 +26,8 @@ class Role:
     roles_name = Function(fget="get_all_roles_name")
 
     def get_all_roles_name(self):
+        """Return all the name of the roles self and dependencies
+        """
         names = [self.name]
         for child in self.children:
             if child.name in names:
@@ -36,6 +39,8 @@ class Role:
 
     @classmethod
     def before_update_orm_event(cls, mapper, connection, target):
+        """Check if the role has not any cyclical dependencies
+        """
         try:
             target.get_all_roles_name()
         except MainException:

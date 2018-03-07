@@ -68,5 +68,26 @@ anyblok_pyramid.scripts module
 
 .. automodule:: anyblok_pyramid.scripts
 
-.. autofunction:: anyblok_wsgi
+.. autofunction:: wsgi
     :noindex:
+
+.. autofunction:: gunicorn_wsgi
+    :noindex:
+
+anyblok_pyramid.security module
+-------------------------------
+
+.. automodule:: anyblok_pyramid.security
+
+.. autofunction:: group_finder
+    :noindex:
+
+.. autofunction:: check_user
+    :noindex:
+
+.. autofunction:: AnyBlokResourceFactory
+    :noindex:
+
+.. autoclass:: RootFactory
+    :noindex:
+    :members:

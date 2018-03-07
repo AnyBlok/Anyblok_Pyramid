@@ -2,6 +2,7 @@
 #
 #    Copyright (C) 2015 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
 #    Copyright (C) 2016 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
+#    Copyright (C) 2018 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
 #
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
@@ -42,7 +43,8 @@ def wsgi():
     server.serve_forever()
 
 
-def gunicorn_anyblok_wsgi(application, configuration_groups, **kwargs):
+def gunicorn_wsgi():
+    """console script function to run anyblok / pyramid with gunicorn"""
     try:
         import gunicorn  # noqa
     except ImportError:
@@ -51,7 +53,3 @@ def gunicorn_anyblok_wsgi(application, configuration_groups, **kwargs):
 
     from .gunicorn import WSGIApplication
     WSGIApplication('gunicorn').run()
-
-
-def gunicorn_wsgi():
-    gunicorn_anyblok_wsgi('gunicorn', ['logging'])

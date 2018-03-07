@@ -30,6 +30,7 @@ import sphinx_bootstrap_theme
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'anyblok.sphinx.ext.load.blok',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

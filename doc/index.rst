@@ -14,6 +14,7 @@ Contents:
    FRONT.rst
    MEMENTO.rst
    CODE.rst
+   BLOKS.rst
    UNITTEST.rst
    CHANGES.rst
    LICENSE.rst

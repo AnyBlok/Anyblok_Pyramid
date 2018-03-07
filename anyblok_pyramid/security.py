@@ -36,7 +36,15 @@ def check_user(userid, password, request):
 
 
 def AnyBlokResourceFactory(resource):
+    """Return a factory to get ACL in function of the resource
 
+    The factory use the method **User.get_acl** to define the
+    real ACL, if the user is not authenticated, the access is denied
+
+    :param resource: str, resource's name
+    :rtype: class, inherit RootFactory, with ACL in function
+      of resource
+    """
     def __acl__(self):
         if not hasattr(self, 'registry'):
             raise HTTPUnauthorized("ACL have not get AnyBlok registry")
@@ -57,7 +65,11 @@ def AnyBlokResourceFactory(resource):
 
 
 class RootFactory:
+    """This RootFactory need to be used with AnyBlokResourceFactory
 
+    The goal of the root factory is to add the anyblok registry in the request
+    for AnyBlokResourceFactory
+    """
     def __init__(self, request):
         self.request = request
         if hasattr(request, 'anyblok'):
