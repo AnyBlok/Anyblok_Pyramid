@@ -42,7 +42,7 @@ class User:
         return list(set(roles))
 
     @classmethod
-    def get_acl(cls, login, resource, **params):
+    def get_acl(cls, login, resource, params=None):
         """Retun the ACL for a ressource and a user
 
         Auth, does not implement any rule to compute ACL,
