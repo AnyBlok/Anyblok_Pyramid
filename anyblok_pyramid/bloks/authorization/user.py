@@ -12,7 +12,7 @@ from anyblok import Declarations
 class User:
 
     @classmethod
-    def get_acl(cls, login, resource, **params):
+    def get_acl(cls, login, resource, params):
         """Overwrite the method to return the ACL for the resource and user
 
         :param login: str, login of the user

@@ -53,7 +53,7 @@ def AnyBlokResourceFactory(resource):
         if userid:
             return self.registry.User.get_acl(
                 userid, self.__resource__,
-                **dict(self.request.matchdict)
+                params=dict(self.request.matchdict)
             )
 
         return [(Deny, Everyone, ALL_PERMISSIONS)]
