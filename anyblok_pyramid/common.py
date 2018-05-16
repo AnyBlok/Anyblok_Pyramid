@@ -14,13 +14,13 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 
-def get_registry_for(dbname, loadwithoutmigration=True):
+def get_registry_for(dbname, loadwithoutmigration=True, log_repeat=False):
     settings = {
         'anyblok.session.event': [register],
     }
     return RegistryManager.get(
         dbname, loadwithoutmigration=loadwithoutmigration,
-        **settings)
+        log_repeat=log_repeat, **settings)
 
 
 def preload_databases(loadwithoutmigration=True):
@@ -36,7 +36,8 @@ def preload_databases(loadwithoutmigration=True):
     for dbname in dbnames:
         logger.info("Preload the database : %r", dbname)
         if Registry.db_exists(db_name=dbname):
-            registry = get_registry_for(dbname, loadwithoutmigration)
+            registry = get_registry_for(dbname, loadwithoutmigration,
+                                        log_repeat=True)
             registry.commit()
             registry.session.close()
             logger.info("The database %r is preloaded", dbname)
