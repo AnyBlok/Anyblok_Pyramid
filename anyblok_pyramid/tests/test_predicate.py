@@ -61,13 +61,13 @@ class TestViewPredicate(PyramidDBTestCase):
         self.assertKO()
 
     def test_before_and_after_install_blok(self):
-        self.installed_blok = 'anyblok-io'
+        self.installed_blok = 'auth'
         self.includemes.append(self.add_route_and_views)
         registry = self.init_registry(None)
         self.assertKO()
-        registry.upgrade(install=['anyblok-io'])
+        registry.upgrade(install=['auth'])
         self.assertOK()
-        registry.upgrade(uninstall=['anyblok-io'])
+        registry.upgrade(uninstall=['auth'])
         self.assertKO()
 
     def test_need_anyblok_registry_ok(self):
@@ -132,13 +132,13 @@ class TestRoutePredicate(PyramidDBTestCase):
         self.webserver.get('/test/', status=404)
 
     def test_before_and_after_install_blok(self):
-        self.installed_blok = 'anyblok-io'
+        self.installed_blok = 'auth'
         self.includemes.append(self.add_route_and_views)
         registry = self.init_registry(None)
         self.webserver.get('/test/', status=404)
-        registry.upgrade(install=['anyblok-io'])
+        registry.upgrade(install=['auth'])
         self.assertOK()
-        registry.upgrade(uninstall=['anyblok-io'])
+        registry.upgrade(uninstall=['auth'])
         self.webserver.get('/test/', status=404)
 
     def test_need_anyblok_registry_ok(self):
