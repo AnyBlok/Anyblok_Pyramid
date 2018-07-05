@@ -52,7 +52,7 @@ class Authorization:
         }
 
     @classmethod
-    def get_acl(cls, login, resource, **params):
+    def get_acl(cls, login, resource, params):
         """Return the Pyramid ACL in function of the resource and user
 
         :param login: str, login of the user
