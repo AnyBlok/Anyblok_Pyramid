@@ -12,6 +12,13 @@
 CHANGELOG
 =========
 
+
+0.9.2 (2018-08-10)
+------------------
+
+* Fix get_acl method
+* Add max age for static path, issue #13
+
 0.9.1 (2018-05-30)
 ------------------
 

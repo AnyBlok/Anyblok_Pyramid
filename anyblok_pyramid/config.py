@@ -37,6 +37,9 @@ def define_wsgi_option(group):
     group.add_argument(
         '--wsgi-port', type=int,
         default=os.environ.get('ANYBLOK_PYRAMID_WSGI_PORT', 5000))
+    group.add_argument(
+        '--cache-max-age', type=int, dest='pyramid_cache_max_age',
+        default=os.environ.get('ANYBLOK_PYRAMID_CACHE_MAX_AGE', 3600))
 
 
 @Configuration.add('auth', label="Authentication and Authorization",
@@ -188,6 +191,9 @@ def add_configuration_file(parser):
     parser.add_argument('--without-auto-migration',
                         dest='withoutautomigration',
                         action='store_true')
+    parser.add_argument(
+        '--pyramid-cache-max-age', type=int, dest='pyramid_cache_max_age',
+        default=os.environ.get('ANYBLOK_PYRAMID_CACHE_MAX_AGE', 3600))
 
 
 @Configuration.add('plugins', must_be_loaded_by_unittest=True)

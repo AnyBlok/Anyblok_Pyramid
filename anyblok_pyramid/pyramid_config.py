@@ -234,6 +234,7 @@ def static_paths(config):
             paths = ['static']
 
         blok_path = BlokManager.getPath(blok)
-
+        cache_max_age = Configuration.get('pyramid_cache_max_age', 3600)
         for p in paths:
-            config.add_static_view(join(blok, p), join(blok_path, p))
+            config.add_static_view(join(blok, p), join(blok_path, p),
+                                   cache_max_age=cache_max_age)
