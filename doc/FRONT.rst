@@ -94,4 +94,4 @@ Bugs
 ----
 
 Bugs and feature enhancements to AnyBlok should be reported on the `Issue
-tracker <https://bitbucket.org/jssuzanne/anyblok_pyramid/issues>`_.
+tracker <https://github.com/AnyBlok/Anyblok_Pyramid/issues>`_.
