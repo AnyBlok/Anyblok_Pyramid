@@ -33,7 +33,6 @@ AnyBlok with Pyramid is currently in beta status and is expected to be fairly
 stable.   Users should take care to report bugs and missing features on an as-needed
 basis.  It should be expected that the development version may be required
 for proper implementation of recently repaired issues in between releases;
-the latest master is always available at http://bitbucket.org/jssuzanne/anyblok_pyramid/get/default.tar.gz.
 
 Installation
 ------------
