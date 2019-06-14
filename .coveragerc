@@ -1,0 +1,16 @@
+[run]
+omit =
+    # omit scripts file
+    anyblok_pyramid/scripts.py
+    anyblok_pyramid/wsgi.py
+    anyblok_pyramid/gunicorn.py
+    # omit anything in a tests directory anywhere
+    */tests/*
+    # omit anything in a test_bloks directory anywhere
+    anyblok_pyramid/test_bloks/*
+
+[report]
+# Regexes for lines to exclude from consideration
+exclude_lines =
+    # unexecuting logger
+    logger\.

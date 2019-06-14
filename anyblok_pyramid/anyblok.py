@@ -72,7 +72,7 @@ class AnyBlokSessionDataManager:
         pass
 
     def tpc_abort(self, trans):
-        assert self.state is not 'committed'
+        assert self.state != 'committed'
 
     def sortKey(self):
         return "~AnyBlok:%d" % id(self.transaction)

@@ -1,10 +1,14 @@
 .. This file is a part of the AnyBlok / Pyramid project
 ..
 ..    Copyright (C) 2015 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
+..    Copyright (C) 2019 Jean-Sebastien SUZANNE <js.suzanne@gmail.com>
 ..
 .. This Source Code Form is subject to the terms of the Mozilla Public License,
 .. v. 2.0. If a copy of the MPL was not distributed with this file,You can
 .. obtain one at http://mozilla.org/MPL/2.0/.
+
+.. image:: https://img.shields.io/pypi/pyversions/anyblok_delivery.svg?longCache=True
+    :alt: Python versions
 
 .. image:: https://travis-ci.org/AnyBlok/Anyblok_Pyramid.svg?branch=master
     :target: https://travis-ci.org/AnyBlok/Anyblok_Pyramid
@@ -29,6 +33,17 @@ AnyBlok / Pyramid
 
 AnyBlok / Pyramid make the link between `AnyBlok <http://doc.anyblok.org>`_ and
 `Pyramid <http://pyramid.readthedocs.org/>`_
+
++-------------------+--------------+----------------------------------------------------------+
+| Blok              | Dependancies | Description                                              |
++===================+==============+==========================================================+
+| **auth**          |              | Add User Model. Add hook to connect with pyramid         |
+|                   |              | authentification and authorization                       |
++-------------------+--------------+----------------------------------------------------------+
+| **auth-password** | **auth**     | Add CredentialStore Model, simple login / password table |
++-------------------+--------------+----------------------------------------------------------+
+| **authorization** | **auth**     | Add Model to define rules of the autorisation            |
++-------------------+--------------+----------------------------------------------------------+
 
 AnyBlok / Pyramid is released under the terms of the `Mozilla Public License`.
 
