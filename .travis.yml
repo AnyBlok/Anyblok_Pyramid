@@ -46,4 +46,4 @@ script:
   - pytest --cov-report= --cov=anyblok_pyramid anyblok_pyramid/bloks
   
 after_success:
-  coveralls
+  coveralls --data_file=.coverage --config_file=.coveragerc
