@@ -36,10 +36,8 @@ class TestAdapter:
 
         webserver = init_web_server(add_route_and_views)
         res = webserver.get('/test/', status=200)
-        assert (
-            res.json_body['datetime']
-            == datetime_adapter(datetime(2017, 10, 1, 1, 1, 1), None)
-        )
+        assert res.json_body['datetime'] == datetime_adapter(
+            datetime(2017, 10, 1, 1, 1, 1), None)
 
     def test_registry_get_date(self):
 
