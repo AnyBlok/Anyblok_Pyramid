@@ -5,17 +5,19 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from anyblok_pyramid.tests.testcase import BlokTestCase
+import pytest
 
 
-class TestQuery(BlokTestCase):
+@pytest.mark.usefixtures('rollback_registry')
+class TestQuery:
+
+    @pytest.fixture(scope="function", autouse=True)
+    def init_user(self, rollback_registry):
+        self.registry = rollback_registry
 
     def test_empty(self):
         query = self.registry.System.Blok.query().condition_filter({}, {})
-        self.assertEqual(
-            self.registry.System.Blok.query().count(),
-            query.count()
-        )
+        assert self.registry.System.Blok.query().count() == query.count()
 
     def test_equal_condition(self):
         query = self.registry.System.Blok.query().condition_filter(
@@ -28,7 +30,7 @@ class TestQuery(BlokTestCase):
                 'Blok': self.registry.System.Blok
             }
         )
-        self.assertEqual(query.count(), 1)
+        assert query.count() == 1
 
     def test_not_equal_contition(self):
         query = self.registry.System.Blok.query().condition_filter(
@@ -41,10 +43,7 @@ class TestQuery(BlokTestCase):
                 'Blok': self.registry.System.Blok
             }
         )
-        self.assertEqual(
-            self.registry.System.Blok.query().count() - 1,
-            query.count()
-        )
+        assert self.registry.System.Blok.query().count() - 1 == query.count()
 
     def test_not_equal_contition_2(self):
         query = self.registry.System.Blok.query().condition_filter(
@@ -59,10 +58,7 @@ class TestQuery(BlokTestCase):
                 'Blok': self.registry.System.Blok
             }
         )
-        self.assertEqual(
-            self.registry.System.Blok.query().count() - 1,
-            query.count()
-        )
+        assert self.registry.System.Blok.query().count() - 1 == query.count()
 
     def test_like_condition(self):
         Blok = self.registry.System.Blok
@@ -76,10 +72,8 @@ class TestQuery(BlokTestCase):
                 'Blok': Blok
             }
         )
-        self.assertEqual(
-            Blok.query().filter(Blok.name.like('%auth%')).count(),
-            query.count()
-        )
+        assert Blok.query().filter(Blok.name.like(
+            '%auth%')).count() == query.count()
 
     def test_ilike_condition(self):
         Blok = self.registry.System.Blok
@@ -93,10 +87,8 @@ class TestQuery(BlokTestCase):
                 'Blok': Blok
             }
         )
-        self.assertEqual(
-            Blok.query().filter(Blok.name.ilike('auth')).count(),
-            query.count()
-        )
+        assert Blok.query().filter(Blok.name.ilike(
+            'auth')).count() == query.count()
 
     def test_lt_condition(self):
         Blok = self.registry.System.Blok
@@ -110,10 +102,7 @@ class TestQuery(BlokTestCase):
                 'Blok': Blok
             }
         )
-        self.assertEqual(
-            Blok.query().filter(Blok.order < 2).count(),
-            query.count()
-        )
+        assert Blok.query().filter(Blok.order < 2).count() == query.count()
 
     def test_lte_condition(self):
         Blok = self.registry.System.Blok
@@ -127,10 +116,7 @@ class TestQuery(BlokTestCase):
                 'Blok': Blok
             }
         )
-        self.assertEqual(
-            Blok.query().filter(Blok.order <= 2).count(),
-            query.count()
-        )
+        assert Blok.query().filter(Blok.order <= 2).count() == query.count()
 
     def test_gt_condition(self):
         Blok = self.registry.System.Blok
@@ -144,10 +130,7 @@ class TestQuery(BlokTestCase):
                 'Blok': Blok
             }
         )
-        self.assertEqual(
-            Blok.query().filter(Blok.order > 2).count(),
-            query.count()
-        )
+        assert Blok.query().filter(Blok.order > 2).count() == query.count()
 
     def test_gte_condition(self):
         Blok = self.registry.System.Blok
@@ -161,10 +144,7 @@ class TestQuery(BlokTestCase):
                 'Blok': Blok
             }
         )
-        self.assertEqual(
-            Blok.query().filter(Blok.order >= 2).count(),
-            query.count()
-        )
+        assert Blok.query().filter(Blok.order >= 2).count() == query.count()
 
     def test_or_condition(self):
         query = self.registry.System.Blok.query().condition_filter(
@@ -186,7 +166,7 @@ class TestQuery(BlokTestCase):
                 'Blok': self.registry.System.Blok
             }
         )
-        self.assertEqual(query.count(), 2)
+        assert query.count() == 2
 
     def test_and_condition_1(self):
         query = self.registry.System.Blok.query().condition_filter(
@@ -208,7 +188,7 @@ class TestQuery(BlokTestCase):
                 'Blok': self.registry.System.Blok
             }
         )
-        self.assertFalse(query.count())
+        assert not query.count()
 
     def test_and_condition_2(self):
         query = self.registry.System.Blok.query().condition_filter(
@@ -230,7 +210,7 @@ class TestQuery(BlokTestCase):
                 'Blok': self.registry.System.Blok
             }
         )
-        self.assertTrue(query.count())
+        assert query.count()
 
     def test_in_condition(self):
         query = self.registry.System.Blok.query().condition_filter(
@@ -243,7 +223,7 @@ class TestQuery(BlokTestCase):
                 'Blok': self.registry.System.Blok
             }
         )
-        self.assertEqual(query.count(), 2)
+        assert query.count() == 2
 
     def test_with_relationship(self):
         user = self.registry.User.insert(login="jssuzanne", first_name="js",
@@ -262,5 +242,5 @@ class TestQuery(BlokTestCase):
                 'Authorization': self.registry.User.Authorization
             }
         )
-        self.assertEqual(query.count(), 1)
-        self.assertIs(query.one(), authorization)
+        assert query.count() == 1
+        assert query.one() is authorization
