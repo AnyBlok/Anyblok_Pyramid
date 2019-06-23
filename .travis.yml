@@ -22,14 +22,14 @@ services:
   - postgresql
 
 install:
-  - pip install psycopg2
-  - pip install anyblok
-  - pip install flake8
-  - pip install coverage
-  - pip install nose
-  - pip install WebTest
-  - pip install coveralls
-  - python setup.py develop
+  - pip install -U psycopg2
+  - pip install -U anyblok
+  - pip install -U flake8
+  - pip install -U pytest-cov
+  - pip install -U pytest
+  - pip install -U WebTest
+  - pip install -U coveralls
+  - pip install .
 
 env:
   global:
@@ -40,10 +40,10 @@ env:
 script:
   - flake8 anyblok_pyramid --ignore F999
   - psql -c 'create database travis_ci_test;' -U postgres
-  - nosetests anyblok_pyramid/tests -v -s --with-coverage --cover-package=anyblok_pyramid
+  - pytest --cov-report= --cov=anyblok_pyramid anyblok_pyramid/tests
   - psql -c 'drop database travis_ci_test;' -U postgres
   - anyblok_createdb --install-all-bloks
-  - nosetests anyblok_pyramid/bloks --with-anyblok-bloks -v -s --with-coverage --cover-package=anyblok_pyramid
+  - pytest --cov-report= --cov=anyblok_pyramid anyblok_pyramid/bloks
   
 after_success:
-  coveralls
+  coveralls --data_file=.coverage --config_file=.coveragerc

@@ -5,7 +5,6 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from .testcase import PyramidDBTestCase
 from datetime import datetime, date
 from pyramid.renderers import JSON
 from uuid import UUID, uuid1
@@ -18,9 +17,10 @@ from anyblok_pyramid.adapter import (
     bytes_adapter,
     decimal_adapter,
 )
+from anyblok_pyramid.testing import init_web_server
 
 
-class TestAdapter(PyramidDBTestCase):
+class TestAdapter:
 
     def test_registry_get_datetime(self):
 
@@ -34,13 +34,10 @@ class TestAdapter(PyramidDBTestCase):
             json_renderer.add_adapter(datetime, datetime_adapter)
             config.add_renderer('json', json_renderer)
 
-        self.includemes.append(add_route_and_views)
-        webserver = self.init_web_server()
+        webserver = init_web_server(add_route_and_views)
         res = webserver.get('/test/', status=200)
-        self.assertEqual(
-            res.json_body['datetime'],
-            datetime_adapter(datetime(2017, 10, 1, 1, 1, 1), None)
-        )
+        assert res.json_body['datetime'] == datetime_adapter(
+            datetime(2017, 10, 1, 1, 1, 1), None)
 
     def test_registry_get_date(self):
 
@@ -54,13 +51,9 @@ class TestAdapter(PyramidDBTestCase):
             json_renderer.add_adapter(date, date_adapter)
             config.add_renderer('json', json_renderer)
 
-        self.includemes.append(add_route_and_views)
-        webserver = self.init_web_server()
+        webserver = init_web_server(add_route_and_views)
         res = webserver.get('/test/', status=200)
-        self.assertEqual(
-            res.json_body['date'],
-            date_adapter(date(2017, 10, 1), None)
-        )
+        assert res.json_body['date'] == date_adapter(date(2017, 10, 1), None)
 
     def test_registry_get_uuid(self):
 
@@ -76,13 +69,9 @@ class TestAdapter(PyramidDBTestCase):
             json_renderer.add_adapter(UUID, uuid_adapter)
             config.add_renderer('json', json_renderer)
 
-        self.includemes.append(add_route_and_views)
-        webserver = self.init_web_server()
+        webserver = init_web_server(add_route_and_views)
         res = webserver.get('/test/', status=200)
-        self.assertEqual(
-            res.json_body['uuid'],
-            uuid_adapter(uuid, None)
-        )
+        assert res.json_body['uuid'] == uuid_adapter(uuid, None)
 
     def test_registry_get_bytes(self):
 
@@ -98,13 +87,9 @@ class TestAdapter(PyramidDBTestCase):
             json_renderer.add_adapter(bytes, bytes_adapter)
             config.add_renderer('json', json_renderer)
 
-        self.includemes.append(add_route_and_views)
-        webserver = self.init_web_server()
+        webserver = init_web_server(add_route_and_views)
         res = webserver.get('/test/', status=200)
-        self.assertEqual(
-            res.json_body['bytes'],
-            bytes_adapter(val, None)
-        )
+        assert res.json_body['bytes'] == bytes_adapter(val, None)
 
     def test_registry_get_decimal(self):
 
@@ -120,10 +105,6 @@ class TestAdapter(PyramidDBTestCase):
             json_renderer.add_adapter(Decimal, decimal_adapter)
             config.add_renderer('json', json_renderer)
 
-        self.includemes.append(add_route_and_views)
-        webserver = self.init_web_server()
+        webserver = init_web_server(add_route_and_views)
         res = webserver.get('/test/', status=200)
-        self.assertEqual(
-            res.json_body['decimal'],
-            decimal_adapter(val, None)
-        )
+        assert res.json_body['decimal'] == decimal_adapter(val, None)
