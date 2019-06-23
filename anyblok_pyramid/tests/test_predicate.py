@@ -7,7 +7,8 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 import pytest
 from pyramid.response import Response
-from anyblok.testing import tmp_configuration
+from anyblok.config import Configuration
+from anyblok_pyramid.config import get_db_name
 from anyblok_pyramid.testing import init_web_server
 
 
@@ -24,7 +25,12 @@ class TestRoutePredicate:
     @pytest.fixture(autouse=True)
     def transact(self, request, registry_blok):
         transaction = registry_blok.begin_nested()
-        request.addfinalizer(transaction.rollback)
+
+        def rollback():
+            transaction.rollback()
+            Configuration.update(get_db_name=get_db_name)
+
+        request.addfinalizer(rollback)
         return
 
     def add_route_and_views(self, config):
@@ -70,9 +76,9 @@ class TestRoutePredicate:
         def __get_db_name(request):
             return 'wrong_db_name'
 
-        with tmp_configuration(get_db_name=__get_db_name):
-            webserver = init_web_server(self.add_route_and_views2)
-            webserver.get('/test/', status=404)
+        Configuration.update(get_db_name=__get_db_name)
+        webserver = init_web_server(self.add_route_and_views2)
+        webserver.get('/test/', status=404)
 
     def test_need_anyblok_registry_ok2(self, registry_blok):
         self.need_anyblok_registry = False
@@ -80,9 +86,9 @@ class TestRoutePredicate:
         def __get_db_name(request):
             return 'wrong_db_name'
 
-        with tmp_configuration(get_db_name=__get_db_name):
-            webserver = init_web_server(self.add_route_and_views2)
-            webserver.get('/test/', status=200)
+        Configuration.update(get_db_name=__get_db_name)
+        webserver = init_web_server(self.add_route_and_views2)
+        webserver.get('/test/', status=200)
 
 
 class TestViewPredicate:
@@ -90,7 +96,12 @@ class TestViewPredicate:
     @pytest.fixture(autouse=True)
     def transact(self, request, registry_blok):
         transaction = registry_blok.begin_nested()
-        request.addfinalizer(transaction.rollback)
+
+        def rollback():
+            transaction.rollback()
+            Configuration.update(get_db_name=get_db_name)
+
+        request.addfinalizer(rollback)
         return
 
     def add_route_and_views(self, config):
@@ -142,9 +153,9 @@ class TestViewPredicate:
         def __get_db_name(request):
             return 'wrong_db_name'
 
-        with tmp_configuration(get_db_name=__get_db_name):
-            webserver = init_web_server(self.add_route_and_views2)
-            webserver.get('/test/', status=404)
+        Configuration.update(get_db_name=__get_db_name)
+        webserver = init_web_server(self.add_route_and_views2)
+        webserver.get('/test/', status=404)
 
     def test_need_anyblok_registry_ok2(self):
         self.need_anyblok_registry = False
@@ -152,6 +163,6 @@ class TestViewPredicate:
         def __get_db_name(request):
             return 'wrong_db_name'
 
-        with tmp_configuration(get_db_name=__get_db_name):
-            webserver = init_web_server(self.add_route_and_views2)
-            webserver.get('/test/', status=200)
+        Configuration.update(get_db_name=__get_db_name)
+        webserver = init_web_server(self.add_route_and_views2)
+        webserver.get('/test/', status=200)
