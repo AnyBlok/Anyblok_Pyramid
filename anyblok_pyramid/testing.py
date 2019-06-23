@@ -7,7 +7,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok.tests.testcase import DBTestCase, BlokTestCase
 from webtest import TestApp
-from ..pyramid_config import Configurator
+from .pyramid_config import Configurator
 
 
 class PyramidTestCase:

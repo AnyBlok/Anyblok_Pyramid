@@ -7,8 +7,8 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 import pytest
 from anyblok.conftest import *  # noqa
-from webtest import TestApp  # noqa
-from anyblok_pyramid.pyramid_config import Configurator  # noqa
+from webtest import TestApp
+from anyblok_pyramid.pyramid_config import Configurator
 
 
 @pytest.fixture(scope="class")
