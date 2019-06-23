@@ -5,14 +5,16 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from anyblok.tests.testcase import BlokTestCase
+import pytest
 from ..exceptions import AuthorizationValidationException
 
 
-class TestAuthorizationValidation(BlokTestCase):
+@pytest.mark.usefixtures('rollback_registry')
+class TestAuthorizationValidation:
 
-    def setUp(self):
-        super(TestAuthorizationValidation, self).setUp()
+    @pytest.fixture(scope="function", autouse=True)
+    def init_user(self, rollback_registry):
+        self.registry = rollback_registry
         self.user = self.registry.User.insert(
             login='jssuzanne', first_name='Jean-Sébastien',
             last_name='Suzanne')
@@ -33,20 +35,20 @@ class TestAuthorizationValidation(BlokTestCase):
     def test_ok(self):
         vals = self.get_entry_value()
         authorization = self.registry.User.Authorization.insert(**vals)
-        self.assertIs(authorization.user, self.user)
+        assert authorization.user is self.user
 
     def test_without_resource_and_model(self):
         vals = self.get_entry_value()
         del vals['resource']
         del vals['model']
         del vals['primary_keys']
-        with self.assertRaises(AuthorizationValidationException):
+        with pytest.raises(AuthorizationValidationException):
             self.registry.User.Authorization.insert(**vals)
 
     def test_primary_keys_without_model(self):
         vals = self.get_entry_value()
         del vals['model']
-        with self.assertRaises(AuthorizationValidationException):
+        with pytest.raises(AuthorizationValidationException):
             self.registry.User.Authorization.insert(**vals)
 
     def test_without_role_and_login(self):
@@ -54,5 +56,5 @@ class TestAuthorizationValidation(BlokTestCase):
         del vals['role']
         del vals['login']
         del vals['primary_keys']
-        with self.assertRaises(AuthorizationValidationException):
+        with pytest.raises(AuthorizationValidationException):
             self.registry.User.Authorization.insert(**vals)
