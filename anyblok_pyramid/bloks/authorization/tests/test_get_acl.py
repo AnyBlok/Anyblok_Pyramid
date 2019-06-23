@@ -5,14 +5,16 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from anyblok.tests.testcase import BlokTestCase
+import pytest
 from pyramid.security import Allow, Deny, ALL_PERMISSIONS
 
 
-class TestGetACL(BlokTestCase):
+@pytest.mark.usefixtures('rollback_registry')
+class TestGetACL:
 
-    def setUp(self):
-        super(TestGetACL, self).setUp()
+    @pytest.fixture(scope="function", autouse=True)
+    def init_user(self, rollback_registry):
+        self.registry = rollback_registry
         self.user = self.registry.User.insert(
             login='jssuzanne', first_name='Jean-Sébastien',
             last_name='Suzanne')
@@ -22,7 +24,7 @@ class TestGetACL(BlokTestCase):
 
     def test_without_any_entry(self):
         acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
-        self.assertEqual(acl, [(Deny, 'jssuzanne', ALL_PERMISSIONS)])
+        assert acl == [(Deny, 'jssuzanne', ALL_PERMISSIONS)]
 
     def test_with_resource(self):
         self.registry.User.Authorization.insert(
@@ -34,13 +36,10 @@ class TestGetACL(BlokTestCase):
             perm_delete=dict(matched=True)
         )
         acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
-        self.assertEqual(
-            acl,
-            [
-                (Allow, 'jssuzanne', ['create', 'delete', 'read', 'update']),
-                (Deny, 'jssuzanne', ALL_PERMISSIONS),
-            ]
-        )
+        assert acl == [
+            (Allow, 'jssuzanne', ['create', 'delete', 'read', 'update']),
+            (Deny, 'jssuzanne', ALL_PERMISSIONS),
+        ]
 
     def test_with_wrong_resource(self):
         self.registry.User.Authorization.insert(
@@ -52,7 +51,7 @@ class TestGetACL(BlokTestCase):
             perm_delete=dict(matched=True)
         )
         acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
-        self.assertEqual(acl, [(Deny, 'jssuzanne', ALL_PERMISSIONS)])
+        assert acl == [(Deny, 'jssuzanne', ALL_PERMISSIONS)]
 
     def test_with_model(self):
         self.registry.User.Authorization.insert(
@@ -65,13 +64,10 @@ class TestGetACL(BlokTestCase):
         )
         acl = self.registry.User.Authorization.get_acl(
             'jssuzanne', 'Model.System.Blok')
-        self.assertEqual(
-            acl,
-            [
-                (Allow, 'jssuzanne', ['create', 'delete', 'read', 'update']),
-                (Deny, 'jssuzanne', ALL_PERMISSIONS),
-            ]
-        )
+        assert acl == [
+            (Allow, 'jssuzanne', ['create', 'delete', 'read', 'update']),
+            (Deny, 'jssuzanne', ALL_PERMISSIONS),
+        ]
 
     def test_with_resource_only_create_1(self):
         self.registry.User.Authorization.insert(
@@ -80,13 +76,10 @@ class TestGetACL(BlokTestCase):
             perm_create=dict(matched=True)
         )
         acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
-        self.assertEqual(
-            acl,
-            [
-                (Allow, 'jssuzanne', ['create']),
-                (Deny, 'jssuzanne', ALL_PERMISSIONS),
-            ]
-        )
+        assert acl == [
+            (Allow, 'jssuzanne', ['create']),
+            (Deny, 'jssuzanne', ALL_PERMISSIONS),
+        ]
 
     def test_with_resource_only_create_2(self):
         self.registry.User.Authorization.insert(
@@ -98,14 +91,11 @@ class TestGetACL(BlokTestCase):
             perm_delete=dict(matched=False)
         )
         acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
-        self.assertEqual(
-            acl,
-            [
-                (Allow, 'jssuzanne', ['create']),
-                (Deny, 'jssuzanne', ['delete', 'read', 'update']),
-                (Deny, 'jssuzanne', ALL_PERMISSIONS),
-            ]
-        )
+        assert acl == [
+            (Allow, 'jssuzanne', ['create']),
+            (Deny, 'jssuzanne', ['delete', 'read', 'update']),
+            (Deny, 'jssuzanne', ALL_PERMISSIONS),
+        ]
 
     def test_with_condition1(self):
         self.registry.User.Authorization.insert(
@@ -121,13 +111,10 @@ class TestGetACL(BlokTestCase):
             ),
         )
         acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
-        self.assertEqual(
-            acl,
-            [
-                (Allow, 'jssuzanne', ['create']),
-                (Deny, 'jssuzanne', ALL_PERMISSIONS),
-            ]
-        )
+        assert acl == [
+            (Allow, 'jssuzanne', ['create']),
+            (Deny, 'jssuzanne', ALL_PERMISSIONS),
+        ]
 
     def test_with_condition2(self):
         self.registry.User.Authorization.insert(
@@ -143,12 +130,9 @@ class TestGetACL(BlokTestCase):
             ),
         )
         acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
-        self.assertEqual(
-            acl,
-            [
-                (Deny, 'jssuzanne', ALL_PERMISSIONS),
-            ]
-        )
+        assert acl == [
+            (Deny, 'jssuzanne', ALL_PERMISSIONS),
+        ]
 
     def test_with_condition3(self):
         self.registry.User.Authorization.insert(
@@ -164,13 +148,10 @@ class TestGetACL(BlokTestCase):
             ),
         )
         acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
-        self.assertEqual(
-            acl,
-            [
-                (Allow, 'jssuzanne', ['create']),
-                (Deny, 'jssuzanne', ALL_PERMISSIONS),
-            ]
-        )
+        assert acl == [
+            (Allow, 'jssuzanne', ['create']),
+            (Deny, 'jssuzanne', ALL_PERMISSIONS),
+        ]
 
     def test_with_condition4(self):
         self.registry.User.Authorization.insert(
@@ -186,12 +167,9 @@ class TestGetACL(BlokTestCase):
             ),
         )
         acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
-        self.assertEqual(
-            acl,
-            [
-                (Deny, 'jssuzanne', ALL_PERMISSIONS),
-            ]
-        )
+        assert acl == [
+            (Deny, 'jssuzanne', ALL_PERMISSIONS),
+        ]
 
     def test_with_condition5(self):
         self.registry.User.Authorization.insert(
@@ -211,14 +189,11 @@ class TestGetACL(BlokTestCase):
             perm_delete=dict(matched=True)
         )
         acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
-        self.assertEqual(
-            acl,
-            [
-                (Allow, 'jssuzanne', ['delete', 'read', 'update']),
-                (Deny, 'jssuzanne', ['create']),
-                (Deny, 'jssuzanne', ALL_PERMISSIONS),
-            ]
-        )
+        assert acl == [
+            (Allow, 'jssuzanne', ['delete', 'read', 'update']),
+            (Deny, 'jssuzanne', ['create']),
+            (Deny, 'jssuzanne', ALL_PERMISSIONS),
+        ]
 
     def test_with_role_1(self):
         self.registry.User.Authorization.insert(
@@ -230,13 +205,10 @@ class TestGetACL(BlokTestCase):
             perm_delete=dict(matched=True)
         )
         acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
-        self.assertEqual(
-            acl,
-            [
-                (Allow, 'jssuzanne', ['create', 'delete', 'read', 'update']),
-                (Deny, 'jssuzanne', ALL_PERMISSIONS),
-            ]
-        )
+        assert acl == [
+            (Allow, 'jssuzanne', ['create', 'delete', 'read', 'update']),
+            (Deny, 'jssuzanne', ALL_PERMISSIONS),
+        ]
 
     def test_with_role_2(self):
         self.registry.User.Role.insert(
@@ -250,12 +222,9 @@ class TestGetACL(BlokTestCase):
             perm_delete=dict(matched=True)
         )
         acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
-        self.assertEqual(
-            acl,
-            [
-                (Deny, 'jssuzanne', ALL_PERMISSIONS),
-            ]
-        )
+        assert acl == [
+            (Deny, 'jssuzanne', ALL_PERMISSIONS),
+        ]
 
     def test_role_after_login(self):
         self.registry.User.Authorization.insert(
@@ -269,14 +238,11 @@ class TestGetACL(BlokTestCase):
             perm_read=dict(matched=True),
         )
         acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
-        self.assertEqual(
-            acl,
-            [
-                (Allow, 'jssuzanne', ['read']),
-                (Allow, 'jssuzanne', ['create']),
-                (Deny, 'jssuzanne', ALL_PERMISSIONS),
-            ]
-        )
+        assert acl == [
+            (Allow, 'jssuzanne', ['read']),
+            (Allow, 'jssuzanne', ['create']),
+            (Deny, 'jssuzanne', ALL_PERMISSIONS),
+        ]
 
     def test_order(self):
         self.registry.User.Authorization.insert(
@@ -292,14 +258,11 @@ class TestGetACL(BlokTestCase):
             order=1
         )
         acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
-        self.assertEqual(
-            acl,
-            [
-                (Allow, 'jssuzanne', ['read']),
-                (Allow, 'jssuzanne', ['create']),
-                (Deny, 'jssuzanne', ALL_PERMISSIONS),
-            ]
-        )
+        assert acl == [
+            (Allow, 'jssuzanne', ['read']),
+            (Allow, 'jssuzanne', ['create']),
+            (Deny, 'jssuzanne', ALL_PERMISSIONS),
+        ]
 
     def test_with_filter_1(self):
         self.registry.User.Authorization.insert(
@@ -316,13 +279,10 @@ class TestGetACL(BlokTestCase):
             perm_delete=dict(matched=True)
         )
         acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
-        self.assertEqual(
-            acl,
-            [
-                (Allow, 'jssuzanne', ['create', 'delete', 'read', 'update']),
-                (Deny, 'jssuzanne', ALL_PERMISSIONS),
-            ]
-        )
+        assert acl == [
+            (Allow, 'jssuzanne', ['create', 'delete', 'read', 'update']),
+            (Deny, 'jssuzanne', ALL_PERMISSIONS),
+        ]
 
     def test_with_filter_2(self):
         self.registry.User.Authorization.insert(
@@ -339,9 +299,4 @@ class TestGetACL(BlokTestCase):
             perm_delete=dict(matched=True)
         )
         acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
-        self.assertEqual(
-            acl,
-            [
-                (Deny, 'jssuzanne', ALL_PERMISSIONS),
-            ]
-        )
+        assert acl == [(Deny, 'jssuzanne', ALL_PERMISSIONS)]
