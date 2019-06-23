@@ -10,6 +10,17 @@ from webtest import TestApp
 from .pyramid_config import Configurator
 
 
+def init_web_server(*functions):
+    config = Configurator()
+    config.include_from_entry_point()
+    for function in functions:
+        config.include(function)
+
+    config.load_config_bloks()
+    app = config.make_wsgi_app()
+    return TestApp(app)
+
+
 class PyramidTestCase:
 
     def setUp(self):
@@ -17,14 +28,7 @@ class PyramidTestCase:
         self.includemes = []
 
     def init_web_server(self):
-        config = Configurator()
-        config.include_from_entry_point()
-        for includeme in self.includemes:
-            config.include(includeme)
-
-        config.load_config_bloks()
-        app = config.make_wsgi_app()
-        return TestApp(app)
+        return init_web_server(*self.includemes)
 
 
 class PyramidDBTestCase(PyramidTestCase, DBTestCase):

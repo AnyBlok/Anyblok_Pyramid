@@ -10,8 +10,6 @@ from pyramid.renderers import JSON
 from uuid import UUID, uuid1
 from os import urandom
 from decimal import Decimal
-from webtest import TestApp
-from anyblok_pyramid.pyramid_config import Configurator
 from anyblok_pyramid.adapter import (
     datetime_adapter,
     date_adapter,
@@ -19,17 +17,10 @@ from anyblok_pyramid.adapter import (
     bytes_adapter,
     decimal_adapter,
 )
+from anyblok_pyramid.testing import init_web_server
 
 
 class TestAdapter:
-
-    def init_web_server(self, function):
-        config = Configurator()
-        config.include_from_entry_point()
-        config.include(function)
-        config.load_config_bloks()
-        app = config.make_wsgi_app()
-        return TestApp(app)
 
     def test_registry_get_datetime(self):
 
@@ -43,7 +34,7 @@ class TestAdapter:
             json_renderer.add_adapter(datetime, datetime_adapter)
             config.add_renderer('json', json_renderer)
 
-        webserver = self.init_web_server(add_route_and_views)
+        webserver = init_web_server(add_route_and_views)
         res = webserver.get('/test/', status=200)
         assert (
             res.json_body['datetime']
@@ -62,7 +53,7 @@ class TestAdapter:
             json_renderer.add_adapter(date, date_adapter)
             config.add_renderer('json', json_renderer)
 
-        webserver = self.init_web_server(add_route_and_views)
+        webserver = init_web_server(add_route_and_views)
         res = webserver.get('/test/', status=200)
         assert res.json_body['date'] == date_adapter(date(2017, 10, 1), None)
 
@@ -80,7 +71,7 @@ class TestAdapter:
             json_renderer.add_adapter(UUID, uuid_adapter)
             config.add_renderer('json', json_renderer)
 
-        webserver = self.init_web_server(add_route_and_views)
+        webserver = init_web_server(add_route_and_views)
         res = webserver.get('/test/', status=200)
         assert res.json_body['uuid'] == uuid_adapter(uuid, None)
 
@@ -98,7 +89,7 @@ class TestAdapter:
             json_renderer.add_adapter(bytes, bytes_adapter)
             config.add_renderer('json', json_renderer)
 
-        webserver = self.init_web_server(add_route_and_views)
+        webserver = init_web_server(add_route_and_views)
         res = webserver.get('/test/', status=200)
         assert res.json_body['bytes'] == bytes_adapter(val, None)
 
@@ -116,6 +107,6 @@ class TestAdapter:
             json_renderer.add_adapter(Decimal, decimal_adapter)
             config.add_renderer('json', json_renderer)
 
-        webserver = self.init_web_server(add_route_and_views)
+        webserver = init_web_server(add_route_and_views)
         res = webserver.get('/test/', status=200)
         assert res.json_body['decimal'] == decimal_adapter(val, None)

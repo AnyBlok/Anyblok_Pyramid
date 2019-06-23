@@ -9,12 +9,9 @@ import pytest
 from anyblok.conftest import *  # noqa
 from webtest import TestApp
 from anyblok_pyramid.pyramid_config import Configurator
+from .testing import init_web_server
 
 
 @pytest.fixture(scope="class")
 def webserver(request, configuration_loaded):
-    config = Configurator()
-    config.include_from_entry_point()
-    config.load_config_bloks()
-    app = config.make_wsgi_app()
-    return TestApp(app)
+    return init_web_server()
