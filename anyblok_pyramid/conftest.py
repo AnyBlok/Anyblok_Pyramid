@@ -12,7 +12,7 @@ from anyblok_pyramid.pyramid_config import Configurator
 
 
 @pytest.fixture(scope="class")
-def webserver(request, init_session):
+def webserver(request, configuration_loaded):
     config = Configurator()
     config.include_from_entry_point()
     config.load_config_bloks()

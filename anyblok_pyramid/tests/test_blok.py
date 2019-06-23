@@ -12,7 +12,7 @@ import pytest
 class TestPyramidBlok:
 
     @pytest.fixture(autouse=True)
-    def transact(self, request, registry_testblok):
+    def transact(self, request, registry_testblok, webserver):
         transaction = registry_testblok.begin_nested()
         request.addfinalizer(transaction.rollback)
         return
@@ -22,7 +22,7 @@ class TestPyramidBlok:
         webserver.get('/hello/JS/', status=404)
         registry.upgrade(install=('test-pyramid1',))
         resp = webserver.get('/hello/JS/', status=200)
-        self.assertEqual(resp.body.decode('utf8'), 'Hello JS !!!')
+        assert resp.body.decode('utf8') == 'Hello JS !!!'
 
     def test_simple_crud_security(self, registry_testblok, webserver):
         registry = registry_testblok
