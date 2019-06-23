@@ -4,6 +4,7 @@
 ..    Copyright (C) 2016 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
 ..    Copyright (C) 2017 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
 ..    Copyright (C) 2018 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
+..    Copyright (C) 2019 Jean-Sebastien SUZANNE <js.suzanne@gmail.com>
 ..
 .. This Source Code Form is subject to the terms of the Mozilla Public License,
 .. v. 2.0. If a copy of the MPL was not distributed with this file,You can
@@ -11,6 +12,12 @@
 
 CHANGELOG
 =========
+
+
+0.9.3 (2019-06-23)
+------------------
+
+* Refactored unittest and helpper from nose to pytest
 
 
 0.9.2 (2018-08-10)
