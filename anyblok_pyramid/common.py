@@ -42,4 +42,4 @@ def preload_databases(loadwithoutmigration=True):
             registry.session.close()
             logger.info("The database %r is preloaded", dbname)
         else:
-            logger.warn("The database %r does not exist", dbname)
+            logger.warning("The database %r does not exist", dbname)
