@@ -28,12 +28,25 @@
     :show-inheritance:
     :noindex:
 
-
 **Views**
 ~~~~~~~~~
 
-Give the views forlogin and logout, this views, is not applied by default
-You must declare the route to use them
+Define views for login and logout. Those views are not automatically applied
+to your project.
+You must declare the route to use them in the pyramid_load_config method of
+your project blok.
+
+First import them in your blok definition __init__.py file:
+
+   from anyblok_pyramid.bloks.auth.views import login, logout
+
+Then set route path in pyramid_load_config method:
+
+   def pyramid_load_config(cls, config):
+      config.add_route('login', '/login', request_method='POST')
+      config.add_view(view=login, route_name='login', renderer="JSON")
+      config.add_route('logout', '/logout', request_method='POST')
+      config.add_view(view=logout, route_name='logout')
 
 .. automodule:: anyblok_pyramid.bloks.auth.views
 .. autofunction:: login
@@ -42,8 +55,8 @@ You must declare the route to use them
 **Configuration**
 ~~~~~~~~~~~~~~~~~
 
-Define the authentification / authorization policies, This depend of the options
-passed on the global configuration
+Define the authentification / authorization policies, This depend on the
+options defined in global configuration.
 
 .. automodule:: anyblok_pyramid.bloks.auth.pyramid
 .. autofunction:: getAuthenticationPolicy

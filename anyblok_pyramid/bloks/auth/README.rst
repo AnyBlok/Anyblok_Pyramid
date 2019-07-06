@@ -9,13 +9,18 @@
 How to use it
 ~~~~~~~~~~~~~
 
-This blok defined **User** and the base of the Authentication / Authorization.
+This blok define a **User** model and add the basics of Pyramid Authentication
+and Authorization policy.
+It is required by the 'password' and 'authorization' bloks.
+Used alone it adds : 
 
-Alone this Blok is useless because no credential and autorization are defined
+* **User** and **User.Role** models
+* **login** / **logout** extendable views (That will throw an exception until
+  you require 'password' and 'authorization' bloks into your project.)
 
-You can:
+Basically you can:
 
-* Create an user::
+* Create a new user::
 
       user = registry.User.insert(
           login='jssuzanne',
@@ -25,7 +30,7 @@ You can:
 
       user.name  # Jean-Sébastien SUZANNE
 
-* Add a role at this user::
+* Add a role to the created user::
 
       role = registry.User.Role.insert(
           name='admin',
@@ -33,7 +38,10 @@ You can:
       )
       user.roles.append(role)
 
-* check a permission for a user to use a resource::
+      user.roles # [<Model.User.Role(children=[], label='Administrator', name='admin', parents=<not loaded>, users=<Model.User len(1)>)>]
+      role.users # [<Model.User(first_name='Jean-Sébastien', last_name='Suzanne', login='jssuzanne', roles=<Model.User.Role len(1)>)>]
+
+* Check a permission for a user to use a resource::
 
       from anyblok_pyramid.security import AnyBlokResourceFactory
 
@@ -48,4 +56,5 @@ You can:
 
 .. warning::
 
-    The have to define credential behaviours, to login and logout
+    Remember that until you had credential behaviours, the 'login' view from
+    'auth.views' will raise an 'HTTPUnauthorized' exception.

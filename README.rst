@@ -34,15 +34,20 @@ AnyBlok / Pyramid
 AnyBlok / Pyramid make the link between `AnyBlok <http://doc.anyblok.org>`_ and
 `Pyramid <http://pyramid.readthedocs.org/>`_
 
+It also gives you some bloks for adding user http authentication and role
+based authorization to your project.
+
+
 +-------------------+--------------+----------------------------------------------------------+
-| Blok              | Dependancies | Description                                              |
+| Blok              | Dependencies | Description                                              |
 +===================+==============+==========================================================+
-| **auth**          |              | Add User Model. Add hook to connect with pyramid         |
-|                   |              | authentification and authorization                       |
+| **auth**          |              | Add 'User' and 'User.Role' models. Add hooks to connect  |
+|                   |              | Pyramid authentification and authorization               |
 +-------------------+--------------+----------------------------------------------------------+
-| **auth-password** | **auth**     | Add CredentialStore Model, simple login / password table |
+| **auth-password** | **auth**     | Add 'User.CredentialStore' model, a simple               |
+|                   |              | login, password table                                    |
 +-------------------+--------------+----------------------------------------------------------+
-| **authorization** | **auth**     | Add Model to define rules of the autorisation            |
+| **authorization** | **auth**     | Add 'User.Authorization' model for managing permissions  |
 +-------------------+--------------+----------------------------------------------------------+
 
 AnyBlok / Pyramid is released under the terms of the `Mozilla Public License`.
