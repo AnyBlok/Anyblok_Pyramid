@@ -19,7 +19,8 @@ User = Declarations.Model.User
 
 @Declarations.register(User)
 class Authorization:
-    """Store the autorization rules"""
+    """A model to store autorization rules (permissions for users against an
+    Anyblok model or a Pyramid resource)"""
 
     id = Integer(primary_key=True)
     order = Integer(default=100, nullable=False)
@@ -118,7 +119,8 @@ class Authorization:
         target.check_validity()
 
     def check_validity(self):
-        """Check at the insert or update that all rule match
+        """When creating or updating a User.Authorization, check that all rules
+        objects exists or return an AuthorizationValidationException
 
         :exception: AuthorizationValidationException
         """
