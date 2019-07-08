@@ -9,7 +9,8 @@
 How to use it
 ~~~~~~~~~~~~~
 
-This blok defined authorization for **User or Role** on a **resource or model**.
+This blok helps defining authorization for **User or Role** on a **resource or
+model**.
 
 * Create an user::
 
@@ -21,9 +22,8 @@ This blok defined authorization for **User or Role** on a **resource or model**.
 
       user.name  # Jean-Sébastien SUZANNE
 
-* Add an autorization::
+* Add an authorization for the user to access a Pyramid resource::
 
-      user.roles.append(role)
       registry.User.Authorization.insert(
           resource='something',
           user=user,
@@ -39,13 +39,37 @@ This blok defined authorization for **User or Role** on a **resource or model**.
       #      (Deny, 'jssuzanne', ALL_PERMISSIONS),
       #  ]
 
+* An user can have roles, this way you can define an authorization for a role
+  and all users that have this role will be authorized::
 
-The permissiosn is stored in the **Json** column, the permission can be the CRUD and also
-any another permission.
+      role = registry.User.Role.insert(
+          name='admin',
+          label='Administrator'
+      )
+      user.roles.append(role)
+
+      registry.User.Authorization.insert(
+          resource='otherthing',
+          role=role,
+          perm_create=dict(matched=True),
+          perm_read=dict(matched=True),
+          perm_update=dict(matched=True),
+          perm_delete=dict(matched=True)
+      )
+
+      registry.User.Authorization.get_acl('jssuzanne', 'otherthing')
+      #  [
+      #      (Allow, 'jssuzanne', ['create', 'delete', 'read', 'update']),
+      #      (Deny, 'jssuzanne', ALL_PERMISSIONS),
+      #  ]
+
+
+The permission is stored in a **Json** column, the permissions can be CRUD
+or any other one that is defined.
 
 Each permission can defined three keys:
 
-* condition: ``Query.filter_condition``, if the empty then the condition is marked as True
+* condition: ``Query.filter_condition``, if it's empty then the condition is marked as True
 * matched: If condition is True, the entry indicate the value (default None)
 * unmatched: If condition is False, the entry indicate the value (default None)
 

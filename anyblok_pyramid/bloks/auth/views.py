@@ -13,7 +13,7 @@ logger = getLogger(__name__)
 
 
 def login(request):
-    """Default view to login one user"""
+    """Default view to login a user"""
     User = request.anyblok.registry.User
     params = User.format_login_params(request)
     if User.check_login(**params):
@@ -27,7 +27,7 @@ def login(request):
 
 
 def logout(request):
-    """Default view to logout one user"""
+    """Default view to logout a user"""
     logger.info('%r is logged out', request.authenticated_userid)
     headers = forget(request)
     User = request.anyblok.registry.User

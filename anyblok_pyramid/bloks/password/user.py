@@ -12,7 +12,7 @@ from anyblok.column import String, Password
 
 @Declarations.register(Declarations.Model.User)
 class CredentialStore:
-    """Save in table login / password"""
+    """Simple login / password table"""
     login = String(
         primary_key=True, nullable=False,
         foreign_key=Declarations.Model.User.use('login').options(
@@ -27,8 +27,8 @@ class User:
 
     @classmethod
     def check_login(cls, login=None, password=None, **kwargs):
-        """Overwrite the method to check if the user exist and
-        the password gave is the same sa the password stored
+        """Overwrite the initial method to check if the given login match with
+        an existing user that has the same password.
 
         :param login: str
         :param password: str
