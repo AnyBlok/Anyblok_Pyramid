@@ -17,6 +17,7 @@ from anyblok import (
     configuration_post_load,
 )
 from .common import preload_databases
+from colorama import Fore, Style
 from logging import getLogger
 logger = getLogger(__name__)
 
@@ -39,10 +40,10 @@ def wsgi():
     server = make_server(wsgi_host, wsgi_port, app)
     preload_databases(loadwithoutmigration=False)
 
-    logger.warning("Pyramid development server running at %r:%r" % (
-        wsgi_host,
-        wsgi_port)
-    )
+    start_msg = f"Pyramid development server running at "\
+                f"{Fore.BLUE}http://{wsgi_host}:{wsgi_port}{Style.RESET_ALL}"
+    logger.info(start_msg)
+    print(start_msg)
     server.serve_forever()
 
 
