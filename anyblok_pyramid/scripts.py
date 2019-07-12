@@ -40,10 +40,11 @@ def wsgi():
     server = make_server(wsgi_host, wsgi_port, app)
     preload_databases(loadwithoutmigration=False)
 
-    start_msg = f"Pyramid development server running at "\
-                f"{Fore.BLUE}http://{wsgi_host}:{wsgi_port}{Style.RESET_ALL}"
+    start_msg = "Pyramid development server running at %shttp://%s:%s%s" % (
+        Fore.BLUE, wsgi_host, wsgi_port, Style.RESET_ALL)
     logger.info(start_msg)
     print(start_msg)
+
     server.serve_forever()
 
 
