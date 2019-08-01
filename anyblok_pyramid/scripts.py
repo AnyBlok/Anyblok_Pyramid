@@ -17,12 +17,13 @@ from anyblok import (
     configuration_post_load,
 )
 from .common import preload_databases
+from colorama import Fore, Style
 from logging import getLogger
 logger = getLogger(__name__)
 
 
 def wsgi():
-    """Simple wsgi server for dev
+    """Simple Pyramid wsgi server for development purpose
     """
     load_init_function_from_entry_points()
     Configuration.load('pyramid')
@@ -39,7 +40,11 @@ def wsgi():
     server = make_server(wsgi_host, wsgi_port, app)
     preload_databases(loadwithoutmigration=False)
 
-    logger.info("Serve forever on %r:%r" % (wsgi_host, wsgi_port))
+    start_msg = "Pyramid development server running at %shttp://%s:%s%s" % (
+        Fore.BLUE, wsgi_host, wsgi_port, Style.RESET_ALL)
+    logger.info(start_msg)
+    print(start_msg)
+
     server.serve_forever()
 
 
@@ -48,7 +53,7 @@ def gunicorn_wsgi():
     try:
         import gunicorn  # noqa
     except ImportError:
-        logger.error("No gunicorn installed")
+        logger.error("Gunicorn is not installed. Try: pip install gunicorn")
         sys.exit(1)
 
     from .gunicorn import WSGIApplication
