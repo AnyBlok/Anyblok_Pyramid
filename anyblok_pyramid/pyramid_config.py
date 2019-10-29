@@ -73,7 +73,7 @@ class InstalledBlokPredicate:
         self.blok_name = blok_name
 
     def text(self):
-        return 'instaled blok = %s' % self.blok_name
+        return 'installed blok = %s' % self.blok_name
 
     phash = text
 
