@@ -13,6 +13,11 @@
 CHANGELOG
 =========
 
+0.9.4
+-----
+
+* Fixed #21 that `zope.sqlalchemy 1.2 <https://pypi.org/project/zope.sqlalchemy/#id1>`_ rename a class
+
 
 0.9.3 (2019-06-23)
 ------------------

@@ -3,11 +3,17 @@
 #
 #    Copyright (C) 2015 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
 #    Copyright (C) 2017 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
+#    Copyright (C) 2019 Jean-Sebastien SUZANNE <js.suzanne@gmail.fr>
 #
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from zope.sqlalchemy import ZopeTransactionExtension
+try:
+    from zope.sqlalchemy import ZopeTransactionExtension
+except ImportError:
+    from zope.sqlalchemy import (
+        ZopeTransactionEvents as ZopeTransactionExtension)
+
 from zope.sqlalchemy.datamanager import (
     _SESSION_STATE, STATUS_ACTIVE, STATUS_READONLY, STATUS_CHANGED,
     STATUS_INVALIDATED, NO_SAVEPOINT_SUPPORT, _retryable_errors)
