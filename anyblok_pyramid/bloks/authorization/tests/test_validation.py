@@ -9,15 +9,14 @@ import pytest
 from ..exceptions import AuthorizationValidationException
 
 
-@pytest.mark.usefixtures('rollback_registry')
+@pytest.mark.usefixtures('registry_authorization')
 class TestAuthorizationValidation:
 
     @pytest.fixture(scope="function", autouse=True)
-    def init_user(self, rollback_registry):
-        self.registry = rollback_registry
+    def init_user(self, registry_authorization):
+        self.registry = registry_authorization
         self.user = self.registry.User.insert(
-            login='jssuzanne', first_name='Jean-Sébastien',
-            last_name='Suzanne')
+            login='jssuzanne')
         self.role = self.registry.User.Role.insert(
             name='admin', label='Administrator')
         self.role.users.append(self.user)

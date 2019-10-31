@@ -8,12 +8,12 @@
 import pytest
 
 
-@pytest.mark.usefixtures('rollback_registry')
+@pytest.mark.usefixtures('registry_authorization')
 class TestQuery:
 
     @pytest.fixture(scope="function", autouse=True)
-    def init_user(self, rollback_registry):
-        self.registry = rollback_registry
+    def init_user(self, registry_authorization):
+        self.registry = registry_authorization
 
     def test_empty(self):
         query = self.registry.System.Blok.query().condition_filter({}, {})
@@ -226,8 +226,7 @@ class TestQuery:
         assert query.count() == 2
 
     def test_with_relationship(self):
-        user = self.registry.User.insert(login="jssuzanne", first_name="js",
-                                         last_name="suzanne")
+        user = self.registry.User.insert(login="jssuzanne")
         role = self.registry.User.Role.insert(name='admin', label="Admin")
         role.users.append(user)
         authorization = self.registry.User.Authorization.insert(

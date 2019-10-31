@@ -17,13 +17,6 @@ class User:
     """User declaration need for Auth"""
 
     login = String(primary_key=True, nullable=False)
-    first_name = String(nullable=False)
-    last_name = String(nullable=False)
-    name = Function(fget='get_name')
-
-    def get_name(self):
-        """Return the name of the user"""
-        return self.first_name + ' ' + self.last_name.upper()
 
     @classmethod
     def get_roles(cls, login):

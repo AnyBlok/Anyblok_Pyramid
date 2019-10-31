@@ -9,20 +9,20 @@ import pytest
 from pyramid.httpexceptions import HTTPUnauthorized
 
 
-@pytest.mark.usefixtures('rollback_registry')
+@pytest.mark.usefixtures('registry_password')
 class TestCredential:
 
     def init_user(self, registry):
         self.User = registry.User
         self.CredentialStore = registry.User.CredentialStore
-        self.User.insert(login='user.1', first_name="User", last_name="1")
+        self.User.insert(login='user.1')
         self.CredentialStore.insert(login='user.1', password="P1")
 
-    def test_check_login_ok(self, rollback_registry):
-        self.init_user(rollback_registry)
+    def test_check_login_ok(self, registry_password):
+        self.init_user(registry_password)
         assert self.User.check_login(login="user.1", password="P1") == 'user.1'
 
-    def test_check_login_ko(self, rollback_registry):
-        self.init_user(rollback_registry)
+    def test_check_login_ko(self, registry_password):
+        self.init_user(registry_password)
         with pytest.raises(HTTPUnauthorized):
             self.User.check_login(login="user.1", password="P2")
