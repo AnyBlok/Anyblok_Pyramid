@@ -9,10 +9,11 @@
 How to use it
 ~~~~~~~~~~~~~
 
-This Blok define credential from an **existing user**. You can not add credential
-for an **unexisting user** because one foreign key constraint is defined between both.
+This Blok add **User.CredentialStore** model, a simple login / password table.
+You can not add credential for an **unexisting user** because one foreign key
+constraint is defined between both.
 
-* You must have an user::
+* Before all you must create a new user::
 
       user = registry.User.insert(
           login='jssuzanne',
@@ -20,14 +21,33 @@ for an **unexisting user** because one foreign key constraint is defined between
           last_name='Suzanne'
       )
 
-* Define the credential::
-      
-      registry.User.CredentialStore.insert(
+* Then define a credential for this user::
+
+      user_credential = registry.User.CredentialStore.insert(
           login=user.login,
           password='secret password',
       )
 
+
+* At this point you can check if a given password is the good one::
+
+      user_credential = registry.User.CredentialStore.insert(
+          login=user.login,
+          password='secret password',
+      )
+
+      user_credential.password == "not the good one" # False
+      user_credential.password == "secret password" # True
+
+* You can also use 'registry.User.check_login' method to check that a password
+  and a login match::
+
+      registry.User.check_login(login='jssuzanne', password='a bad one') # Will raise an HTTPUnauthorized exception
+      registry.User.check_login(login='jssuzanne', password='secret password') # 'jssuzanne'
+
+
 .. note::
     
-    The password use the **Password** column, the value is crypted is table and can not be
-    get during the execution of the application, You only compare it
+    The password use the **Password** column, the value is an encrypted string
+    in database and can not be revealed during the execution of the application,
+    you can only compare it.
