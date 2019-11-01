@@ -8,7 +8,6 @@
 from pyramid.httpexceptions import HTTPUnauthorized
 from anyblok import Declarations
 from anyblok.column import String
-from anyblok.field import Function
 from pyramid.security import Allow, ALL_PERMISSIONS
 
 

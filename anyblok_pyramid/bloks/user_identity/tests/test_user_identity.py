@@ -15,7 +15,7 @@ class TestUserIdentity:
 
         registry = registry_identity
 
-        user = registry.User.insert(login="johnny_dowey",
-                first_name="John", last_name="Doe")
+        user = registry.User.insert(
+                login="johnny_dowey", first_name="John", last_name="Doe")
 
         assert user.name == "John DOE"
