@@ -53,7 +53,7 @@ script:
   - pytest --cov-report= --cov=anyblok_pyramid anyblok_pyramid/bloks/authorization
   - psql -c 'drop database travis_ci_test;' -U postgres
   - anyblok_createdb --install-bloks user-identity
-  - pytest --cov-report= --cov=anyblok_pyramid anyblok_pyramid/bloks/auth
-  
+  - pytest --cov-report= --cov=anyblok_pyramid anyblok_pyramid/bloks/user_identity
+
 after_success:
   coveralls --data_file=.coverage --config_file=.coveragerc
