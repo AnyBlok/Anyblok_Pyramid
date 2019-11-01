@@ -17,7 +17,6 @@ from anyblok import (
     configuration_post_load,
 )
 from .common import preload_databases
-from colorama import Fore, Style
 from logging import getLogger
 logger = getLogger(__name__)
 
@@ -40,8 +39,16 @@ def wsgi():
     server = make_server(wsgi_host, wsgi_port, app)
     preload_databases(loadwithoutmigration=False)
 
-    start_msg = "Pyramid development server running at %shttp://%s:%s%s" % (
-        Fore.BLUE, wsgi_host, wsgi_port, Style.RESET_ALL)
+    try:
+        from colorama import Fore, Style
+        start_msg = \
+            "Pyramid development server running at %shttp://%s:%s%s" % (
+                Fore.BLUE, wsgi_host, wsgi_port, Style.RESET_ALL)
+    except ImportError:
+        logger.info("`pip install colorama` to get colored link"
+        start_msg = "Pyramid development server running at http://%s:%s" % (
+            wsgi_host, wsgi_port)
+
     logger.info(start_msg)
     print(start_msg)
 
