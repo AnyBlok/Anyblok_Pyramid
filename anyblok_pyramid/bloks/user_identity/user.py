@@ -5,11 +5,9 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from pyramid.httpexceptions import HTTPUnauthorized
 from anyblok import Declarations
 from anyblok.column import String
 from anyblok.field import Function
-from pyramid.security import Allow, ALL_PERMISSIONS
 
 
 @Declarations.register(Declarations.Model)
