@@ -15,7 +15,7 @@ class TestCredential:
     def init_user(self, registry):
         self.User = registry.User
         self.CredentialStore = registry.User.CredentialStore
-        self.User.insert(login='user.1', first_name="User", last_name="1")
+        self.User.insert(login='user.1')
         self.CredentialStore.insert(login='user.1', password="P1")
 
     def test_check_login_ok(self, rollback_registry):

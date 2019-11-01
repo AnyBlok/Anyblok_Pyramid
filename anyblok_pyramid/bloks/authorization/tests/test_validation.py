@@ -16,8 +16,7 @@ class TestAuthorizationValidation:
     def init_user(self, rollback_registry):
         self.registry = rollback_registry
         self.user = self.registry.User.insert(
-            login='jssuzanne', first_name='Jean-Sébastien',
-            last_name='Suzanne')
+            login='jssuzanne')
         self.role = self.registry.User.Role.insert(
             name='admin', label='Administrator')
         self.role.users.append(self.user)

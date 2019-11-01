@@ -226,8 +226,7 @@ class TestQuery:
         assert query.count() == 2
 
     def test_with_relationship(self):
-        user = self.registry.User.insert(login="jssuzanne", first_name="js",
-                                         last_name="suzanne")
+        user = self.registry.User.insert(login="jssuzanne")
         role = self.registry.User.Role.insert(name='admin', label="Admin")
         role.users.append(user)
         authorization = self.registry.User.Authorization.insert(
