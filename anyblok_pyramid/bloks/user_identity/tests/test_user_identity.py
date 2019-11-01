@@ -8,12 +8,12 @@
 import pytest
 
 
-@pytest.mark.usefixtures('registry_identity')
+@pytest.mark.usefixtures('rollback_registry')
 class TestUserIdentity:
 
-    def test_user_identity(self, registry_identity):
+    def test_user_identity(self, rollback_registry):
 
-        registry = registry_identity
+        registry = rollback_registry
 
         user = registry.User.insert(
             login="johnny_dowey", first_name="John", last_name="Doe")

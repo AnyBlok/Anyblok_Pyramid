@@ -9,7 +9,7 @@ import pytest
 from ..exceptions import RecursionRoleError
 
 
-@pytest.mark.usefixtures('registry_auth')
+@pytest.mark.usefixtures('rollback_registry')
 class TestUserAndRole:
 
     def init_user(self, registry):
@@ -20,14 +20,14 @@ class TestUserAndRole:
         self.role = self.Role.insert(name='admin', label="Administrator")
         self.role.users.append(self.user)
 
-    def test_role_name_in_user_roles(self, registry_auth):
-        self.init_user(registry_auth)
+    def test_role_name_in_user_roles(self, rollback_registry):
+        self.init_user(rollback_registry)
         assert self.role.name in self.User.get_roles(self.user.login)
 
-    def test_rec_roles(self, registry_auth):
-        self.init_user(registry_auth)
+    def test_rec_roles(self, rollback_registry):
+        self.init_user(rollback_registry)
         role2 = self.Role.insert(name='g2', label="G2")
         self.role.children.append(role2)
         role2.children.append(self.role)
         with pytest.raises(RecursionRoleError):
-            registry_auth.flush()
+            rollback_registry.flush()

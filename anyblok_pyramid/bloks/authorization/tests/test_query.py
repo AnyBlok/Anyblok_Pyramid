@@ -8,12 +8,12 @@
 import pytest
 
 
-@pytest.mark.usefixtures('registry_authorization')
+@pytest.mark.usefixtures('rollback_registry')
 class TestQuery:
 
     @pytest.fixture(scope="function", autouse=True)
-    def init_user(self, registry_authorization):
-        self.registry = registry_authorization
+    def init_user(self, rollback_registry):
+        self.registry = rollback_registry
 
     def test_empty(self):
         query = self.registry.System.Blok.query().condition_filter({}, {})

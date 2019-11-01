@@ -9,12 +9,12 @@ import pytest
 from pyramid.security import Allow, Deny, ALL_PERMISSIONS
 
 
-@pytest.mark.usefixtures('registry_authorization')
+@pytest.mark.usefixtures('rollback_registry')
 class TestGetACL:
 
     @pytest.fixture(scope="function", autouse=True)
-    def init_user(self, registry_authorization):
-        self.registry = registry_authorization
+    def init_user(self, rollback_registry):
+        self.registry = rollback_registry
         self.user = self.registry.User.insert(
             login='jssuzanne')
         self.role = self.registry.User.Role.insert(
