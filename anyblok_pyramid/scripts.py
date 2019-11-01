@@ -41,11 +41,11 @@ def wsgi():
 
     try:
         from colorama import Fore, Style
-        start_msg = \
+        start_msg = (
             "Pyramid development server running at %shttp://%s:%s%s" % (
-                Fore.BLUE, wsgi_host, wsgi_port, Style.RESET_ALL)
+                Fore.BLUE, wsgi_host, wsgi_port, Style.RESET_ALL))
     except ImportError:
-        logger.info("`pip install colorama` to get colored link"
+        logger.info("`pip install colorama` to get colored link")
         start_msg = "Pyramid development server running at http://%s:%s" % (
             wsgi_host, wsgi_port)
 
