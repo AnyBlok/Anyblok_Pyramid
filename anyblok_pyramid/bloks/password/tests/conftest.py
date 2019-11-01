@@ -7,10 +7,3 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok.tests.conftest import *  # noqa
 from anyblok_pyramid.conftest import *  # noqa
-
-
-@pytest.fixture(scope="function")
-def registry_password(request, testbloks_loaded):
-    registry = init_registry_with_bloks(['auth-password'], None)
-    request.addfinalizer(registry.close)
-    return registry
