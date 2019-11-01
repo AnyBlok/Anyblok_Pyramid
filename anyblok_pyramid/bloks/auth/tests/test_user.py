@@ -16,7 +16,7 @@ class TestUserAndRole:
         self.User = registry.User
         self.Role = registry.User.Role
         self.user = self.User.insert(
-            login='user.1', first_name="User", last_name="1")
+            login='user.1')
         self.role = self.Role.insert(name='admin', label="Administrator")
         self.role.users.append(self.user)
 

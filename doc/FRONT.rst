@@ -90,6 +90,11 @@ Contributors
 
 * Franck Bret
 
+`ZeProfile <http://zeprofile.com>`_ team:
+
+* Franck Bret
+* Alexis Tourneux
+
 Bugs
 ----
 
