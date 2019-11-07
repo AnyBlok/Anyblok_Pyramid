@@ -97,7 +97,7 @@ class WSGIApplication(Application):
 
     def load(self):
         BlokManager.load()
-        preload_databases()
+        preload_databases(loadwithoutmigration=False)
         config = Configurator()
         config.include_from_entry_point()
         config.load_config_bloks()
