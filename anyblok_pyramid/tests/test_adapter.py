@@ -61,7 +61,7 @@ class TestAdapter:
             timedelta(
                 days=1, hours=4, minutes=56, seconds=3710, milliseconds=4000,
                 microseconds=500)
-            )
+        )
 
     def test_registry_get_date(self):
 
