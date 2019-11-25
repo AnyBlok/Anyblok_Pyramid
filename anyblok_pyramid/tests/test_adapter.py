@@ -5,18 +5,19 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from pyramid.renderers import JSON
 from uuid import UUID, uuid1
 from os import urandom
 from decimal import Decimal
 from anyblok_pyramid.adapter import (
-    datetime_adapter,
-    date_adapter,
-    uuid_adapter,
-    bytes_adapter,
-    decimal_adapter,
-)
+        datetime_adapter,
+        date_adapter,
+        timedelta_adapter,
+        uuid_adapter,
+        bytes_adapter,
+        decimal_adapter,
+        )
 from anyblok_pyramid.testing import init_web_server
 
 
@@ -37,7 +38,31 @@ class TestAdapter:
         webserver = init_web_server(add_route_and_views)
         res = webserver.get('/test/', status=200)
         assert res.json_body['datetime'] == datetime_adapter(
-            datetime(2017, 10, 1, 1, 1, 1), None)
+                datetime(2017, 10, 1, 1, 1, 1), None)
+
+    def test_registry_get_timedelta(self):
+
+        def get_timedelta(request):
+            return {'timedelta': timedelta(
+                days=1, hours=4, minutes=56,
+                seconds=3710, milliseconds=4000,
+                microseconds=500)}
+
+        def add_route_and_views(config):
+            config.add_route('dbname', '/test/')
+            config.add_view(
+                    get_timedelta, route_name='dbname', renderer='json')
+            json_renderer = JSON()
+            json_renderer.add_adapter(timedelta, timedelta_adapter)
+            config.add_renderer('json', json_renderer)
+
+        webserver = init_web_server(add_route_and_views)
+        res = webserver.get('/test/', status=200)
+
+        assert res.json_body['timedelta'] == timedelta_adapter(
+            timedelta(
+                days=1, hours=4, minutes=56, seconds=3710,
+                milliseconds=4000, microseconds=500), None)
 
     def test_registry_get_date(self):
 
