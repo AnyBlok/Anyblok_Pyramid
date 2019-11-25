@@ -57,7 +57,7 @@ class TestAdapter:
 
         webserver = init_web_server(add_route_and_views)
         res = webserver.get('/test/', status=200)
-        assert res.json_body['timedelta'] == datetime_adapter(
+        assert res.json_body['timedelta'] == timedelta_adapter(
             timedelta(
                 days=1, hours=4, minutes=56, seconds=3710, milliseconds=4000,
                 microseconds=500), None)
