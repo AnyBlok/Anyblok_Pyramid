@@ -11,13 +11,13 @@ from uuid import UUID, uuid1
 from os import urandom
 from decimal import Decimal
 from anyblok_pyramid.adapter import (
-        datetime_adapter,
-        date_adapter,
-        timedelta_adapter,
-        uuid_adapter,
-        bytes_adapter,
-        decimal_adapter,
-        )
+    datetime_adapter,
+    date_adapter,
+    timedelta_adapter,
+    uuid_adapter,
+    bytes_adapter,
+    decimal_adapter,
+)
 from anyblok_pyramid.testing import init_web_server
 
 
@@ -38,7 +38,7 @@ class TestAdapter:
         webserver = init_web_server(add_route_and_views)
         res = webserver.get('/test/', status=200)
         assert res.json_body['datetime'] == datetime_adapter(
-                datetime(2017, 10, 1, 1, 1, 1), None)
+            datetime(2017, 10, 1, 1, 1, 1), None)
 
     def test_registry_get_timedelta(self):
 
@@ -51,7 +51,7 @@ class TestAdapter:
         def add_route_and_views(config):
             config.add_route('dbname', '/test/')
             config.add_view(
-                    get_timedelta, route_name='dbname', renderer='json')
+                get_timedelta, route_name='dbname', renderer='json')
             json_renderer = JSON()
             json_renderer.add_adapter(timedelta, timedelta_adapter)
             config.add_renderer('json', json_renderer)
