@@ -38,6 +38,25 @@ def datetime_adapter(obj, request):
     return obj.isoformat()
 
 
+def timedelta_adapter(obj, request):
+
+    """Format the fields.TimeDelta to return String
+
+    ::
+
+        from pyramid.renderers import JSON
+        from datetime import timedelta
+        json_renderer = JSON()
+        json_renderer.add_adapter(timedelta, timedelta_adapter)
+        config.add_renderer('json', json_renderer)
+
+    :param obj: timedelta obj
+    :rtype: str, seconds corresponding to timedelta
+    """
+
+    return obj.total_seconds()
+
+
 def date_adapter(obj, request):
     """Format the fields.Date to return String
 
