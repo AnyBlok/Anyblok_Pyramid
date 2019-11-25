@@ -50,7 +50,7 @@ class TestAdapter:
         def add_route_and_views(config):
             config.add_route('dbname', '/test/')
             config.add_view(
-                    get_timedelta, route_name='db_name', renderer='json')
+                get_timedelta, route_name='dbname', renderer='json')
             json_renderer = JSON()
             json_renderer.add_adapter(timedelta, timedelta_adapter)
             config.add_renderer('json', json_renderer)
@@ -58,11 +58,10 @@ class TestAdapter:
         webserver = init_web_server(add_route_and_views)
         res = webserver.get('/test/', status=200)
         assert res.json_body['timedelta'] == datetime_adapter(
-                timedelta(
-                    days=1, hours=4, minutes=56, seconds=3710,
-                    milliseconds=4000, microseconds=500
-                    )
-                )
+            timedelta(
+                days=1, hours=4, minutes=56, seconds=3710, milliseconds=4000,
+                microseconds=500)
+            )
 
     def test_registry_get_date(self):
 
