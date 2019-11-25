@@ -60,8 +60,7 @@ class TestAdapter:
         assert res.json_body['timedelta'] == datetime_adapter(
             timedelta(
                 days=1, hours=4, minutes=56, seconds=3710, milliseconds=4000,
-                microseconds=500)
-        )
+                microseconds=500), None)
 
     def test_registry_get_date(self):
 
