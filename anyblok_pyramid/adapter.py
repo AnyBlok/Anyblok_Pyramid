@@ -38,7 +38,7 @@ def datetime_adapter(obj, request):
     return obj.isoformat()
 
 
-def timedelta_adapter(obj, request):
+def timedelta_adapter(obj, request, mode='seconds'):
 
     """Format the fields.TimeDelta to return String
 
@@ -49,9 +49,65 @@ def timedelta_adapter(obj, request):
         json_renderer.add_adapter(timedelta, timedelta_adapter)
         config.add_renderer('json', json_renderer)
 
+    The mode parameter can be used to set the output of the adpater.
+    This parameter can either be :
+
+        * microseconds
+        * milliseconds
+        * seconds (default)
+        * minutes
+        * hours
+        * days
+        * weeks
+
+    When using this adapter with non default parameter, it might be used the
+    following way :
+
+    ::
+        from pyramid.renderers import JSON
+        from datetime import timedelta
+        json_renderer = JSON()
+        json_renderer.add_adapter(
+            timedelta, lambda obj, request: timedelta_adapter(
+                obj, request, 'hours'))
+        config.add_renderer('json', json_renderer)
+
     :param obj: timedelta obj
+    :param mode: str
     :rtype: str, seconds corresponding to timedelta
     """
+
+    seconds = obj.total_seconds()
+
+    if mode == 'microseconds':
+        # 1 second = 10**6 microseconds
+        return seconds * 10**6
+    elif mode == 'milliseconds':
+        # 1 second = 10**3 milliseconds
+        return seconds * 10**3
+    elif mode == 'seconds':
+        return seconds
+    elif mode == 'minutes':
+        # 1 minute = 60 seconds
+        return seconds / 60
+    elif mode == 'hours':
+        # 1 hour = 60 minutes
+        # 3600 = 60 * 60
+        return seconds / 3600
+    elif mode == 'days':
+        # 1 day = 24 hours
+        # 86400 = 60 * 60 * 24
+        return seconds / 86400
+    elif mode == 'weeks':
+        # 1 week = 7 days
+        # 604800 = 60 * 60 * 24 * 7
+        return seconds / 604800
+    else:
+        raise ValueError(
+                ("Provided mode for timedelta_adapter is not valid. Found '%s'"
+                 "." % mode
+                 )
+                )
 
     return obj.total_seconds()
 
