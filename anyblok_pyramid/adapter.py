@@ -11,6 +11,7 @@ import pytz
 import time
 from base64 import b64encode
 from decimal import Decimal
+from datetime import timedelta
 
 
 def datetime_adapter(obj, request):
@@ -78,31 +79,20 @@ def timedelta_adapter(obj, request, mode='seconds'):
     :rtype: str, seconds corresponding to timedelta
     """
 
-    seconds = obj.total_seconds()
-
     if mode == 'microseconds':
-        # 1 second = 10**6 microseconds
-        return seconds * 10**6
+        return obj / timedelta(microseconds=1)
     elif mode == 'milliseconds':
-        # 1 second = 10**3 milliseconds
-        return seconds * 10**3
+        return obj / timedelta(milliseconds=1)
     elif mode == 'seconds':
-        return seconds
+        return obj.total_seconds()
     elif mode == 'minutes':
-        # 1 minute = 60 seconds
-        return seconds / 60
+        return obj / timedelta(minutes=1)
     elif mode == 'hours':
-        # 1 hour = 60 minutes
-        # 3600 = 60 * 60
-        return seconds / 3600
+        return obj / timedelta(hours=1)
     elif mode == 'days':
-        # 1 day = 24 hours
-        # 86400 = 60 * 60 * 24
-        return seconds / 86400
+        return obj / timedelta(days=1)
     elif mode == 'weeks':
-        # 1 week = 7 days
-        # 604800 = 60 * 60 * 24 * 7
-        return seconds / 604800
+        return obj / timedelta(weeks=1)
     else:
         raise ValueError(
             ("Provided mode for timedelta_adapter is not valid. Found '%s'"
