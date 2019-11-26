@@ -105,9 +105,7 @@ def timedelta_adapter(obj, request, mode='seconds'):
     else:
         raise ValueError(
             ("Provided mode for timedelta_adapter is not valid. Found '%s'"
-             "." % mode
-             )
-            )
+             "." % mode))
 
     return obj.total_seconds()
 
