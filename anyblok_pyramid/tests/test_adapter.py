@@ -55,8 +55,8 @@ class TestAdapter:
                 get_timedelta, route_name='dbname', renderer='json')
             json_renderer = JSON()
             json_renderer.add_adapter(
-                    timedelta, lambda obj, request: timedelta_adapter(
-                        obj, request, mode))
+                timedelta, lambda obj, request: timedelta_adapter(
+                    obj, request, mode))
             config.add_renderer('json', json_renderer)
 
         webserver = init_web_server(add_route_and_views)
@@ -69,25 +69,27 @@ class TestAdapter:
 
         # This part is aimed at testing that the different modes implemented on
         # timedelta adapter are behaving as intented
-        delta = timedelta(weeks=1, days=3, hours=15, minutes=3, seconds=45,
-                milliseconds=354, microseconds=768)
+        delta = timedelta(
+            weeks=1, days=3, hours=15, minutes=3, seconds=45, milliseconds=354,
+            microseconds=768
+        )
 
         assert round(
-                timedelta_adapter(delta, None, 'seconds'), 8)  == 918225.354768
+            timedelta_adapter(delta, None, 'seconds'), 8) == 918225.354768
         assert round(
-                timedelta_adapter(delta, None, 'microseconds'),
-                8) == 918225354768
+            timedelta_adapter(delta, None, 'microseconds'),
+            8) == 918225354768
         assert round(
-                timedelta_adapter(delta, None, 'milliseconds'),
-                8) == 918225354.768
+            timedelta_adapter(delta, None, 'milliseconds'),
+            8) == 918225354.768
         assert round(
-                timedelta_adapter(delta, None, 'minutes'), 8) == 15303.7559128
+            timedelta_adapter(delta, None, 'minutes'), 8) == 15303.7559128
         assert round(
-                timedelta_adapter(delta, None, 'hours'), 8) == 255.06259855
+            timedelta_adapter(delta, None, 'hours'), 8) == 255.06259855
         assert round(
-                timedelta_adapter(delta, None, 'days'), 8) == 10.62760827
+            timedelta_adapter(delta, None, 'days'), 8) == 10.62760827
         assert round(
-                timedelta_adapter(delta, None, 'weeks'), 8) == 1.51822975
+            timedelta_adapter(delta, None, 'weeks'), 8) == 1.51822975
 
         with pytest.raises(ValueError):
             timedelta_adapter(delta, None, "not a valid mode")
