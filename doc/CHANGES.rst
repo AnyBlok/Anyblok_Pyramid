@@ -13,6 +13,12 @@
 CHANGELOG
 =========
 
+0.9.6 (Unreleased)
+------------------
+
+* Created a new adapter for timedelta objects. It can parametrized using
+  the new timedelta_adapter_factory and TimedeltaModes enumeration
+
 0.9.5 (2019-11-01)
 ------------------
 
