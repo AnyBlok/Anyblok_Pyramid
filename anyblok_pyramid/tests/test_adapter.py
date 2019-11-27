@@ -14,7 +14,8 @@ from decimal import Decimal
 from anyblok_pyramid.adapter import (
     datetime_adapter,
     date_adapter,
-    timedelta_adapter,
+    TimeDeltaModes,
+    timedelta_adapter_factory,
     uuid_adapter,
     bytes_adapter,
     decimal_adapter,
@@ -50,23 +51,21 @@ class TestAdapter:
                 seconds=3710, milliseconds=4000,
                 microseconds=500)}
 
-        def add_route_and_views(config, mode='seconds'):
+        def add_route_and_views(config):
             config.add_route('dbname', '/test/')
             config.add_view(
                 get_timedelta, route_name='dbname', renderer='json')
             json_renderer = JSON()
             json_renderer.add_adapter(
-                timedelta, lambda obj, request: timedelta_adapter(
-                    obj, request, mode))
+                timedelta, timedelta_adapter_factory())
             config.add_renderer('json', json_renderer)
 
         webserver = init_web_server(add_route_and_views)
         res = webserver.get('/test/', status=200)
 
-        assert res.json_body['timedelta'] == timedelta_adapter(
-            timedelta(
-                days=1, hours=4, minutes=56, seconds=3710,
-                milliseconds=4000, microseconds=500), None)
+        assert res.json_body['timedelta'] == timedelta(
+            days=1, hours=4, minutes=56, seconds=3710,
+            milliseconds=4000, microseconds=500).total_seconds()
 
         # This part is aimed at testing that the different modes implemented on
         # timedelta adapter are behaving as intented
@@ -76,24 +75,29 @@ class TestAdapter:
         )
 
         assert round(
-            timedelta_adapter(delta, None, 'seconds'), 8) == 918225.354768
+            timedelta_adapter_factory(TimeDeltaModes.SECONDS)(
+                delta, None), 8) == 918225.354768
         assert round(
-            timedelta_adapter(delta, None, 'microseconds'),
-            8) == 918225354768
+            timedelta_adapter_factory(TimeDeltaModes.MICROSECONDS)(
+                delta, None), 8) == 918225354768
         assert round(
-            timedelta_adapter(delta, None, 'milliseconds'),
-            8) == 918225354.768
+            timedelta_adapter_factory(TimeDeltaModes.MILLISECONDS)(
+                delta, None), 8) == 918225354.768
         assert round(
-            timedelta_adapter(delta, None, 'minutes'), 8) == 15303.7559128
+            timedelta_adapter_factory(TimeDeltaModes.MINUTES)(
+                delta, None), 8) == 15303.7559128
         assert round(
-            timedelta_adapter(delta, None, 'hours'), 8) == 255.06259855
+            timedelta_adapter_factory(TimeDeltaModes.HOURS)(
+                delta, None), 8) == 255.06259855
         assert round(
-            timedelta_adapter(delta, None, 'days'), 8) == 10.62760827
+            timedelta_adapter_factory(TimeDeltaModes.DAYS)(
+                delta, None), 8) == 10.62760827
         assert round(
-            timedelta_adapter(delta, None, 'weeks'), 8) == 1.51822975
+            timedelta_adapter_factory(TimeDeltaModes.WEEKS)(
+                delta, None), 8) == 1.51822975
 
         with pytest.raises(ValueError):
-            timedelta_adapter(delta, None, "not a valid mode")
+            timedelta_adapter_factory("not a valid mode")(delta, None)
 
     def test_registry_get_date(self):
 
