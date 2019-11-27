@@ -13,7 +13,7 @@ from base64 import b64encode
 from decimal import Decimal
 from datetime import timedelta
 
-from enum import Enum, auto, unique
+from enum import Enum, unique
 
 
 def datetime_adapter(obj, request):
@@ -48,13 +48,13 @@ class TimeDeltaModes(Enum):
     """This enum is aimed at creating constants for setting the serialization
        mode for timedelta adapter."""
 
-    MICROSECONDS = auto()
-    MILLISECONDS = auto()
-    SECONDS = auto()
-    MINUTES = auto()
-    HOURS = auto()
-    DAYS = auto()
-    WEEKS = auto()
+    MICROSECONDS = 1
+    MILLISECONDS = 2
+    SECONDS = 3
+    MINUTES = 4
+    HOURS = 5
+    DAYS = 6
+    WEEKS = 7
 
 
 def timedelta_adapter_factory(mode=TimeDeltaModes.SECONDS):
