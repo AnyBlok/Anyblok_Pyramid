@@ -102,8 +102,6 @@ def timedelta_adapter_factory(mode=TimeDeltaModes.SECONDS):
         :rtype: str, seconds corresponding to timedelta
         """
 
-        import ipdb; ipdb.set_trace()
-
         if mode == TimeDeltaModes.MICROSECONDS:
             return obj / timedelta(microseconds=1)
         elif mode == TimeDeltaModes.MILLISECONDS:
