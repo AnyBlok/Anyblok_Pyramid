@@ -28,7 +28,9 @@ def wsgi():
     """Simple Pyramid wsgi server for development purpose
     """
     load_init_function_from_entry_points()
+    argv = [] + sys.argv
     Configuration.load('pyramid')
+    sys.argv = argv
     configuration_post_load()
     BlokManager.load()
     config = Configurator()
@@ -40,7 +42,6 @@ def wsgi():
 
     reload_at_change = Configuration.get('pyramid.reload_all', False)
     if reload_at_change:
-
         hupper.start_reloader('anyblok_pyramid.scripts.wsgi')
 
     app = config.make_wsgi_app()
