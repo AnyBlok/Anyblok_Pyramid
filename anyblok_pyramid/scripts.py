@@ -3,6 +3,7 @@
 #    Copyright (C) 2015 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
 #    Copyright (C) 2016 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
 #    Copyright (C) 2018 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
+#    Copyright (C) 2020 Jean-Sebastien SUZANNE <js.suzanne@gmail.com>
 #
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
@@ -11,6 +12,7 @@ from wsgiref.simple_server import make_server
 from anyblok.blok import BlokManager
 from anyblok.config import Configuration
 from .pyramid_config import Configurator
+import hupper
 import sys
 from anyblok import (
     load_init_function_from_entry_points,
@@ -18,6 +20,7 @@ from anyblok import (
 )
 from .common import preload_databases
 from logging import getLogger
+
 logger = getLogger(__name__)
 
 
@@ -34,6 +37,11 @@ def wsgi():
 
     wsgi_host = Configuration.get('wsgi_host')
     wsgi_port = int(Configuration.get('wsgi_port'))
+
+    reload_at_change = Configuration.get('pyramid.reload_all', False)
+    if reload_at_change:
+
+        hupper.start_reloader('anyblok_pyramid.scripts.wsgi')
 
     app = config.make_wsgi_app()
     server = make_server(wsgi_host, wsgi_port, app)

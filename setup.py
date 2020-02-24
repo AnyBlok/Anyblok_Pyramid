@@ -17,6 +17,7 @@ requires = [
     'pyramid_tm',
     'zope.sqlalchemy',
     'passlib',
+    'hupper',
 ]
 
 here = os.path.abspath(os.path.dirname(__file__))
