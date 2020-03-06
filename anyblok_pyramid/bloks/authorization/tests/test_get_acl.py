@@ -15,18 +15,19 @@ class TestGetACL:
     @pytest.fixture(scope="function", autouse=True)
     def init_user(self, rollback_registry):
         self.registry = rollback_registry
-        self.user = self.registry.User.insert(
+        self.user = self.registry.Pyramid.User.insert(
             login='jssuzanne')
-        self.role = self.registry.User.Role.insert(
+        self.role = self.registry.Pyramid.Role.insert(
             name='admin', label='Administrator')
         self.role.users.append(self.user)
 
     def test_without_any_entry(self):
-        acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
+        acl = self.registry.Pyramid.Authorization.get_acl(
+            'jssuzanne', 'something')
         assert acl == [(Deny, 'jssuzanne', ALL_PERMISSIONS)]
 
     def test_with_resource(self):
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             resource='something',
             login='jssuzanne',
             perm_create=dict(matched=True),
@@ -34,14 +35,15 @@ class TestGetACL:
             perm_update=dict(matched=True),
             perm_delete=dict(matched=True)
         )
-        acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
+        acl = self.registry.Pyramid.Authorization.get_acl(
+            'jssuzanne', 'something')
         assert acl == [
             (Allow, 'jssuzanne', ['create', 'delete', 'read', 'update']),
             (Deny, 'jssuzanne', ALL_PERMISSIONS),
         ]
 
     def test_with_wrong_resource(self):
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             resource='something2',
             login='jssuzanne',
             perm_create=dict(matched=True),
@@ -49,11 +51,12 @@ class TestGetACL:
             perm_update=dict(matched=True),
             perm_delete=dict(matched=True)
         )
-        acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
+        acl = self.registry.Pyramid.Authorization.get_acl(
+            'jssuzanne', 'something')
         assert acl == [(Deny, 'jssuzanne', ALL_PERMISSIONS)]
 
     def test_with_model(self):
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             model='Model.System.Blok',
             login='jssuzanne',
             perm_create=dict(matched=True),
@@ -61,7 +64,7 @@ class TestGetACL:
             perm_update=dict(matched=True),
             perm_delete=dict(matched=True)
         )
-        acl = self.registry.User.Authorization.get_acl(
+        acl = self.registry.Pyramid.Authorization.get_acl(
             'jssuzanne', 'Model.System.Blok')
         assert acl == [
             (Allow, 'jssuzanne', ['create', 'delete', 'read', 'update']),
@@ -69,19 +72,20 @@ class TestGetACL:
         ]
 
     def test_with_resource_only_create_1(self):
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             resource='something',
             login='jssuzanne',
             perm_create=dict(matched=True)
         )
-        acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
+        acl = self.registry.Pyramid.Authorization.get_acl(
+            'jssuzanne', 'something')
         assert acl == [
             (Allow, 'jssuzanne', ['create']),
             (Deny, 'jssuzanne', ALL_PERMISSIONS),
         ]
 
     def test_with_resource_only_create_2(self):
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             resource='something',
             login='jssuzanne',
             perm_create=dict(matched=True),
@@ -89,7 +93,8 @@ class TestGetACL:
             perm_update=dict(matched=False),
             perm_delete=dict(matched=False)
         )
-        acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
+        acl = self.registry.Pyramid.Authorization.get_acl(
+            'jssuzanne', 'something')
         assert acl == [
             (Allow, 'jssuzanne', ['create']),
             (Deny, 'jssuzanne', ['delete', 'read', 'update']),
@@ -97,7 +102,7 @@ class TestGetACL:
         ]
 
     def test_with_condition1(self):
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             resource='something',
             login='jssuzanne',
             perm_create=dict(
@@ -109,14 +114,15 @@ class TestGetACL:
                 matched=True
             ),
         )
-        acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
+        acl = self.registry.Pyramid.Authorization.get_acl(
+            'jssuzanne', 'something')
         assert acl == [
             (Allow, 'jssuzanne', ['create']),
             (Deny, 'jssuzanne', ALL_PERMISSIONS),
         ]
 
     def test_with_condition2(self):
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             resource='something',
             login='jssuzanne',
             perm_create=dict(
@@ -128,13 +134,14 @@ class TestGetACL:
                 matched=True
             ),
         )
-        acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
+        acl = self.registry.Pyramid.Authorization.get_acl(
+            'jssuzanne', 'something')
         assert acl == [
             (Deny, 'jssuzanne', ALL_PERMISSIONS),
         ]
 
     def test_with_condition3(self):
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             resource='something',
             login='jssuzanne',
             perm_create=dict(
@@ -146,14 +153,15 @@ class TestGetACL:
                 matched=True
             ),
         )
-        acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
+        acl = self.registry.Pyramid.Authorization.get_acl(
+            'jssuzanne', 'something')
         assert acl == [
             (Allow, 'jssuzanne', ['create']),
             (Deny, 'jssuzanne', ALL_PERMISSIONS),
         ]
 
     def test_with_condition4(self):
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             resource='something',
             login='jssuzanne',
             perm_create=dict(
@@ -165,13 +173,14 @@ class TestGetACL:
                 matched=True
             ),
         )
-        acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
+        acl = self.registry.Pyramid.Authorization.get_acl(
+            'jssuzanne', 'something')
         assert acl == [
             (Deny, 'jssuzanne', ALL_PERMISSIONS),
         ]
 
     def test_with_condition5(self):
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             resource='something',
             login='jssuzanne',
             perm_create=dict(
@@ -187,7 +196,8 @@ class TestGetACL:
             perm_update=dict(matched=True),
             perm_delete=dict(matched=True)
         )
-        acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
+        acl = self.registry.Pyramid.Authorization.get_acl(
+            'jssuzanne', 'something')
         assert acl == [
             (Allow, 'jssuzanne', ['delete', 'read', 'update']),
             (Deny, 'jssuzanne', ['create']),
@@ -195,7 +205,7 @@ class TestGetACL:
         ]
 
     def test_with_role_1(self):
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             resource='something',
             role=self.role,
             perm_create=dict(matched=True),
@@ -203,7 +213,8 @@ class TestGetACL:
             perm_update=dict(matched=True),
             perm_delete=dict(matched=True)
         )
-        acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
+        acl = self.registry.Pyramid.Authorization.get_acl(
+            'jssuzanne', 'something')
         assert acl == [
             (Allow, 'jssuzanne', ['create', 'delete', 'read', 'update']),
             (Deny, 'jssuzanne', ALL_PERMISSIONS),
@@ -212,7 +223,7 @@ class TestGetACL:
     def test_with_role_2(self):
         self.registry.User.Role.insert(
             name='admin2', label='Other')
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             resource='something',
             role_name='admin2',
             perm_create=dict(matched=True),
@@ -220,23 +231,25 @@ class TestGetACL:
             perm_update=dict(matched=True),
             perm_delete=dict(matched=True)
         )
-        acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
+        acl = self.registry.Pyramid.Authorization.get_acl(
+            'jssuzanne', 'something')
         assert acl == [
             (Deny, 'jssuzanne', ALL_PERMISSIONS),
         ]
 
     def test_role_after_login(self):
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             resource='something',
             role=self.role,
             perm_create=dict(matched=True),
         )
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             resource='something',
             login='jssuzanne',
             perm_read=dict(matched=True),
         )
-        acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
+        acl = self.registry.Pyramid.Authorization.get_acl(
+            'jssuzanne', 'something')
         assert acl == [
             (Allow, 'jssuzanne', ['read']),
             (Allow, 'jssuzanne', ['create']),
@@ -244,19 +257,20 @@ class TestGetACL:
         ]
 
     def test_order(self):
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             resource='something',
             login='jssuzanne',
             perm_create=dict(matched=True),
             order=2
         )
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             resource='something',
             login='jssuzanne',
             perm_read=dict(matched=True),
             order=1
         )
-        acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
+        acl = self.registry.Pyramid.Authorization.get_acl(
+            'jssuzanne', 'something')
         assert acl == [
             (Allow, 'jssuzanne', ['read']),
             (Allow, 'jssuzanne', ['create']),
@@ -264,7 +278,7 @@ class TestGetACL:
         ]
 
     def test_with_filter_1(self):
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             resource='something',
             login='jssuzanne',
             filter=dict(
@@ -277,14 +291,15 @@ class TestGetACL:
             perm_update=dict(matched=True),
             perm_delete=dict(matched=True)
         )
-        acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
+        acl = self.registry.Pyramid.Authorization.get_acl(
+            'jssuzanne', 'something')
         assert acl == [
             (Allow, 'jssuzanne', ['create', 'delete', 'read', 'update']),
             (Deny, 'jssuzanne', ALL_PERMISSIONS),
         ]
 
     def test_with_filter_2(self):
-        self.registry.User.Authorization.insert(
+        self.registry.Pyramid.Authorization.insert(
             resource='something',
             login='jssuzanne',
             filter=dict(
@@ -297,5 +312,6 @@ class TestGetACL:
             perm_update=dict(matched=True),
             perm_delete=dict(matched=True)
         )
-        acl = self.registry.User.Authorization.get_acl('jssuzanne', 'something')
+        acl = self.registry.Pyramid.Authorization.get_acl(
+            'jssuzanne', 'something')
         assert acl == [(Deny, 'jssuzanne', ALL_PERMISSIONS)]

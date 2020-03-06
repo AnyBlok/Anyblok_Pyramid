@@ -226,19 +226,19 @@ class TestQuery:
         assert query.count() == 2
 
     def test_with_relationship(self):
-        user = self.registry.User.insert(login="jssuzanne")
-        role = self.registry.User.Role.insert(name='admin', label="Admin")
+        user = self.registry.Pyramid.User.insert(login="jssuzanne")
+        role = self.registry.Pyramid.Role.insert(name='admin', label="Admin")
         role.users.append(user)
-        authorization = self.registry.User.Authorization.insert(
+        authorization = self.registry.Pyramid.Authorization.insert(
             resource='test', role=role)
-        query = self.registry.User.Authorization.query().condition_filter(
+        query = self.registry.Pyramid.Authorization.query().condition_filter(
             dict(
                 left_condition='Authorization.role.users.name',
                 operator='=',
                 right_value='jssuzanne',
             ),
             {
-                'Authorization': self.registry.User.Authorization
+                'Authorization': self.registry.Pyramid.Authorization
             }
         )
         assert query.count() == 1

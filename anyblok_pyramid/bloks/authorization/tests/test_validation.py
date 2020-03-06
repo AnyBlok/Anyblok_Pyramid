@@ -15,9 +15,9 @@ class TestAuthorizationValidation:
     @pytest.fixture(scope="function", autouse=True)
     def init_user(self, rollback_registry):
         self.registry = rollback_registry
-        self.user = self.registry.User.insert(
+        self.user = self.registry.Pyramid.User.insert(
             login='jssuzanne')
-        self.role = self.registry.User.Role.insert(
+        self.role = self.registry.Pyramid.Role.insert(
             name='admin', label='Administrator')
         self.role.users.append(self.user)
 
@@ -33,7 +33,7 @@ class TestAuthorizationValidation:
 
     def test_ok(self):
         vals = self.get_entry_value()
-        authorization = self.registry.User.Authorization.insert(**vals)
+        authorization = self.registry.Pyramid.Authorization.insert(**vals)
         assert authorization.user is self.user
 
     def test_without_resource_and_model(self):
@@ -42,13 +42,13 @@ class TestAuthorizationValidation:
         del vals['model']
         del vals['primary_keys']
         with pytest.raises(AuthorizationValidationException):
-            self.registry.User.Authorization.insert(**vals)
+            self.registry.Pyramid.Authorization.insert(**vals)
 
     def test_primary_keys_without_model(self):
         vals = self.get_entry_value()
         del vals['model']
         with pytest.raises(AuthorizationValidationException):
-            self.registry.User.Authorization.insert(**vals)
+            self.registry.Pyramid.Authorization.insert(**vals)
 
     def test_without_role_and_login(self):
         vals = self.get_entry_value()
@@ -56,4 +56,4 @@ class TestAuthorizationValidation:
         del vals['login']
         del vals['primary_keys']
         with pytest.raises(AuthorizationValidationException):
-            self.registry.User.Authorization.insert(**vals)
+            self.registry.Pyramid.Authorization.insert(**vals)
