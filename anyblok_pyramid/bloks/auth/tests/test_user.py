@@ -13,8 +13,8 @@ from ..exceptions import RecursionRoleError
 class TestUserAndRole:
 
     def init_user(self, registry):
-        self.User = registry.User
-        self.Role = registry.User.Role
+        self.User = registry.Pyramid.User
+        self.Role = registry.Pyramid.Role
         self.user = self.User.insert(
             login='user.1')
         self.role = self.Role.insert(name='admin', label="Administrator")
