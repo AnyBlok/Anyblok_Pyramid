@@ -56,6 +56,14 @@ class Pyramid:
         """
         return cls.registry.Pyramid.User.check_login(**kwargs)
 
+    @classmethod
+    def check_user_exists(cls, login):
+        user = cls.registry.Pyramid.User.query().get(login)
+        if user is None:
+            raise KeyError('%s is not a valid login')
+
+        return user
+
 
 @Declarations.register(Declarations.Model.Pyramid)
 class User:

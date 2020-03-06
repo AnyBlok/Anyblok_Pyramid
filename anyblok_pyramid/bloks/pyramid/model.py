@@ -70,3 +70,7 @@ class Pyramid:
         :param kwargs: any options need to validate credential
         """
         raise HTTPUnauthorized()
+
+    @classmethod
+    def check_user_exists(cls, login):
+        raise NotImplementedError()
