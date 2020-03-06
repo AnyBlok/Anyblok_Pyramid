@@ -14,17 +14,11 @@ model**.
 
 * Create an user::
 
-      user = registry.User.insert(
-          login='jssuzanne',
-          first_name='Jean-Sébastien',
-          last_name='Suzanne'
-      )
-
-      user.name  # Jean-Sébastien SUZANNE
+      user = registry.Pyramid.User.insert(login='jssuzanne')
 
 * Add an authorization for the user to access a Pyramid resource::
 
-      registry.User.Authorization.insert(
+      registry.Pyramid.Authorization.insert(
           resource='something',
           user=user,
           perm_create=dict(matched=True),
@@ -33,7 +27,7 @@ model**.
           perm_delete=dict(matched=True)
       )
 
-      registry.User.Authorization.get_acl('jssuzanne', 'something')
+      registry.Pyramid.Authorization.get_acl('jssuzanne', 'something')
       #  [
       #      (Allow, 'jssuzanne', ['create', 'delete', 'read', 'update']),
       #      (Deny, 'jssuzanne', ALL_PERMISSIONS),
@@ -42,13 +36,13 @@ model**.
 * An user can have roles, this way you can define an authorization for a role
   and all users that have this role will be authorized::
 
-      role = registry.User.Role.insert(
+      role = registry.Pyramid.Role.insert(
           name='admin',
           label='Administrator'
       )
       user.roles.append(role)
 
-      registry.User.Authorization.insert(
+      registry.Pyramid.Authorization.insert(
           resource='otherthing',
           role=role,
           perm_create=dict(matched=True),
@@ -57,7 +51,7 @@ model**.
           perm_delete=dict(matched=True)
       )
 
-      registry.User.Authorization.get_acl('jssuzanne', 'otherthing')
+      registry.Pyramid.Authorization.get_acl('jssuzanne', 'otherthing')
       #  [
       #      (Allow, 'jssuzanne', ['create', 'delete', 'read', 'update']),
       #      (Deny, 'jssuzanne', ALL_PERMISSIONS),

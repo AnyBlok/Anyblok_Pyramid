@@ -12,17 +12,17 @@ from anyblok.field import Function
 from .exceptions import RecursionRoleError, MainException
 
 
-User = Declarations.Model.User
+Pyramid = Declarations.Model.Pyramid
 
 
-@Declarations.register(User)
+@Declarations.register(Pyramid)
 class Role:
     """Role, allow to group some authorization for an user"""
 
     name = String(primary_key=True, nullable=False)
     label = String(nullable=False)
-    children = Many2Many(model='Model.User.Role', many2many="parents")
-    users = Many2Many(model=User, many2many="roles")
+    children = Many2Many(model='Model.Pyramid.Role', many2many="parents")
+    users = Many2Many(model=Pyramid.User, many2many="roles")
     roles_name = Function(fget="get_all_roles_name")
 
     def get_all_roles_name(self):

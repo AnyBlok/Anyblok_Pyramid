@@ -82,6 +82,7 @@ setup(
         'anyblok_pyramid.includeme': anyblok_pyramid_includeme,
         'anyblok.init': anyblok_init,
         'bloks': [
+            'pyramid=anyblok_pyramid.bloks.pyramid:Pyramid',
             'auth=anyblok_pyramid.bloks.auth:Auth',
             'auth-password=anyblok_pyramid.bloks.password:Password',
             'authorization=anyblok_pyramid.bloks.authorization:Authorization',

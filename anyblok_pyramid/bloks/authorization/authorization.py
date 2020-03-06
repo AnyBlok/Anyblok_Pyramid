@@ -14,10 +14,10 @@ from pyramid.security import Allow, Deny, ALL_PERMISSIONS
 from sqlalchemy import or_
 
 
-User = Declarations.Model.User
+Pyramid = Declarations.Model.Pyramid
 
 
-@Declarations.register(User)
+@Declarations.register(Pyramid)
 class Authorization:
     """A model to store autorization rules (permissions for users against an
     Anyblok model or a Pyramid resource)"""
@@ -34,9 +34,10 @@ class Authorization:
     filter = Json(default={})  # next step
 
     role = Many2One(
-        model=User.Role, foreign_key_options={'ondelete': 'cascade'})
-    login = String(foreign_key=User.use('login').options(ondelete="cascade"))
-    user = Many2One(model=User)
+        model=Pyramid.Role, foreign_key_options={'ondelete': 'cascade'})
+    login = String(
+        foreign_key=Pyramid.User.use('login').options(ondelete="cascade"))
+    user = Many2One(model=Pyramid.User)
     perms = Json(default={})
 
     perm_create = JsonRelated(json_column='perms', keys=['create'])
@@ -48,8 +49,8 @@ class Authorization:
     def get_acl_filter_model(cls):
         """Return the Model to use to check the permission"""
         return {
-            'User': cls.registry.User,
-            'Role': cls.registry.User.Role,
+            'User': cls.registry.Pyramid.User,
+            'Role': cls.registry.Pyramid.Role,
         }
 
     @classmethod
@@ -60,8 +61,8 @@ class Authorization:
         :param resource: str, name of the resource
         """
         # cache the method
-        User = cls.registry.User
-        Role = cls.registry.User.Role
+        User = cls.registry.Pyramid.User
+        Role = cls.registry.Pyramid.Role
 
         query = cls.query()
         query = query.filter(

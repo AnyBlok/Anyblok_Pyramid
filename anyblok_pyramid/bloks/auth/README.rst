@@ -14,7 +14,7 @@ and Authorization policy.
 It is required by the 'password' and 'authorization' bloks.
 Used alone it adds : 
 
-* **User** and **User.Role** models
+* **Pyramid.User** and **Pyramid.Role** models
 * **login** / **logout** extendable views (That will throw an exception until
   you require 'password' and 'authorization' bloks into your project.)
 
@@ -22,24 +22,19 @@ Basically you can:
 
 * Create a new user::
 
-      user = registry.User.insert(
-          login='jssuzanne',
-          first_name='Jean-Sébastien',
-          last_name='Suzanne'
-      )
-
-      user.name  # Jean-Sébastien SUZANNE
+      user = registry.Pyramid.User.insert(login='jssuzanne')
+      user.login  # jssuzanne
 
 * Add a role to the created user::
 
-      role = registry.User.Role.insert(
+      role = registry.Pyramid.Role.insert(
           name='admin',
           label='Administrator'
       )
       user.roles.append(role)
 
-      user.roles # [<Model.User.Role(children=[], label='Administrator', name='admin', parents=<not loaded>, users=<Model.User len(1)>)>]
-      role.users # [<Model.User(first_name='Jean-Sébastien', last_name='Suzanne', login='jssuzanne', roles=<Model.User.Role len(1)>)>]
+      user.roles # [<Model.Pyramid.Role(children=[], label='Administrator', name='admin', parents=<not loaded>, users=<Model.Pyramid.User len(1)>)>]
+      role.users # [<Model.Pyramid.User(login='jssuzanne', roles=<Model.Pyramid.Role len(1)>)>]
 
 * Check a permission for a user to use a resource::
 

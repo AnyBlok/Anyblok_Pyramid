@@ -10,19 +10,19 @@ from anyblok import Declarations
 from anyblok.column import String, Password
 
 
-@Declarations.register(Declarations.Model.User)
+@Declarations.register(Declarations.Model.Pyramid)
 class CredentialStore:
     """Simple login / password table"""
     login = String(
         primary_key=True, nullable=False,
-        foreign_key=Declarations.Model.User.use('login').options(
+        foreign_key=Declarations.Model.Pyramid.User.use('login').options(
             ondelete='cascade')
     )
     password = Password(
         nullable=False, crypt_context={'schemes': ['md5_crypt']})
 
 
-@Declarations.register(Declarations.Model)
+@Declarations.register(Declarations.Model.Pyramid)
 class User:
 
     @classmethod
@@ -34,7 +34,7 @@ class User:
         :param password: str
         :exception: HTTPUnauthorized
         """
-        Credential = cls.registry.User.CredentialStore
+        Credential = cls.registry.Pyramid.CredentialStore
         credential = Credential.query().filter(
             Credential.login == login
         ).one_or_none()

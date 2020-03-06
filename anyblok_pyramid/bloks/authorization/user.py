@@ -8,7 +8,7 @@
 from anyblok import Declarations
 
 
-@Declarations.register(Declarations.Model)
+@Declarations.register(Declarations.Model.Pyramid)
 class User:
 
     @classmethod
@@ -18,5 +18,5 @@ class User:
         :param login: str, login of the user
         :param resource: str, name of the resource
         """
-        Authorization = cls.registry.User.Authorization
+        Authorization = cls.registry.Pyramid.Authorization
         return Authorization.get_acl(login, resource, params=params)
