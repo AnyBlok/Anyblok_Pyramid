@@ -41,8 +41,10 @@ based authorization to your project.
 +-------------------+--------------+----------------------------------------------------------+
 | Blok              | Dependencies | Description                                              |
 +===================+==============+==========================================================+
-| **auth**          |              | Add 'User' and 'User.Role' models. Add hooks to connect  |
-|                   |              | Pyramid authentification and authorization               |
+| **Pyramid**       |              | Add hooks to connect Pyramid authentification and        |
+|                   |              | authorization                                            |
++-------------------+--------------+----------------------------------------------------------+
+| **auth**          | **pyramid**  | Add 'User' and 'User.Role' models.                       |
 +-------------------+--------------+----------------------------------------------------------+
 | **auth-password** | **auth**     | Add 'User.CredentialStore' model, a simple               |
 |                   |              | login, password table                                    |
