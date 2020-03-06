@@ -13,8 +13,8 @@ from pyramid.httpexceptions import HTTPUnauthorized
 class TestCredential:
 
     def init_user(self, registry):
-        self.User = registry.User
-        self.CredentialStore = registry.User.CredentialStore
+        self.User = registry.Pyramid.User
+        self.CredentialStore = registry.Pyramid.CredentialStore
         self.User.insert(login='user.1')
         self.CredentialStore.insert(login='user.1', password="P1")
 
