@@ -20,7 +20,7 @@ def declarations(reload=None):
 class Auth(Blok):
     version = "0.1.0"
     author = "Jean-Sébastien Suzanne"
-    required = ['anyblok-core']
+    required = ['anyblok-core', 'pyramid']
 
     @classmethod
     def import_declaration_module(cls):
