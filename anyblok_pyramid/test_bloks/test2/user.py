@@ -9,7 +9,7 @@ from anyblok import Declarations
 from pyramid.security import Allow, Authenticated
 
 
-@Declarations.register(Declarations.Model)
+@Declarations.register(Declarations.Model.Pyramid)
 class User:
 
     @classmethod
