@@ -221,7 +221,7 @@ class TestGetACL:
         ]
 
     def test_with_role_2(self):
-        self.registry.User.Role.insert(
+        self.registry.Pyramid.Role.insert(
             name='admin2', label='Other')
         self.registry.Pyramid.Authorization.insert(
             resource='something',
