@@ -44,6 +44,21 @@ class Pyramid:
         return [(Allow, login, ALL_PERMISSIONS)]
 
     @classmethod
+    def check_acl(cls, login, resource, type_):
+        """Retun True if user is allowed to make action type
+        of the resource
+
+        This method must be ober writting by the auth blok
+
+        :param login: str, login attribute of the user
+        :param resource: str, name of a resource
+        :param type: str, name of the action
+        :param params: all options need to compute ACL
+        """
+        # cache the method
+        return True
+
+    @classmethod
     def format_login_params(cls, request):
         """Return the login and password from query
 

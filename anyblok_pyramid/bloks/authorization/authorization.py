@@ -112,6 +112,56 @@ class Authorization:
         return res
 
     @classmethod
+    def check_acl(cls, login, resource, type_):
+        """Return the Pyramid ACL in function of the resource and user
+
+        :param login: str, login of the user
+        :param resource: str, name of the resource
+        :param type: str, name of the action
+        """
+        # cache the method
+        User = cls.registry.Pyramid.User
+        Role = cls.registry.Pyramid.Role
+
+        query = cls.query()
+        query = query.filter(
+            or_(cls.resource == resource, cls.model == resource))
+        query = query.order_by(cls.order)
+        Q1 = query.filter(cls.login == login)
+        Q2 = query.join(cls.role).filter(Role.name.in_(User.get_roles(login)))
+        for query in (Q1, Q2):
+            for self in query.all():
+                perms = list((self.perms or {}).keys())
+                if type_ not in perms:
+                    continue
+
+                p = self.perms[type_]
+                query = User.query()
+                query = query.filter(User.login == login)
+                query = query.join(User.roles)
+                if self.filter:
+                    query = query.condition_filter(
+                        self.filter,
+                        cls.get_acl_filter_model()
+                    )
+
+                if 'condition' in p:
+                    query = query.condition_filter(
+                        p['condition'],
+                        cls.get_acl_filter_model()
+                    )
+
+                ismatched = True if query.count() else False
+                if p.get('matched' if ismatched else 'unmatched') is True:
+                    return True
+                elif (
+                    p.get('matched' if ismatched else 'unmatched') is False
+                ):
+                    return False
+
+        return False
+
+    @classmethod
     def before_insert_orm_event(cls, mapper, connection, target):
         target.check_validity()
 

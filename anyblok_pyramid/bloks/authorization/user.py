@@ -20,3 +20,14 @@ class User:
         """
         Authorization = cls.registry.Pyramid.Authorization
         return Authorization.get_acl(login, resource, params=params)
+
+    @classmethod
+    def check_acl(cls, login, resource, type_):
+        """Overwrite the method to return the ACL for the resource and user
+
+        :param login: str, login of the user
+        :param resource: str, name of the resource
+        :param type: str, name of the action
+        """
+        Authorization = cls.registry.Pyramid.Authorization
+        return Authorization.check_acl(login, resource, type_)

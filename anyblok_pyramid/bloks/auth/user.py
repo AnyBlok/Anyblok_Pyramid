@@ -41,6 +41,21 @@ class Pyramid:
             login, resource, params=params)
 
     @classmethod
+    def check_acl(cls, login, resource, type_):
+        """Retun True if user is allowed to make action type
+        of the resource
+
+        This method must be ober writting by the auth blok
+
+        :param login: str, login attribute of the user
+        :param resource: str, name of a resource
+        :param type: str, name of the action
+        :param params: all options need to compute ACL
+        """
+        return cls.registry.Pyramid.User.check_acl(
+            login, resource, type_)
+
+    @classmethod
     def check_login(cls, **kwargs):
         """Check login / password
 
