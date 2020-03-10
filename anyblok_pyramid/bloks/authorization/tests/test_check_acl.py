@@ -61,7 +61,7 @@ class TestCheckACL:
             perm_delete=dict(matched=True)
         )
         acl = self.registry.Pyramid.Authorization.check_acl(
-            'jssuzanne', 'something', 'create')
+            'jssuzanne', 'Model.System.Blok', 'create')
         assert acl is True
 
     def test_with_resource_only_create_1(self):
