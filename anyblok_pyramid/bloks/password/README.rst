@@ -9,21 +9,17 @@
 How to use it
 ~~~~~~~~~~~~~
 
-This Blok add **User.CredentialStore** model, a simple login / password table.
+This Blok add **Pyramid.CredentialStore** model, a simple login / password table.
 You can not add credential for an **unexisting user** because one foreign key
 constraint is defined between both.
 
 * Before all you must create a new user::
 
-      user = registry.User.insert(
-          login='jssuzanne',
-          first_name='Jean-Sébastien',
-          last_name='Suzanne'
-      )
+      user = registry.Pyramid.User.insert(login='jssuzanne')
 
 * Then define a credential for this user::
 
-      user_credential = registry.User.CredentialStore.insert(
+      user_credential = registry.Pyramid.CredentialStore.insert(
           login=user.login,
           password='secret password',
       )
@@ -31,19 +27,14 @@ constraint is defined between both.
 
 * At this point you can check if a given password is the good one::
 
-      user_credential = registry.User.CredentialStore.insert(
-          login=user.login,
-          password='secret password',
-      )
-
       user_credential.password == "not the good one" # False
       user_credential.password == "secret password" # True
 
-* You can also use 'registry.User.check_login' method to check that a password
+* You can also use 'registry.Pyramid.User.check_login' method to check that a password
   and a login match::
 
-      registry.User.check_login(login='jssuzanne', password='a bad one') # Will raise an HTTPUnauthorized exception
-      registry.User.check_login(login='jssuzanne', password='secret password') # 'jssuzanne'
+      registry.Pyramid.User.check_login(login='jssuzanne', password='a bad one') # Will raise an HTTPUnauthorized exception
+      registry.Pyramid.User.check_login(login='jssuzanne', password='secret password') # 'jssuzanne'
 
 
 .. note::

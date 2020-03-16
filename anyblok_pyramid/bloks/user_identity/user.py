@@ -10,7 +10,7 @@ from anyblok.column import String
 from anyblok.field import Function
 
 
-@Declarations.register(Declarations.Model)
+@Declarations.register(Declarations.Model.Pyramid)
 class User:
     """User declaration for identity"""
 

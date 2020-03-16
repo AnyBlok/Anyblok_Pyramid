@@ -16,7 +16,7 @@ def group_finder(userid, request):
     :param request: request from pyramid
     """
     if hasattr(request, 'anyblok') and request.anyblok:
-        return request.anyblok.registry.User.get_roles(userid)
+        return request.anyblok.registry.Pyramid.get_roles(userid)
 
     return userid
 
@@ -28,7 +28,7 @@ def check_user(userid, password, request):
     :param request: request from pyramid
     """
     if hasattr(request, 'anyblok') and request.anyblok:
-        return request.anyblok.registry.User.check_login(
+        return request.anyblok.registry.Pyramid.check_login(
             login=userid, password=password
         )
 
@@ -38,8 +38,10 @@ def check_user(userid, password, request):
 def AnyBlokResourceFactory(resource):
     """Return a factory to get ACL in function of the resource
 
-    The factory use the method **User.get_acl** to define the
+    The factory use the method **Pyramid.get_acl** to define the
     real ACL, if the user is not authenticated, the access is denied
+
+    Pyramid defined hooks to connect any User model
 
     :param resource: str, resource's name
     :rtype: class, inherit RootFactory, with ACL in function
@@ -51,7 +53,7 @@ def AnyBlokResourceFactory(resource):
 
         userid = self.request.authenticated_userid
         if userid:
-            return self.registry.User.get_acl(
+            return self.registry.Pyramid.get_acl(
                 userid, self.__resource__,
                 params=dict(self.request.matchdict)
             )

@@ -14,13 +14,13 @@ logger = getLogger(__name__)
 
 def login(request):
     """Default view to login a user"""
-    User = request.anyblok.registry.User
-    params = User.format_login_params(request)
-    if User.check_login(**params):
+    Pyramid = request.anyblok.registry.Pyramid
+    params = Pyramid.format_login_params(request)
+    if Pyramid.check_login(**params):
         login = params['login']
         headers = remember(request, login)
         logger.info('%s is logged in', login)
-        location = User.get_login_location_to(login, request)
+        location = Pyramid.User.get_login_location_to(login, request)
         return HTTPFound(location=location, headers=headers)
 
     return HTTPUnauthorized(comment='Login failed')
@@ -30,6 +30,6 @@ def logout(request):
     """Default view to logout a user"""
     logger.info('%r is logged out', request.authenticated_userid)
     headers = forget(request)
-    User = request.anyblok.registry.User
+    User = request.anyblok.registry.Pyramid.User
     location = User.get_logout_location_to(request)
     return HTTPFound(location=location, headers=headers)
