@@ -13,7 +13,7 @@
 CHANGELOG
 =========
 
-1.0.0 (Unreleased)
+1.0.0 (2020-05-12)
 ------------------
 
 * Added **pyramid** blok, used to do a better isolation
