@@ -18,6 +18,7 @@ requires = [
     'zope.sqlalchemy',
     'passlib',
     'hupper',
+    'oic',  # this could be an optional requirement to install likes anyblok_pyramid[oic]
 ]
 
 here = os.path.abspath(os.path.dirname(__file__))
