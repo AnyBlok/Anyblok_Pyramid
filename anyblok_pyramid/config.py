@@ -87,6 +87,15 @@ def define_auth_option(group):
         help="Only send the cookie back over an unsecure conn",
         action='store_true')
     group.add_argument(
+        '--pyramid-authtkt-http-only',
+        default=os.environ.get('ANYBLOK_PYRAMID_AUTHTKT_HTTP_ONLY', False),
+        help=(
+            "Default: ``False``. Hide cookie from JavaScript by setting the"
+            "HttpOnly flag. Not honored by all browsers."
+            "Optional."
+        ),
+        action='store_true')
+    group.add_argument(
         '--pyramid-authtkt-timeout', type=int,
         default=os.environ.get('ANYBLOK_PYRAMID_AUTHTKT_TIMEOUT', None),
         help=(
