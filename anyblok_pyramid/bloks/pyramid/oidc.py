@@ -21,7 +21,6 @@ The Authorization Code Flow goes through the following steps::
 
 """
 from functools import lru_cache
-
 from anyblok import Declarations
 from anyblok.config import Configuration
 from oic import rndstr
@@ -32,13 +31,15 @@ from oic.oic.message import (
     RegistrationResponse,
 )
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
+from pyramid.httpexceptions import HTTPFound
 from pyramid.security import remember
 
 
 @Declarations.register(Declarations.Model)
 class Pyramid:
+
     @classmethod
-    @lru_cache
+    @lru_cache(maxsize=512)
     def oidc_get_client(cls):
         """Method that prepare the oidc client.
 
@@ -62,7 +63,6 @@ class Pyramid:
         """
 
         client = Client(client_authn_method=CLIENT_AUTHN_METHOD)
-        # issuer = client.discover("pverkest@gitlab.anybox.cloud")
         provider_info = client.provider_config(
             Configuration.get("oidc_provider_issuer")
         )
@@ -78,7 +78,7 @@ class Pyramid:
         return client
 
     @classmethod
-    def oidc_prepare_auth_url(cls, request, extra_args=None):
+    def oidc_prepare_auth_url(cls, request):
         """Prepare redirect uri to the OIDC provider
         
         You may use it likes this (using cornice)::
@@ -102,7 +102,7 @@ class Pyramid:
         """
         # s'assurer que request.session est présent quelque soit le mécanisme de
         # session avec pyramid il doit implémenter Idict
-        if not request.sessoin:
+        if not getattr(request, "session", None):
             raise RuntimeError(
                 "In order to use OIDC Relaying party utility, you must configure a Pyramid"
                 "session object https://docs.pylonsproject.org/projects/pyramid/en/latest/narr/sessions.html"
@@ -123,9 +123,7 @@ class Pyramid:
             "redirect_uri": client.registration_response["redirect_uris"][0],
             "state": request.session["oic_state"],
         }
-        auth_req = client.construct_AuthorizationRequest(
-            request_args=args, extra_args=extra_args
-        )
+        auth_req = client.construct_AuthorizationRequest(request_args=args)
         login_url = auth_req.request(client.authorization_endpoint)
         return login_url
 
@@ -143,7 +141,7 @@ class Pyramid:
         return response
 
     @classmethod
-    def oidc_validate_state(cls, response):
+    def oidc_validate_state(cls, request, response):
         """State is generated on the first call before redirection to the OIDC
         provider and must be the same, when user comme back from the OIDC provider.
 
@@ -170,12 +168,11 @@ class Pyramid:
     @classmethod
     def oidc_get_token(cls, request):
         """Get a token in order to retreive data from the OIDC provider"""
-        client = cls.oidc_get_client()
-        response = client.parse_response(
+        response = cls.oidc_get_client().parse_response(
             AuthorizationResponse, info=request.query_string, sformat="urlencoded"
         )
         cls.oidc_validate_response(response)
-        cls.oidc_validate_state(response)
+        cls.oidc_validate_state(request, response)
         access_token_response = cls.oidc_get_access_token(response)
         return response, access_token_response
 
@@ -183,7 +180,7 @@ class Pyramid:
     def oidc_get_user_info(cls, response):
         """Request to the OIDC provider to get user informations according the
         requested scope"""
-        return client.do_user_info_request(state=response["state"])
+        return cls.oidc_get_client().do_user_info_request(state=response["state"])
 
     @classmethod
     def oidc_log_user(cls, request):
@@ -211,9 +208,6 @@ class Pyramid:
         # cheatsheets/Session_Management_Cheat_Sheet.html
         # #renew-the-session-id-after-any-privilege-level-change`_
         request.session.invalidate()
-        # TODO: consider using http_only and secure, wondering if that could be
-        # manage through pyramid policy
-        # TODO: return extra args (I suppose )
         return userinfo, remember(request, login)
 
     @classmethod

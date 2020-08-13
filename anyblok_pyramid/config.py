@@ -144,14 +144,14 @@ def define_auth_option(group):
     # OIDC
     group.add_argument(
         "--oidc-provider-issuer",
-        default=os.environ.get('OIDC_PROVIDER_ISSUER', None),
+        default=os.environ.get('ANYBLOK_OIDC_PROVIDER_ISSUER', None),
         help=(
             "he OIDC Provider urls (ie: https://gitlab.com)"
         )
     )
     group.add_argument(
         "--oidc-relying-party-callback",
-        default=os.environ.get('OIDC_RELYING_PARTY_CALLBACK', None),
+        default=os.environ.get('ANYBLOK_OIDC_RELYING_PARTY_CALLBACK', None),
         help=(
             "The Relaying Party callback, once the user is authenticate "
             "on the OIDC provider he will be redirect to that uri to the RP service "
@@ -161,7 +161,7 @@ def define_auth_option(group):
     )
     group.add_argument(
         "--oidc-relying-party-client-id",
-        default=os.environ.get('OIDC_RELYING_PARTY_CLIENT_ID', None),
+        default=os.environ.get('OANYBLOK_IDC_RELYING_PARTY_CLIENT_ID', None),
         help=(
             "The client id to authenticate the relying party (this application) "
             "to the OIDC provider. "
@@ -170,7 +170,7 @@ def define_auth_option(group):
     )
     group.add_argument(
         "--oidc-relying-party-secret-id",
-        default=os.environ.get('OIDC_RELYING_PARTY_SECRET_ID', None),
+        default=os.environ.get('ANYBLOK_OIDC_RELYING_PARTY_SECRET_ID', None),
         help=(
             "The secret id to authenticate the relying party (this application) "
             "to the OIDC provider. "
