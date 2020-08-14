@@ -17,8 +17,15 @@ class User:
         return login
 
     @classmethod
-    def get_acl(self, login, resource, **params):
+    def get_acl(cls, login, resource, **params):
         return [
             (Allow, Authenticated, 'read'),
             (Allow, 'admin', 'write'),
         ]
+
+
+@Declarations.register(Declarations.Model)
+class Pyramid:
+    @classmethod
+    def check_user_exists(cls, login):
+        return True

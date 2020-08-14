@@ -8,6 +8,7 @@
 from anyblok.blok import Blok
 from anyblok_pyramid.security import AnyBlokResourceFactory
 from anyblok_pyramid.bloks.auth.views import login, logout
+from anyblok_pyramid.bloks.pyramid.oidc import login as oidc_login, callback as oidc_callback
 
 
 class Test(Blok):
@@ -34,4 +35,11 @@ class Test(Blok):
         config.add_view(view=login, route_name='login', renderer="JSON")
         config.add_route('logout', '/logout', request_method='POST')
         config.add_view(view=logout, route_name='logout')
+
+        config.add_route('oidc_login', '/oidc_login', request_method='GET')
+        config.add_view(view=oidc_login, route_name='oidc_login')
+        config.add_route('oidc_callback', '/oidc_callback', request_method='GET')
+        config.add_view(view=oidc_callback, route_name='oidc_callback')
+
         config.scan(cls.__module__ + '.views')
+

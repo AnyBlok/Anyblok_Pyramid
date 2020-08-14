@@ -1,0 +1,7 @@
+psycopg2
+anyblok
+flake8
+pytest-cov
+pytest
+WebTest
+coveralls

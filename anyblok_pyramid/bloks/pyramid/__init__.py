@@ -13,10 +13,8 @@ from .pyramid import getAuthenticationPolicy
 
 def declarations(reload=None):
     from . import model
-    from . import oidc
     if reload:
         reload(model)
-        reload(oidc)
 
 
 class Pyramid(Blok):
