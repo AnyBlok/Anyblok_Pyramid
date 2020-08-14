@@ -25,7 +25,7 @@ services:
 install:
   - pip install -U pip wheel
   - pip install -U -r requirements.test.txt
-  - pip install .[oic]
+  - pip install .[oidc]
 
 env:
   global:
