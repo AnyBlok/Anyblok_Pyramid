@@ -164,7 +164,7 @@ def validate_state(request, response):
 
     It is used to keep track of responses to outstanding requests (state).
     """
-    if not response["state"] == request.session["oic_state"]:
+    if not response.get("state") == request.session.get("oic_state"):
         raise ValueError(
             "State must be the same between registration and callback")
 
