@@ -154,17 +154,18 @@ def define_auth_option(group):
         default=os.environ.get('ANYBLOK_OIDC_RELYING_PARTY_CALLBACK', None),
         help=(
             "The Relaying Party callback, once the user is authenticate "
-            "on the OIDC provider he will be redirect to that uri to the RP service "
-            "(ie: http://localhost:8080/callback). In general this value is also "
-            "configured in your OIDC provider to avoid redirection issues."
+            "on the OIDC provider he will be redirect to that uri to the RP "
+            "service (ie: http://localhost:8080/callback). In general this "
+            "value is also configured in your OIDC provider to avoid "
+            "redirection issues."
         )
     )
     group.add_argument(
         "--oidc-relying-party-client-id",
         default=os.environ.get('OANYBLOK_IDC_RELYING_PARTY_CLIENT_ID', None),
         help=(
-            "The client id to authenticate the relying party (this application) "
-            "to the OIDC provider. "
+            "The client id to authenticate the relying party "
+            "(this application) to the OIDC provider. "
             "This information should be provide by your OIDC provider."
         )
     )
@@ -172,12 +173,11 @@ def define_auth_option(group):
         "--oidc-relying-party-secret-id",
         default=os.environ.get('ANYBLOK_OIDC_RELYING_PARTY_SECRET_ID', None),
         help=(
-            "The secret id to authenticate the relying party (this application) "
-            "to the OIDC provider. "
+            "The secret id to authenticate the relying party "
+            "(this application) to the OIDC provider. "
             "This information should be provide by your OIDC provider."
         )
     )
-
 
 
 @Configuration.add('pyramid-debug', label="Pyramid")
