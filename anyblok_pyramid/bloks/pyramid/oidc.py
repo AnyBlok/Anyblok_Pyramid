@@ -67,8 +67,13 @@ def get_client():
         provider
     """
 
-    client = Client(client_authn_method = CLIENT_AUTHN_METHOD)
-    for config in ["oidc_provider_issuer", "oidc_relying_party_client_id", "oidc_relying_party_secret_id", "oidc_relying_party_callback"]:
+    client = Client(client_authn_method=CLIENT_AUTHN_METHOD)
+    for config in [
+        "oidc_provider_issuer",
+        "oidc_relying_party_client_id",
+        "oidc_relying_party_secret_id",
+        "oidc_relying_party_callback",
+    ]:
         if Configuration.get(config, None) is None:
             raise ValueError("You must provide {} parameter".format(config))
     provider_info = client.provider_config(
@@ -77,15 +82,14 @@ def get_client():
     info = {
         "client_id": Configuration.get("oidc_relying_party_client_id"),
         "client_secret": Configuration.get("oidc_relying_party_secret_id"),
-        "redirect_uris": [
-            Configuration.get("oidc_relying_party_callback")
-        ],
+        "redirect_uris": [Configuration.get("oidc_relying_party_callback")],
     }
     info.update(provider_info._dict)
     client_reg = RegistrationResponse(**info)
 
     client.store_registration_info(client_reg)
     return client
+
 
 def prepare_auth_url(request):
     """Prepare redirect uri to the OIDC provider, return headers to add
@@ -122,9 +126,7 @@ def prepare_auth_url(request):
         )
     client = get_client()
     # headers = remember(request, "anonymous")
-    request.session.update(
-        {"oic_state": rndstr()}
-    )
+    request.session.update({"oic_state": rndstr()})
 
     args = {
         "client_id": client.client_id,
@@ -141,6 +143,7 @@ def prepare_auth_url(request):
     login_url = auth_req.request(client.authorization_endpoint)
     return login_url  # , headers
 
+
 def validate_response(response):
     """Make sure response is an instance of an AuthorizationResponse or
     an ErrorResponse.
@@ -148,12 +151,11 @@ def validate_response(response):
     if not isinstance(response, AuthorizationResponse):
         # it should be an ErrorResponse
         raise ValueError(
-            "Something goes wrong on the OIDC Provider: {}".format(
-                response
-            )
+            "Something goes wrong on the OIDC Provider: {}".format(response)
         )
 
     return response
+
 
 def validate_state(request, response):
     """State is generated on the first call before redirection to the OIDC
@@ -164,8 +166,8 @@ def validate_state(request, response):
     """
     if not response["state"] == request.session["oic_state"]:
         raise ValueError(
-            "State must be the same between registration and callback"
-        )
+            "State must be the same between registration and callback")
+
 
 def get_access_token(response):
     """Request an access token to retreive user info on OIDC server side
@@ -181,24 +183,23 @@ def get_access_token(response):
         raise ValueError("OIDC Access token is invalid: {}".format(atr))
     return atr
 
+
 def get_token(request):
     """Get a token in order to retreive data from the OIDC provider"""
     response = get_client().parse_response(
-        AuthorizationResponse,
-        info=request.query_string,
-        sformat="urlencoded",
+        AuthorizationResponse, info=request.query_string, sformat="urlencoded",
     )
     validate_response(response)
     validate_state(request, response)
     access_token_response = get_access_token(response)
     return response, access_token_response
 
+
 def get_user_info(response):
     """Request to the OIDC provider to get user informations according the
     requested scope"""
-    return get_client().do_user_info_request(
-        state=response["state"]
-    )
+    return get_client().do_user_info_request(state=response["state"])
+
 
 def log_user(request):
     """Validate OIDC code and request info to validate if user exists
