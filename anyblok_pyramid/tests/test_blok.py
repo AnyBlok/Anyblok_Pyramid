@@ -164,8 +164,7 @@ class TestPyramidBlok:
             registry_testblok, "oidc_relying_party_callback"
         )
 
-    @mock.patch("requests.request", side_effect=mock_request)
-    def test_oidc_auth(self, mock_oidc, registry_testblok, webserver):
+    def oidc_common(self, registry, webserver):
         Configuration.set("oidc_provider_issuer", "http://fake")
         Configuration.set("oidc_relying_party_client_id", "test_client_id")
         Configuration.set("oidc_relying_party_secret_id", "test_secret_id")
@@ -175,7 +174,6 @@ class TestPyramidBlok:
         SCOPE = "test1,test2"
         Configuration.set("oidc_scope", SCOPE)
         Configuration.set("oidc_userinfo_field", "custom_userinfo_field")
-        registry = registry_testblok
         registry.upgrade(install=("test-pyramid2",))
         resp = webserver.get("/bloks", status=403)
         webserver.get("/blok/auth", status=403)
@@ -190,12 +188,18 @@ class TestPyramidBlok:
         assert qs["redirect_uri"][0] == "http://localhost/oidc_callback"
         assert qs["state"][0]
         assert qs["nonce"][0]
+        return qs
 
+
+
+    @mock.patch("requests.request", side_effect=mock_request)
+    def test_oidc_auth(self, mock_oidc, registry_testblok, webserver):
+        qs = self.oidc_common(registry_testblok, webserver)
         # user is redirect to OIDC provider in order to do the authentication
         # he comes back to the oidc_callback uri with a code and the current
         # state
         curerent_cookie = webserver.cookies["None"]
-        resp = webserver.get(
+        webserver.get(
             "/oidc_callback?code=a-fake-code&state={}".format(qs["state"][0]),
             status=302,
         )
@@ -205,40 +209,11 @@ class TestPyramidBlok:
 
     @mock.patch("requests.request", side_effect=mock_request)
     def test_unkown_user_oidc_auth(self, mock_oidc, registry_testblok, webserver):
-        Configuration.set("oidc_provider_issuer", "http://fake")
-        Configuration.set("oidc_relying_party_client_id", "test_client_id")
-        Configuration.set("oidc_relying_party_secret_id", "test_secret_id")
-        Configuration.set(
-            "oidc_relying_party_callback", "http://localhost/oidc_callback"
-        )
-        SCOPE = "test1,test2"
-        Configuration.set("oidc_scope", SCOPE)
-        Configuration.set("oidc_userinfo_field", "custom_userinfo_field")
-        registry = registry_testblok
-        registry.upgrade(install=("test-pyramid2",))
-        resp = webserver.get("/bloks", status=403)
-        webserver.get("/blok/auth", status=403)
-        resp = webserver.get("/oidc_login", status=302)
-        url = urlparse(resp.headers.get("Location"))
-        qs = parse_qs(url.query, strict_parsing=True)
-        assert url.hostname == "fake"
-        assert url.path == "/oauth/authorize"
-        assert qs["client_id"][0] == "test_client_id"
-        assert qs["response_type"][0] == "code"
-        assert qs["scope"][0] == SCOPE.replace(",", " ")
-        assert qs["redirect_uri"][0] == "http://localhost/oidc_callback"
-        assert qs["state"][0]
-        assert qs["nonce"][0]
-
-        # user is redirect to OIDC provider in order to do the authentication
-        # he comes back to the oidc_callback uri with a code and the current
-        # state
+        qs = self.oidc_common(registry_testblok, webserver)
         curerent_cookie = webserver.cookies["None"]
-        with pytest.raises(ValueError) as ex:
-            resp = webserver.get(
-                "/oidc_callback?code=another-fake-code&state={}".format(qs["state"][0]),
-                status=302,
-            )
-        assert "Unknown user" in str(ex.value)
+        webserver.get(
+            "/oidc_callback?code=another-fake-code&state={}".format(qs["state"][0]),
+            status=401,
+        )
         assert webserver.cookies["None"] == curerent_cookie
         webserver.get("/bloks", status=403)

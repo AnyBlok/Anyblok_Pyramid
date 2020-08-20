@@ -9,7 +9,7 @@ Currently only **Authorization Code Flow** is supported.
 According `specifications <https://openid.net/specs/
 openid-connect-core-1_0.html#CodeFlowSteps>`_
 
-The Authorization Code Flow goes through the following steps::
+The Authorization Code Flow goes through the following steps:
 
   * The RP prepares an Authentication Request containing the desired request
     parameters.
@@ -34,8 +34,9 @@ from oic.oic.message import (
     AuthorizationResponse,
     RegistrationResponse,
 )
+
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPFound, HTTPUnauthorized
 from pyramid.security import remember
 
 
@@ -57,14 +58,25 @@ def get_client():
     * **oidc-provider-issuer**: The OIDC Provider urls
         (ie: https://gitlab.com)
     * **oidc-relying-party-callback**: The Relaying Party callback, once
-        the user is authenticate
-    on the OIDC provider he will be redirect to that uri to the RP service
-    (ie: http://localhost:8080/callback). In general this value is also
-    configured in your OIDC provider to avoid redirection issues.
+        the user is authenticate against the OIDC provider he will be redirect
+        to that uri to the RP service (ie: http://localhost:8080/callback).
+        In general this value is also configured in your OIDC provider to
+        avoid redirection issues.
     * **oidc-relying-party-client-id**: The client id provide by your OIDC
         provider
     * **oidc-relying-party-secret-id**: The secret id provide by your OIDC
         provider
+    
+    And optionally:
+
+    * **oidc-scope**: Specify what access privileges are being requested for
+        Access Tokens. `cf Requesting claims using scope values
+        <https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims`_.
+        a list of claims using coma separator. (default value: `openid,email`)
+    * **oidc-userinfo-field**: Specify which field to use from the response
+        of the OIDC provider `userinfo endpoint <https://openid.net/specs/
+        openid-connect-core-1_0.html#UserInfoResponse>`_. To make sure
+        it's a known user. (default value: `email`).
     """
 
     client = Client(client_authn_method=CLIENT_AUTHN_METHOD)
@@ -214,8 +226,6 @@ def log_user(request):
     except Exception:
         # TODO provide a better default way to manage invalid users
         request.anyblok.registry.rollback()
-        request.errors.add("header", "login", "wrong username")
-        request.errors.status = 401
         return userinfo, None
 
     # Renew the Session ID After Privilege Level Change
@@ -242,7 +252,7 @@ def callback(request):
     session ID cookie"""
     userinfo, headers = log_user(request)
     if headers is None:
-        raise ValueError("Unknown user")
+        raise HTTPUnauthorized()
     login = userinfo[Configuration.get("oidc_userinfo_field", None)]
     User = request.anyblok.registry.Pyramid.User
     location = User.get_login_location_to(login, request)

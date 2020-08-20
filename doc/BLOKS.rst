@@ -47,3 +47,17 @@ Blok Authorization
 
 .. include:: ../anyblok_pyramid/bloks/authorization/README.rst
 .. include:: ../anyblok_pyramid/bloks/authorization/CODE.rst
+
+
+Blok Pyramid
+-------------
+
+.. automodule:: anyblok_pyramid.bloks.pyramid
+.. autoclass:: Pyramid
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+.. include:: ../anyblok_pyramid/bloks/pyramid/README.rst
+.. include:: ../anyblok_pyramid/bloks/pyramid/CODE.rst
