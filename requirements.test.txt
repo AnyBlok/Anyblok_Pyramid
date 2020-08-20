@@ -1,7 +1,8 @@
-psycopg2
 anyblok
+anyblok-pyramid-beaker
+coveralls
 flake8
+psycopg2
 pytest-cov
 pytest
 WebTest
-coveralls
