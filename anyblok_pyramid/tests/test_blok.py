@@ -54,12 +54,10 @@ def mock_request(method=None, url=None, *args, **kwargs):
         )
     elif url == "http://fake/oauth/token":
         qs = parse_qs(kwargs["data"])
-        assert qs["code"][0] == "a-fake-code"
         assert qs["redirect_uri"][0] == "http://localhost/oidc_callback"
-
         return MockJsonResponse(
             {
-                "access_token": "a_test_token",
+                "access_token": "a_test_token" if qs["code"][0] == "a-fake-code" else "other_token",
                 "token_type": "token",
                 "scope": ["openid email"],
                 "state": qs["state"][0],
@@ -70,9 +68,10 @@ def mock_request(method=None, url=None, *args, **kwargs):
         )
     elif url == "https://fake/oauth/userinfo":
         qs = parse_qs(kwargs["data"])
-        assert qs["access_token"][0] == "a_test_token"
-
-        return MockJsonResponse({"email": "user@anyblok.org"}, 200)
+        if qs["access_token"][0] == "a_test_token":
+            return MockJsonResponse({"custom_userinfo_field": "user@anyblok.org"}, 200)
+        else:
+            return MockJsonResponse({"custom_userinfo_field": "unkwnon_user@anyblok.org"}, 200)
     else:
         raise Exception("Unexpected url: {}".format(url))
 
@@ -81,8 +80,18 @@ class TestPyramidBlok:
     @pytest.fixture(autouse=True)
     def transact(self, request, registry_testblok, webserver):
         transaction = registry_testblok.begin_nested()
-        request.addfinalizer(transaction.rollback)
-        return
+        
+        def try_rollback(*args, **kwargs):
+            """Wrap rollback to be silent in case where transaction is
+            expectedly already rollback """
+            
+            try:
+                transaction.rollback(*args, **kwargs)
+            except Exception:
+                # if transaction is already rollback do not raise exceptions
+                pass
+
+        request.addfinalizer(try_rollback)
 
     @pytest.fixture(autouse=True)
     def reset_webserver(self, request, registry_testblok, webserver):
@@ -163,7 +172,9 @@ class TestPyramidBlok:
         Configuration.set(
             "oidc_relying_party_callback", "http://localhost/oidc_callback"
         )
-
+        SCOPE = "test1,test2"
+        Configuration.set("oidc_scope", SCOPE)
+        Configuration.set("oidc_userinfo_field", "custom_userinfo_field")
         registry = registry_testblok
         registry.upgrade(install=("test-pyramid2",))
         resp = webserver.get("/bloks", status=403)
@@ -175,7 +186,7 @@ class TestPyramidBlok:
         assert url.path == "/oauth/authorize"
         assert qs["client_id"][0] == "test_client_id"
         assert qs["response_type"][0] == "code"
-        assert qs["scope"][0] == "openid email"
+        assert qs["scope"][0] == SCOPE.replace(",", " ")
         assert qs["redirect_uri"][0] == "http://localhost/oidc_callback"
         assert qs["state"][0]
         assert qs["nonce"][0]
@@ -190,3 +201,44 @@ class TestPyramidBlok:
         )
         assert webserver.cookies["None"] != curerent_cookie
         webserver.get("/bloks", status=200)
+
+
+    @mock.patch("requests.request", side_effect=mock_request)
+    def test_unkown_user_oidc_auth(self, mock_oidc, registry_testblok, webserver):
+        Configuration.set("oidc_provider_issuer", "http://fake")
+        Configuration.set("oidc_relying_party_client_id", "test_client_id")
+        Configuration.set("oidc_relying_party_secret_id", "test_secret_id")
+        Configuration.set(
+            "oidc_relying_party_callback", "http://localhost/oidc_callback"
+        )
+        SCOPE = "test1,test2"
+        Configuration.set("oidc_scope", SCOPE)
+        Configuration.set("oidc_userinfo_field", "custom_userinfo_field")
+        registry = registry_testblok
+        registry.upgrade(install=("test-pyramid2",))
+        resp = webserver.get("/bloks", status=403)
+        webserver.get("/blok/auth", status=403)
+        resp = webserver.get("/oidc_login", status=302)
+        url = urlparse(resp.headers.get("Location"))
+        qs = parse_qs(url.query, strict_parsing=True)
+        assert url.hostname == "fake"
+        assert url.path == "/oauth/authorize"
+        assert qs["client_id"][0] == "test_client_id"
+        assert qs["response_type"][0] == "code"
+        assert qs["scope"][0] == SCOPE.replace(",", " ")
+        assert qs["redirect_uri"][0] == "http://localhost/oidc_callback"
+        assert qs["state"][0]
+        assert qs["nonce"][0]
+
+        # user is redirect to OIDC provider in order to do the authentication
+        # he comes back to the oidc_callback uri with a code and the current
+        # state
+        curerent_cookie = webserver.cookies["None"]
+        with pytest.raises(ValueError) as ex:
+            resp = webserver.get(
+                "/oidc_callback?code=another-fake-code&state={}".format(qs["state"][0]),
+                status=302,
+            )
+        assert "Unknown user" in str(ex.value)
+        assert webserver.cookies["None"] == curerent_cookie
+        webserver.get("/bloks", status=403)

@@ -131,8 +131,7 @@ def prepare_auth_url(request):
     args = {
         "client_id": client.client_id,
         "response_type": "code",
-        # TODO: make scope configurable
-        "scope": ["openid", "email"],
+        "scope": Configuration.get("oidc_scope", "").split(","),
         # nonce is a string value used to associate a Client session
         # with an ID Token, and to mitigate replay attacks.
         "nonce": rndstr(),
@@ -209,8 +208,7 @@ def log_user(request):
     """
     response, _ = get_token(request)
     userinfo = get_user_info(response)
-    # TODO: make this field configurable
-    login = userinfo["email"]
+    login = userinfo[Configuration.get("oidc_userinfo_field", None)]
     try:
         request.anyblok.registry.Pyramid.check_user_exists(login)
     except Exception:
@@ -244,10 +242,8 @@ def callback(request):
     session ID cookie"""
     userinfo, headers = log_user(request)
     if headers is None:
-        # TODO: find a better way to manage invalid users
-        return
-    # TODO: make this field configurable
-    login = userinfo["email"]
+        raise ValueError("Unknown user")
+    login = userinfo[Configuration.get("oidc_userinfo_field", None)]
     User = request.anyblok.registry.Pyramid.User
     location = User.get_login_location_to(login, request)
     return HTTPFound(location=location, headers=headers)

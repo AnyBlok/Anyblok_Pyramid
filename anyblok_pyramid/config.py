@@ -178,6 +178,28 @@ def define_auth_option(group):
             "This information should be provide by your OIDC provider."
         )
     )
+    group.add_argument(
+        "--oidc-scope",
+        default=os.environ.get('ANYBLOK_OIDC_SCOPE', "openid,email"),
+        help=(
+            "Specify what access privileges are being requested for Access "
+            "Tokens. `cf Requesting claims using scope values "
+            "<https://openid.net/specs/"
+            "openid-connect-core-1_0.html#ScopeClaims`_. a list of claims using"
+            "coma separator."
+        )
+    )
+    group.add_argument(
+        "--oidc-userinfo-field",
+        default=os.environ.get('ANYBLOK_OIDC_USERINFO_FIELD', "email"),
+        help=(
+            "Specify which field to use from the response of the OIDC provider "
+            "`userinfo endpoint <https://openid.net/specs/"
+            "openid-connect-core-1_0.html#UserInfoResponse>`_. To make sure "
+            "it's a known user"
+        )
+    )
+
 
 
 @Configuration.add('pyramid-debug', label="Pyramid")

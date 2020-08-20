@@ -28,4 +28,6 @@ class User:
 class Pyramid:
     @classmethod
     def check_user_exists(cls, login):
-        return True
+        if login == "user@anyblok.org":
+            return
+        raise ValueError("Unknown user")
