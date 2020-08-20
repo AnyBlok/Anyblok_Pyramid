@@ -201,7 +201,6 @@ def define_auth_option(group):
     )
 
 
-
 @Configuration.add('pyramid-debug', label="Pyramid")
 def define_wsgi_debug_option(group):
     group.add_argument('--pyramid-reload-all', dest='pyramid.reload_all',

@@ -57,7 +57,9 @@ def mock_request(method=None, url=None, *args, **kwargs):
         assert qs["redirect_uri"][0] == "http://localhost/oidc_callback"
         return MockJsonResponse(
             {
-                "access_token": "a_test_token" if qs["code"][0] == "a-fake-code" else "other_token",
+                "access_token": "a_test_token"
+                if qs["code"][0] == "a-fake-code"
+                else "other_token",
                 "token_type": "token",
                 "scope": ["openid email"],
                 "state": qs["state"][0],
@@ -69,9 +71,13 @@ def mock_request(method=None, url=None, *args, **kwargs):
     elif url == "https://fake/oauth/userinfo":
         qs = parse_qs(kwargs["data"])
         if qs["access_token"][0] == "a_test_token":
-            return MockJsonResponse({"custom_userinfo_field": "user@anyblok.org"}, 200)
+            return MockJsonResponse(
+                {"custom_userinfo_field": "user@anyblok.org"}, 200
+            )
         else:
-            return MockJsonResponse({"custom_userinfo_field": "unkwnon_user@anyblok.org"}, 200)
+            return MockJsonResponse(
+                {"custom_userinfo_field": "unkwnon_user@anyblok.org"}, 200
+            )
     else:
         raise Exception("Unexpected url: {}".format(url))
 
@@ -80,11 +86,11 @@ class TestPyramidBlok:
     @pytest.fixture(autouse=True)
     def transact(self, request, registry_testblok, webserver):
         transaction = registry_testblok.begin_nested()
-        
+
         def try_rollback(*args, **kwargs):
             """Wrap rollback to be silent in case where transaction is
             expectedly already rollback """
-            
+
             try:
                 transaction.rollback(*args, **kwargs)
             except Exception:
@@ -190,8 +196,6 @@ class TestPyramidBlok:
         assert qs["nonce"][0]
         return qs
 
-
-
     @mock.patch("requests.request", side_effect=mock_request)
     def test_oidc_auth(self, mock_oidc, registry_testblok, webserver):
         qs = self.oidc_common(registry_testblok, webserver)
@@ -206,13 +210,16 @@ class TestPyramidBlok:
         assert webserver.cookies["None"] != curerent_cookie
         webserver.get("/bloks", status=200)
 
-
     @mock.patch("requests.request", side_effect=mock_request)
-    def test_unkown_user_oidc_auth(self, mock_oidc, registry_testblok, webserver):
+    def test_unkown_user_oidc_auth(
+        self, mock_oidc, registry_testblok, webserver
+    ):
         qs = self.oidc_common(registry_testblok, webserver)
         curerent_cookie = webserver.cookies["None"]
         webserver.get(
-            "/oidc_callback?code=another-fake-code&state={}".format(qs["state"][0]),
+            "/oidc_callback?code=another-fake-code&state={}".format(
+                qs["state"][0]
+            ),
             status=401,
         )
         assert webserver.cookies["None"] == curerent_cookie

@@ -66,7 +66,7 @@ def get_client():
         provider
     * **oidc-relying-party-secret-id**: The secret id provide by your OIDC
         provider
-    
+
     And optionally:
 
     * **oidc-scope**: Specify what access privileges are being requested for
@@ -177,7 +177,8 @@ def validate_state(request, response):
     """
     if not response.get("state") == request.session.get("oic_state"):
         raise ValueError(
-            "State must be the same between registration and callback")
+            "State must be the same between registration and callback"
+        )
 
 
 def get_access_token(response):
