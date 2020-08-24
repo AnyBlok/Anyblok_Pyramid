@@ -37,6 +37,7 @@ def getAuthTktAuthenticationPolicy():
         callback=Configuration.get('pyramid_authentication_callback'),
         cookie_name=Configuration.get('pyramid_authtkt_cookie_name'),
         secure=Configuration.get('pyramid_authtkt_secure'),
+        http_only=Configuration.get('pyramid_authtkt_http_only'),
         timeout=Configuration.get('pyramid_authtkt_timeout'),
         max_age=Configuration.get('pyramid_authtkt_max_age'),
         debug=Configuration.get('pyramid_authentication_debug')

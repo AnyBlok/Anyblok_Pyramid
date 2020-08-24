@@ -23,14 +23,9 @@ services:
   - postgresql
 
 install:
-  - pip install -U psycopg2
-  - pip install -U anyblok
-  - pip install -U flake8
-  - pip install -U pytest-cov
-  - pip install -U pytest
-  - pip install -U WebTest
-  - pip install -U coveralls
-  - pip install .
+  - pip install -U pip wheel
+  - pip install -U -r requirements.test.txt
+  - pip install .[oidc]
 
 env:
   global:
@@ -55,5 +50,4 @@ script:
   - anyblok_createdb --install-bloks user-identity
   - pytest --cov-report= --cov=anyblok_pyramid anyblok_pyramid/bloks/user_identity
 
-after_success:
-  coveralls --data_file=.coverage --config_file=.coveragerc
+after_success: coveralls --data_file=.coverage --config_file=.coveragerc
