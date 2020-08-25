@@ -13,11 +13,15 @@
 CHANGELOG
 =========
 
-0.9.6 (Unreleased)
+1.0.0 (2020-05-12)
 ------------------
 
+* Added **pyramid** blok, used to do a better isolation
 * Created a new adapter for timedelta objects. It can parametrized using
   the new timedelta_adapter_factory and TimedeltaModes enumeration
+* Removed **Python 3.4** capability
+* Removed **Python 3.5** capability
+* Refactored unittest, replaced nose by pytest
 
 0.9.5 (2019-11-01)
 ------------------

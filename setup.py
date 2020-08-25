@@ -9,7 +9,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from setuptools import setup, find_packages
 import os
-version = '0.9.5'
+version = '1.0.0'
 
 requires = [
     'anyblok>=0.9.0',
@@ -70,6 +70,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Framework :: Pyramid',
         'Topic :: Internet :: WWW/HTTP',

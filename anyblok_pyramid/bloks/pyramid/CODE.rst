@@ -7,12 +7,18 @@
 .. obtain one at http://mozilla.org/MPL/2.0/.
 
 Pyramid
-=========
+=======
 
 Pyramid model
 -------------
 
 .. automodule:: anyblok_pyramid.bloks.pyramid.model
+    :members:                                                                   
+    :undoc-members:                                                             
+    :show-inheritance:
+    :noindex:
+    
+.. autoanyblok-declaration:: Pyramid                                                     
     :members:                                                                   
     :undoc-members:                                                             
     :show-inheritance:
@@ -23,15 +29,6 @@ OIDC utility
 
 
 .. automodule:: anyblok_pyramid.bloks.pyramid.oidc
-    :members:                                                                   
-    :undoc-members:                                                             
-    :show-inheritance:
-    :noindex:
-
-Pyramid
--------
-
-.. autoanyblok-declaration:: Pyramid                                                     
     :members:                                                                   
     :undoc-members:                                                             
     :show-inheritance:
