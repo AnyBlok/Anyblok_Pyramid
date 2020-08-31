@@ -13,6 +13,13 @@
 CHANGELOG
 =========
 
+1.1.0 (2020-08-31)
+------------------
+
+* Added IODC by Pierre Verkest <pierreverkest84@gmail.com>
+* Added enum_adapter for enum Column
+* Allow to set HttpOnly cookie in pyramid authkt configuration
+
 1.0.0 (2020-05-12)
 ------------------
 
