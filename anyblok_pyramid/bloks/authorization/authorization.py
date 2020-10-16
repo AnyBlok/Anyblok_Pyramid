@@ -28,7 +28,8 @@ class Authorization:
     resource = String()
     model = String(
         foreign_key=Declarations.Model.System.Model.use('name').options(
-            ondelete="cascade")
+            ondelete="cascade"),
+        size=256,
     )
     primary_keys = Json(default={})
     filter = Json(default={})  # next step
