@@ -14,8 +14,8 @@
 CHANGELOG
 =========
 
-1.1.1
------
+1.1.1 (2020-10-16)
+------------------
 
 * Fixed the size of the fields **model**, because they have a
   foreign key to the model  **Model.System.Model** on the field
