@@ -16,22 +16,32 @@ from anyblok_pyramid.bloks.pyramid.restrict import restrict_query_by_user
 
 register = Declarations.register
 Model = Declarations.Model
+Mixin = Declarations.Mixin
 
 
 @pytest.fixture
 def setup_registry(request, bloks_loaded):
-
     def setup(bloks, function, **kwargs):
         registry = init_registry_with_bloks(bloks, function, **kwargs)
         request.addfinalizer(registry.close)
         return registry
+
     return setup
 
 
 def add_in_registry_inherited(with_super=False):
+    @register(Mixin)
+    class MTest:
+        @restrict_query_by_user()
+        def my_restrict_query_by_user_method(cls, query, user):
+            return query.filter_by(name="overriden")
+
+        @restrict_query_by_user()
+        def my_mixin_restrict_query_by_user_method(cls, query, user):
+            return query.filter_by(name="mixin")
 
     @register(Model)
-    class RestrictedModel:
+    class RestrictedModel(Mixin.MTest):
 
         name = String(primary_key=True, nullable=False)
 
@@ -39,10 +49,8 @@ def add_in_registry_inherited(with_super=False):
         def my_restrict_query_by_user_method(cls, query, user):
             return query.filter_by(name="base")
 
-
-    @register(Model)
+    @register(Model)  # noqa: F811
     class RestrictedModel:
-
         @restrict_query_by_user()
         def my_restrict_query_by_user_method(cls, query, user):
             if with_super:
@@ -68,19 +76,23 @@ def get_filters_values(query):
 
 def test_restrict_query_by_user_inheritance(setup_registry):
     registry = setup_registry(
-        ["pyramid", "anyblok-test",], add_in_registry_inherited, with_super=False)
-    query = registry.Pyramid.restrict_query_by_user(
-        registry.RestrictedModel.query(),
-        "test",
+        ["pyramid", "anyblok-test"],
+        add_in_registry_inherited,
+        with_super=False,
     )
-    assert get_filters_values(query.whereclause) == ["child", "other"]
+    query = registry.Pyramid.restrict_query_by_user(
+        registry.RestrictedModel.query(), "test",
+    )
+    assert get_filters_values(query.whereclause) == ["child", "mixin", "other"]
 
 
 def test_restrict_query_by_user_inheritance_calling_parent(setup_registry):
     registry = setup_registry(
-        ["pyramid", "anyblok-test",], add_in_registry_inherited, with_super=True)
-    query = registry.Pyramid.restrict_query_by_user(
-        registry.RestrictedModel.query(),
-        "test",
+        ["pyramid", "anyblok-test"], add_in_registry_inherited, with_super=True
     )
-    assert get_filters_values(query.whereclause) == ["base", "child", "other"]
+    query = registry.Pyramid.restrict_query_by_user(
+        registry.RestrictedModel.query(), "test",
+    )
+    assert get_filters_values(query.whereclause) == [
+        "base", "child", "mixin", "other",
+    ]
