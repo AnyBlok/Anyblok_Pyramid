@@ -1,6 +1,7 @@
 # This file is a part of the AnyBlok / Pyramid project
 #
 #    Copyright (C) 2018 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
+#    Copyright (C) 2020 Pierre Verkest <pierreverkest84@gmail.com>
 #
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
@@ -78,6 +79,16 @@ class Pyramid:
             raise KeyError('%s is not a valid login')
 
         return user
+
+    @classmethod
+    def _get_user(cls, user_id):
+        """Return user for a given user_id.
+        The method is called by `Model.Pyramid.get_user` cached method
+        to retreive user. You (as developer) must implement a cache
+        invalidation in case of user modification that could impact
+        restricted query by user id
+        """
+        return cls.registry.Pyramid.User.query().get(user_id)
 
 
 @Declarations.register(Declarations.Model.Pyramid)

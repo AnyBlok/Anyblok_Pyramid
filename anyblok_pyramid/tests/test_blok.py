@@ -82,14 +82,14 @@ def mock_request(method=None, url=None, *args, **kwargs):
         raise Exception("Unexpected url: {}".format(url))
 
 
-class TestPyramidBlok:
+class TestPyramidBlokBase:
     @pytest.fixture(autouse=True)
     def transact(self, request, registry_testblok, webserver):
         transaction = registry_testblok.begin_nested()
 
         def try_rollback(*args, **kwargs):
             """Wrap rollback to be silent in case where transaction is
-            expectedly already rollback """
+            expectedly already rollback"""
 
             try:
                 transaction.rollback(*args, **kwargs)
@@ -107,6 +107,8 @@ class TestPyramidBlok:
         request.addfinalizer(clear_auth)
         return
 
+
+class TestPyramidBlok(TestPyramidBlokBase):
     def test_current_blok(self, registry_testblok, webserver):
         registry = registry_testblok
         webserver.get("/hello/JS/", status=404)
@@ -224,3 +226,29 @@ class TestPyramidBlok:
         )
         assert webserver.cookies["None"] == curerent_cookie
         webserver.get("/bloks", status=403)
+
+
+class TestPyramidBlokRestrictQueryByUserId(TestPyramidBlokBase):
+    def test_restrict_query_by_user_not_restricted(
+        self, registry_testblok, webserver
+    ):
+        registry = registry_testblok
+        registry.upgrade(install=("test-pyramid2",))
+        resp = webserver.post_json(
+            "/login", {"login": "viewer", "password": ""}, status=302
+        )
+        headers = resp.headers
+        results = webserver.get("/bloks", status=200, headers=headers)
+        assert len(results.json) > 1
+
+    def test_restrict_query_by_user_restricted(
+        self, registry_testblok, webserver
+    ):
+        registry = registry_testblok
+        registry.upgrade(install=("test-pyramid2",))
+        resp = webserver.post_json(
+            "/login", {"login": "user2@anyblok.org", "password": ""}, status=302
+        )
+        headers = resp.headers
+        results = webserver.get("/bloks", status=200, headers=headers)
+        assert len(results.json) == 1

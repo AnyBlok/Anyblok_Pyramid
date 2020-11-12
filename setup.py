@@ -92,6 +92,9 @@ setup(
             'authorization=anyblok_pyramid.bloks.authorization:Authorization',
             'user-identity=anyblok_pyramid.bloks.user_identity:UserIdentity',
         ],
+        'anyblok.model.plugin': [
+            'restrict_query_by_user=anyblok_pyramid.bloks.pyramid.restrict:RestrictQueryByUserIdPlugin',
+        ],
         'test_bloks': [
             'test-pyramid1=anyblok_pyramid.test_bloks.test1:Test',
             'test-pyramid2=anyblok_pyramid.test_bloks.test2:Test',
