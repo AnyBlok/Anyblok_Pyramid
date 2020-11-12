@@ -1,6 +1,7 @@
 # This file is a part of the AnyBlok / Pyramid project
 #
 #    Copyright (C) 2018 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
+#    Copyright (C) 2002 Pierre Verkest <pierreverkest84@gmail.com>
 #
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
@@ -21,13 +22,13 @@ class Test(Blok):
 
     @classmethod
     def import_declaration_module(cls):
-        from . import user  # noqa
+        from . import models  # noqa
 
     @classmethod
     def reload_declaration_module(cls, reload):
-        from . import user
+        from . import models
 
-        reload(user)
+        reload(models)
 
     @classmethod
     def pyramid_load_config(cls, config):
@@ -54,3 +55,10 @@ class Test(Blok):
         config.add_view(view=oidc_callback, route_name="oidc_callback")
 
         config.scan(cls.__module__ + ".views")
+
+    def update(self, latest):
+        if not latest:
+            self.registry.Pyramid.User.insert(login="admin")
+            self.registry.Pyramid.User.insert(login="viewer")
+            self.registry.Pyramid.User.insert(login="user@anyblok.org")
+            self.registry.Pyramid.User.insert(login="user2@anyblok.org")

@@ -17,12 +17,19 @@ Pyramid model
     :undoc-members:                                                             
     :show-inheritance:
     :noindex:
-    
+
+.. automodule:: anyblok_pyramid.bloks.pyramid.restrict
+    :members:                                                                   
+    :undoc-members:                                                             
+    :show-inheritance:
+    :noindex:
+
 .. autoanyblok-declaration:: Pyramid                                                     
     :members:                                                                   
     :undoc-members:                                                             
     :show-inheritance:
     :noindex:
+
 
 OIDC utility
 ------------

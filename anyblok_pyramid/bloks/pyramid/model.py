@@ -5,6 +5,7 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+from anyblok.declarations import classmethod_cache
 from pyramid.httpexceptions import HTTPUnauthorized
 from anyblok import Declarations
 from pyramid.security import Allow, ALL_PERMISSIONS
@@ -89,3 +90,54 @@ class Pyramid:
     @classmethod
     def check_user_exists(cls, login):
         raise NotImplementedError()
+
+    @classmethod
+    def _get_user(cls, user_id):
+        """Return user for a given `user_id`, to be overwrite in user bloks
+        The method is called by `get_user` cached method to retreive user
+        while restricting query by user.
+
+        .. warning::
+
+            User cache invalidation must be done by developer.
+
+        :param user_id: This is the user primary key (could be a loging
+            according the User class definition)
+        :return User (instance ?) or None: retreive the user for the given
+            `user_id`
+        """
+        return user_id
+
+    @classmethod_cache()
+    def get_user(cls, user_id):
+        """Cached `_get_user` results in order to use it by
+        ``restrict_query_by_user`` decorators. Invalidate
+        cache has to be implemented by user who use it"""
+        return cls._get_user(user_id)
+
+    @classmethod
+    def restrict_query_by_user(
+        cls, query, user_code
+    ):
+        """Call registered decorated method (by
+        ``from anyblok_pyramid.bloks.pyramid.restrict.restrict_query_by_user``)
+        to add filters on current query according the selected model.
+
+        :param query: A query object which you have to add filters
+        :user_code: User primary key value used to retreive users.
+
+        .. note::
+
+            This method is using get_user which cached user instance, you
+            have to manage or mind to cache invalidation while using this
+            method.
+        """
+        for method in cls.registry.restrict_query_by_user_methods.get(
+            query.Model, []
+        ):
+
+            query = getattr(
+                cls.registry.get(query.Model), method
+            )(query, cls.get_user(user_code))
+
+        return query

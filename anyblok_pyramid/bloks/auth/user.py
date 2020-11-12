@@ -79,6 +79,16 @@ class Pyramid:
 
         return user
 
+    @classmethod
+    def _get_user(cls, user_id):
+        """Return user for a given user_id.
+        The method is called by `Model.Pyramid.get_user` cached method
+        to retreive user. You (as developer) must implement a cache
+        invalidation in case of user modification that could impact
+        restricted query by user id
+        """
+        return cls.registry.Pyramid.User.query().get(user_id)
+
 
 @Declarations.register(Declarations.Model.Pyramid)
 class User:

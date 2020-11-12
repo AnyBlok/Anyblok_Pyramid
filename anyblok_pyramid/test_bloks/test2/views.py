@@ -11,7 +11,11 @@ class Bloks:
     @view_config(route_name='bloks', renderer="json",
                  request_method='GET', permission="read")
     def get_all(self):
-        bloks = self.registry.System.Blok.query().all()
+        query = self.registry.Pyramid.restrict_query_by_user(
+            self.registry.System.Blok.query(),
+            self.request.authenticated_userid
+        )
+        bloks = query.all()
         return bloks.to_dict('name', 'author', 'version')
 
     @view_config(route_name='blok', renderer="json",
