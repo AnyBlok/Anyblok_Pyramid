@@ -32,7 +32,7 @@ env:
     - ANYBLOK_DATABASE_USER=postgres
 
 script:
-  - flake8 anyblok_pyramid --ignore F999
+  - flake8 anyblok_pyramid
   - psql -c 'create database travis_ci_test;' -U postgres
   - pytest --cov-report= --cov=anyblok_pyramid anyblok_pyramid/tests
   - psql -c 'drop database travis_ci_test;' -U postgres
