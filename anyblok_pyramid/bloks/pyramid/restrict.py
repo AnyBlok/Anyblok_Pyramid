@@ -33,8 +33,8 @@ class RestrictQueryByUserIdPlugin(ModelPluginBase):
         :param new_type_properties: param to add in a new base if need
         """
         if (
-            hasattr(method, "is_a_restric_query_by_user_method") and
-            method.is_a_restric_query_by_user_method is True
+            hasattr(method, "is_a_restric_query_by_user_method")
+            and method.is_a_restric_query_by_user_method is True
         ):
             if namespace not in self.registry.restrict_query_by_user_methods:
                 self.registry.restrict_query_by_user_methods[namespace] = {}

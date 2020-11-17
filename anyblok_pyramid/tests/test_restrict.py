@@ -50,7 +50,7 @@ def add_in_registry_inherited(with_super=False):
             return query.filter_by(name="base")
 
     @register(Model)  # noqa: F811
-    class RestrictedModel:
+    class RestrictedModel:  # noqa: F811
         @restrict_query_by_user()
         def my_restrict_query_by_user_method(cls, query, user):
             if with_super:
