@@ -138,7 +138,7 @@ class Authorization:
                 p = self.perms[type_]
                 query = User.query()
                 query = query.filter(User.login == login)
-                query = query.join(User.roles)
+                query = query.join(User.roles, isouter=True)
                 if self.filter:
                     query = query.condition_filter(
                         self.filter,
