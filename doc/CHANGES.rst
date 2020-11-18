@@ -5,6 +5,8 @@
 ..    Copyright (C) 2017 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
 ..    Copyright (C) 2018 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
 ..    Copyright (C) 2019 Jean-Sebastien SUZANNE <js.suzanne@gmail.com>
+..    Copyright (C) 2020 Jean-Sebastien SUZANNE <js.suzanne@gmail.com>
+..    Copyright (C) 2020 Pierre Verkest <pierreverkest84@gmail.com>
 ..
 .. This Source Code Form is subject to the terms of the Mozilla Public License,
 .. v. 2.0. If a copy of the MPL was not distributed with this file,You can
@@ -12,6 +14,26 @@
 
 CHANGELOG
 =========
+
+1.1.2 (unreleased)
+------------------
+
+* Added **restrict_query_by_user** decorator in order to apply query filters
+  related to a given user
+
+1.1.1 (2020-10-16)
+------------------
+
+* Fixed the size of the fields **model**, because they have a
+  foreign key to the model  **Model.System.Model** on the field
+  **name**. The next version of AnyBlok check that the size are the same
+
+1.1.0 (2020-08-31)
+------------------
+
+* Added IODC by Pierre Verkest <pierreverkest84@gmail.com>
+* Added enum_adapter for enum Column
+* Allow to set HttpOnly cookie in pyramid authkt configuration
 
 1.0.0 (2020-05-12)
 ------------------

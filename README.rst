@@ -41,8 +41,8 @@ based authorization to your project.
 +-------------------+--------------+----------------------------------------------------------+
 | Blok              | Dependencies | Description                                              |
 +===================+==============+==========================================================+
-| **Pyramid**       |              | Add hooks to connect Pyramid authentification and        |
-|                   |              | authorization                                            |
+| **Pyramid**       |              | Add hooks to connect Pyramid authentification, OIDC      |
+|                   |              | Relying Party and authorization                          |
 +-------------------+--------------+----------------------------------------------------------+
 | **auth**          | **pyramid**  | Add 'User' and 'User.Role' models.                       |
 +-------------------+--------------+----------------------------------------------------------+

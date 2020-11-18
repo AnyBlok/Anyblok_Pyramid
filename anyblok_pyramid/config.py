@@ -87,6 +87,15 @@ def define_auth_option(group):
         help="Only send the cookie back over an unsecure conn",
         action='store_true')
     group.add_argument(
+        '--pyramid-authtkt-http-only',
+        default=os.environ.get('ANYBLOK_PYRAMID_AUTHTKT_HTTP_ONLY', False),
+        help=(
+            "Default: ``False``. Hide cookie from JavaScript by setting the"
+            "HttpOnly flag. Not honored by all browsers."
+            "Optional."
+        ),
+        action='store_true')
+    group.add_argument(
         '--pyramid-authtkt-timeout', type=int,
         default=os.environ.get('ANYBLOK_PYRAMID_AUTHTKT_TIMEOUT', None),
         help=(
@@ -131,6 +140,65 @@ def define_auth_option(group):
             "the userid doesn’t exist or a sequence of principal identifiers "
             "(possibly empty) if the user does exist"
         ))
+
+    # OIDC
+    group.add_argument(
+        "--oidc-provider-issuer",
+        default=os.environ.get('ANYBLOK_OIDC_PROVIDER_ISSUER', None),
+        help=(
+            "he OIDC Provider urls (ie: https://gitlab.com)"
+        )
+    )
+    group.add_argument(
+        "--oidc-relying-party-callback",
+        default=os.environ.get('ANYBLOK_OIDC_RELYING_PARTY_CALLBACK', None),
+        help=(
+            "The Relaying Party callback, once the user is authenticate "
+            "on the OIDC provider he will be redirect to that uri to the RP "
+            "service (ie: http://localhost:8080/callback). In general this "
+            "value is also configured in your OIDC provider to avoid "
+            "redirection issues."
+        )
+    )
+    group.add_argument(
+        "--oidc-relying-party-client-id",
+        default=os.environ.get('OANYBLOK_IDC_RELYING_PARTY_CLIENT_ID', None),
+        help=(
+            "The client id to authenticate the relying party "
+            "(this application) to the OIDC provider. "
+            "This information should be provide by your OIDC provider."
+        )
+    )
+    group.add_argument(
+        "--oidc-relying-party-secret-id",
+        default=os.environ.get('ANYBLOK_OIDC_RELYING_PARTY_SECRET_ID', None),
+        help=(
+            "The secret id to authenticate the relying party "
+            "(this application) to the OIDC provider. "
+            "This information should be provide by your OIDC provider."
+        )
+    )
+    group.add_argument(
+        "--oidc-scope",
+        default=os.environ.get('ANYBLOK_OIDC_SCOPE', "openid,email"),
+        help=(
+            "Specify what access privileges are being requested for Access "
+            "Tokens. `cf Requesting claims using scope values "
+            "<https://openid.net/specs/"
+            "openid-connect-core-1_0.html#ScopeClaims`_. a list of claims using"
+            "coma separator."
+        )
+    )
+    group.add_argument(
+        "--oidc-userinfo-field",
+        default=os.environ.get('ANYBLOK_OIDC_USERINFO_FIELD', "email"),
+        help=(
+            "Specify which field to use from the response of the OIDC provider "
+            "`userinfo endpoint <https://openid.net/specs/"
+            "openid-connect-core-1_0.html#UserInfoResponse>`_. To make sure "
+            "it's a known user"
+        )
+    )
 
 
 @Configuration.add('pyramid-debug', label="Pyramid")

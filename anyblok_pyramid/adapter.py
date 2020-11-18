@@ -192,3 +192,22 @@ def decimal_adapter(obj, request):
     :rtype: str
     """
     return str(Decimal(obj).quantize(Decimal('1.00')))
+
+
+def enum_adapter(obj, request):
+    """Format the fields.Enum to return String
+
+    ::
+
+        from pyramid.renderers import JSON
+        import enum
+
+        json_renderer = JSON()
+        json_renderer.add_adapter(enum.Enum, enum_adapter)
+        config.add_renderer('json', json_renderer)
+
+
+    :param obj: Enum
+    :rtype: str
+    """
+    return obj.value
