@@ -1,6 +1,7 @@
 # This file is a part of the AnyBlok / Pyramid project
 #
 #    Copyright (C) 2020 Jean-Sebastien SUZANNE <js.suzanne@gmail.com>
+#    Copyright (C) 2020 Pierre Verkest <pierreverkest84@gmail.com>
 #
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
@@ -180,6 +181,23 @@ class TestCheckACL:
         self.registry.Pyramid.Authorization.insert(
             resource='something',
             role=self.role,
+            perm_create=dict(matched=True),
+            perm_read=dict(matched=True),
+            perm_update=dict(matched=True),
+            perm_delete=dict(matched=True)
+        )
+        acl = self.registry.Pyramid.Authorization.check_acl(
+            'jssuzanne', 'something', 'create')
+        assert acl is True
+
+    def test_with_child_role(self):
+        child_role = self.registry.Pyramid.Role.insert(
+            name='admin-user', label='User managmenet'
+        )
+        self.role.children.append(child_role)
+        self.registry.Pyramid.Authorization.insert(
+            resource='something',
+            role=child_role,
             perm_create=dict(matched=True),
             perm_read=dict(matched=True),
             perm_update=dict(matched=True),
