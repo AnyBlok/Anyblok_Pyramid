@@ -252,11 +252,8 @@ class Role:
                     # if code is not provide it will raise an exception
                     "code": "Uniq auth code by role",
                     "model": "Model.Test",
-                    "perms": {
-                        "create": {"matched": True},
-                        "read": {"matched": True},
-                        "update": {"matched": True},
-                        "delete": {"matched": True}
+                    "perms": merge(
+                        PERM_WRITE,
                         "whatever you needs": {"matched": True}
                     },
                     "order": 100,
