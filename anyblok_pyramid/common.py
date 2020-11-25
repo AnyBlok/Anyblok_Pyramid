@@ -67,3 +67,12 @@ def merge(dict1, dict2):
         else:
             result[key] = deepcopy(dict2[key])
     return result
+
+
+PERM_C___ = dict(create=dict(matched=True))
+PERM__R__ = dict(read=dict(matched=True))
+PERM___U_ = dict(update=dict(matched=True))
+PERM____D = dict(delete=dict(matched=True))
+# alias
+PERM_READ = PERM__R__
+PERM_WRITE = merge(merge(merge(PERM_C___, PERM__R__), PERM___U_), PERM____D)

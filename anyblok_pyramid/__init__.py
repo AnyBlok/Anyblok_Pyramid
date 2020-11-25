@@ -8,7 +8,15 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok.blok import BlokManager
 import inspect
-from .common import merge  # noqa: F401
+from .common import (  # noqa: F401
+    merge,
+    PERM_READ,
+    PERM_WRITE,
+    PERM_C___,
+    PERM__R__,
+    PERM___U_,
+    PERM____D,
+)
 
 
 def anyblok_init_config(unittest=False):

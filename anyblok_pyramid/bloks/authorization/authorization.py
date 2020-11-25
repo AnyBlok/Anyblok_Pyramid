@@ -24,6 +24,7 @@ class Authorization:
     Anyblok model or a Pyramid resource)"""
 
     id = Integer(primary_key=True)
+    code = String(nullable=True, unique=True, size=256)
     order = Integer(default=100, nullable=False)
 
     resource = String()
@@ -193,32 +194,43 @@ class Authorization:
 
     @classmethod
     def ensure_authorizations_exists(
-        cls, role, model, authorizatoions
+        cls, code, **kwargs
     ):
-        """Ensure role's models authorizations are present in an
-        idempotent way
+        """Ensure role's authorization is present
+
+        :param code: String, authorization code.
+        :param kwargs: authorization fields
         """
-        if not authorizatoions:
-            authorizatoions = {}
+        if not kwargs:
+            kwargs = {}
+        # pv: at some point adding index on this criteria may boost things
+        # while setting authorizations
         authz = (
             cls.registry.Pyramid.Authorization.query()
             .filter_by(
-                role=role,
-                model=model,
+                code=code,
             )
             .one_or_none()
         )
         if not authz:
             authz = cls.registry.Pyramid.Authorization.insert(
-                role=role,
-                model=model,
+                code=code, **kwargs
             )
-        authz.update(
-            perms=authorizatoions.get("perms", {}),
-            manual=False,
-            **authorizatoions.get("extra_authz_params", {})
-        )
-        authz.flag_modified("perms")
+        else:
+            authz.update(**kwargs)
+            jsonfields = {"perms", "primary_keys", "filter"}
+            perms_related = {
+                "perm_create",
+                "perm_read",
+                "perm_update",
+                "perm_delete"
+            }
+
+            modified = (jsonfields | perms_related) & set(kwargs.keys())
+            if modified:
+                if perms_related & modified:
+                    modified = modified | {"perms"}
+                authz.flag_modified(*(jsonfields & modified))
         return authz
 
 
@@ -227,32 +239,39 @@ class Role:
 
     @classmethod
     def ensure_role_exists(
-        cls, name, config, label=None
+        cls, name, authorizations, label=None
     ):
-        """Create or update Pyramid.Role with related model's authorization
-        in an idempotent way.
+        """Create or update Pyramid.Role with related model's authorization.
 
         :param name: str, Role name
-        :param config: dict, per model authorizations configuration likes::
+        :param authorizations: list, `Model.Pyramid.Authorization` data to
+            ensure that it exists::
 
-            {
-                "Model.Test": {
-                    perms: {
+            [
+                {
+                    # if code is not provide it will raise an exception
+                    "code": "Uniq auth code by role",
+                    "model": "Model.Test",
+                    "perms": {
                         "create": {"matched": True},
                         "read": {"matched": True},
                         "update": {"matched": True},
                         "delete": {"matched": True}
                         "whatever you needs": {"matched": True}
                     },
-                    extra_authz_params: {
-                        "order": 100,
-                    }
-                }
-            }
-
-        As a convention we suggest to provid a class method to return
-        this configuration that let other blok to easly improuve roles.
-
+                    "order": 100,
+                    # Any other values present on Model.Pyramid.Authorization
+                },
+                {
+                    # if code is not provide it will raise an exception
+                    "code": "Uniq auth code by role",
+                    "resource": "a resource",
+                    "perms": {
+                        "hack_resource": {"matched": True},
+                    },
+                },
+                ...
+            ]
 
         :param label: str, Role label used if role doesn't exits on insert.
                       default: capitalized name.
@@ -265,403 +284,15 @@ class Role:
                 label = name.capitalize()
             role = Pyramid.Role.insert(name=name, label=label)
 
-        for model, authz in config.items():
+        for authz in authorizations:
+            code = authz.pop("code", None)
+            if code is None:
+                raise KeyError(
+                    f"Missing `code` information to ensure "
+                    f"Model.Pyramid.Authorizatoin is present on role "
+                    f"{role.name}"
+                )
             Pyramid.Authorization.ensure_authorizations_exists(
-                role, model, authz
+                code, role=role, **authz
             )
-        Pyramid.Authorization.query().filter_by(role=role).filter(
-            ~Pyramid.Authorization.model.in_(config.keys())
-        ).delete(synchronize_session="fetch")
         return role
-
-
-@Declarations.register(Pyramid.Authorization)
-class Configuration:
-    """Utility class in order to easly manage role and authorizatoin
-    setups.
-
-    As a convention we add class method that configure  role's  models
-    authorizations. This aims to let other Bloks to improve roles by adding
-    or complete models authorizations. For instance if a Blok `A` define a
-    role ``role_a`` that give read only access on ``Model.System.Blok``
-    and write access to ``Model.Pyramid.User``::
-
-        from anyblok import Declarations
-
-        Pyramid = Declarations.Model.Pyramid
-
-        @Declarations.register(Pyramid.Authorization)
-        class Configuration:
-
-            @classmethod
-            def setup_authorization(cls):
-                super().setup_authorization()
-                cls.registry.Pyramid.Role.ensure_role_exists(
-                    "role_a",
-                    cls.get_role_A_models_authorization(),
-                    label= "Role A"
-                )
-
-
-            @classmethod
-            def get_role_A_models_authorization(cls):
-                return {
-                    "Model.Pyramid.User": cls.ACCESS_WRITE,
-                    "Model.System.Blok": cls.ACCESS_READ,
-                }
-
-
-    An other blok `B` could overload this configuration to gives `install`
-    (that would gives access to an exposed method that is allowed
-    to install a blok) permission on ``Model.System.Blok`` and add
-    read-only access to an other model ``Model.pyramid.Role``. Also it's
-    good place if you want to set role inheriance, in the following example
-    a user linked to `role_b` will get `role_a`'s permissions::
-
-        from anyblok import Declarations
-        from anyblok_pyramid import merge
-
-        Pyramid = Declarations.Model.Pyramid
-
-
-        @Declarations.register(Pyramid.Authorization)
-        class Configuration:
-
-            @classmethod
-            def setup_authorization(cls):
-                super().setup_authorization()
-                roleb = cls.registry.Pyramid.Role.ensure_role_exists(
-                    "role_b", cls.get_role_B_models_authorization,
-                    label= "Administrator"
-                )
-                rolea = cls.registry.Pyramid.Role.query.get("role_a")
-                roleb.children.append(rolea)
-
-            @classmethod
-            def get_role_A_models_authorization(cls):
-                return merge(
-                    super().get_role_A_models_authorization()
-                    {
-                        "Model.Pyramid.Role": cls.ACCESS_READ,
-                        "Model.System.Blok": merge(
-                            cls.ACCESS_WRITE,
-                            dict(perms=dict(install=dict(matched=True))
-                        ),
-                    }
-                )
-
-            @classmethod
-            def get_role_B_models_authorization(cls):
-                '''return models authorizations config for role B'''
-
-    """
-    ACCESS_CRUD = dict(
-        perms=dict(
-            create=dict(
-                matched=True,
-            ),
-            read=dict(
-                matched=True,
-            ),
-            update=dict(
-                matched=True,
-            ),
-            delete=dict(
-                matched=True,
-            ),
-        ),
-        extra_authz_params=dict(
-            order=100,
-        ),
-    )
-    ACCESS_CRU_ = dict(
-        perms=dict(
-            create=dict(
-                matched=True,
-            ),
-            read=dict(
-                matched=True,
-            ),
-            update=dict(
-                matched=True,
-            ),
-            delete=dict(
-                matched=False,
-            ),
-        ),
-        extra_authz_params=dict(
-            order=110,
-        ),
-    )
-    ACCESS_CR_D = dict(
-        perms=dict(
-            create=dict(
-                matched=True,
-            ),
-            read=dict(
-                matched=True,
-            ),
-            update=dict(
-                matched=False,
-            ),
-            delete=dict(
-                matched=True,
-            ),
-        ),
-        extra_authz_params=dict(
-            order=120,
-        ),
-    )
-    ACCESS__RUD = dict(
-        perms=dict(
-            create=dict(
-                matched=False,
-            ),
-            read=dict(
-                matched=True,
-            ),
-            update=dict(
-                matched=True,
-            ),
-            delete=dict(
-                matched=True,
-            ),
-        ),
-        extra_authz_params=dict(
-            order=130,
-        ),
-    )
-    ACCESS_C_UD = dict(
-        perms=dict(
-            create=dict(
-                matched=True,
-            ),
-            read=dict(
-                matched=False,
-            ),
-            update=dict(
-                matched=True,
-            ),
-            delete=dict(
-                matched=True,
-            ),
-        ),
-        extra_authz_params=dict(
-            order=140,
-        ),
-    )
-    ACCESS_CR__ = dict(
-        perms=dict(
-            create=dict(
-                matched=True,
-            ),
-            read=dict(
-                matched=True,
-            ),
-            update=dict(
-                matched=False,
-            ),
-            delete=dict(
-                matched=False,
-            ),
-        ),
-        extra_authz_params=dict(
-            order=150,
-        ),
-    )
-    ACCESS__RU_ = dict(
-        perms=dict(
-            create=dict(
-                matched=False,
-            ),
-            read=dict(
-                matched=True,
-            ),
-            update=dict(
-                matched=True,
-            ),
-            delete=dict(
-                matched=False,
-            ),
-        ),
-        extra_authz_params=dict(
-            order=160,
-        ),
-    )
-    ACCESS__R_D = dict(
-        perms=dict(
-            create=dict(
-                matched=False,
-            ),
-            read=dict(
-                matched=True,
-            ),
-            update=dict(
-                matched=False,
-            ),
-            delete=dict(
-                matched=True,
-            ),
-        ),
-        extra_authz_params=dict(
-            order=170,
-        ),
-    )
-    ACCESS___UD = dict(
-        perms=dict(
-            create=dict(
-                matched=False,
-            ),
-            read=dict(
-                matched=False,
-            ),
-            update=dict(
-                matched=True,
-            ),
-            delete=dict(
-                matched=True,
-            ),
-        ),
-        extra_authz_params=dict(
-            order=180,
-        ),
-    )
-    ACCESS_C_U_ = dict(
-        perms=dict(
-            create=dict(
-                matched=True,
-            ),
-            read=dict(
-                matched=False,
-            ),
-            update=dict(
-                matched=True,
-            ),
-            delete=dict(
-                matched=False,
-            ),
-        ),
-        extra_authz_params=dict(
-            order=190,
-        ),
-    )
-    ACCESS_C__D = dict(
-        perms=dict(
-            create=dict(
-                matched=True,
-            ),
-            read=dict(
-                matched=False,
-            ),
-            update=dict(
-                matched=False,
-            ),
-            delete=dict(
-                matched=True,
-            ),
-        ),
-        extra_authz_params=dict(
-            order=200,
-        ),
-    )
-    ACCESS__R__ = dict(
-        perms=dict(
-            create=dict(
-                matched=False,
-            ),
-            read=dict(
-                matched=True,
-            ),
-            update=dict(
-                matched=False,
-            ),
-            delete=dict(
-                matched=False,
-            ),
-        ),
-        extra_authz_params=dict(
-            order=210,
-        ),
-    )
-    ACCESS_C___ = dict(
-        perms=dict(
-            create=dict(
-                matched=True,
-            ),
-            read=dict(
-                matched=False,
-            ),
-            update=dict(
-                matched=False,
-            ),
-            delete=dict(
-                matched=False,
-            ),
-        ),
-        extra_authz_params=dict(
-            order=220,
-        ),
-    )
-    ACCESS___U_ = dict(
-        perms=dict(
-            create=dict(
-                matched=False,
-            ),
-            read=dict(
-                matched=False,
-            ),
-            update=dict(
-                matched=True,
-            ),
-            delete=dict(
-                matched=False,
-            ),
-        ),
-        extra_authz_params=dict(
-            order=230,
-        ),
-    )
-    ACCESS____D = dict(
-        perms=dict(
-            create=dict(
-                matched=False,
-            ),
-            read=dict(
-                matched=False,
-            ),
-            update=dict(
-                matched=False,
-            ),
-            delete=dict(
-                matched=True,
-            ),
-        ),
-        extra_authz_params=dict(
-            order=240,
-        ),
-    )
-
-    # alias
-    ACCESS_READ = ACCESS__R__
-    ACCESS_WRITE = ACCESS_CRUD
-    ACCESS_UPDATE = ACCESS__RU_
-
-    @classmethod
-    def setup_authorization(cls):
-        """A unique entry point that let setup role's  models
-        authorizations.
-
-        The intent of this method is to be called from the latest blok update
-        method. and over load from bloks that needs to add configurations
-        (please read class doctstring).
-
-        .. note::
-
-            Even a dependent blok call it in its update blok method you
-            should call this method again in your update blok method because
-            the update method is called once blok is installed and before next
-            blok to be installed.
-
-            So you should take care to writte idempotent code while
-            overloading this method
-        """
