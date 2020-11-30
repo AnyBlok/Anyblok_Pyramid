@@ -193,7 +193,7 @@ class Authorization:
                 "(%s)" % self)
 
     @classmethod
-    def ensure_authorizations_exists(
+    def ensure_exists(
         cls, code, **kwargs
     ):
         """Ensure role's authorization is present
@@ -238,7 +238,7 @@ class Authorization:
 class Role:
 
     @classmethod
-    def ensure_role_exists(
+    def ensure_exists(
         cls, name, authorizations, label=None
     ):
         """Create or update Pyramid.Role with related model's authorization.
@@ -289,7 +289,7 @@ class Role:
                     f"Model.Pyramid.Authorizatoin is present on role "
                     f"{role.name}"
                 )
-            Pyramid.Authorization.ensure_authorizations_exists(
+            Pyramid.Authorization.ensure_exists(
                 code, role=role, **authz
             )
         return role

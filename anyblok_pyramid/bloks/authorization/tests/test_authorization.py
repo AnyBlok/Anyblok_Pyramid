@@ -47,18 +47,18 @@ class TestAuthorization:
 
     def test_ensure_role_without_code(self):
         self.registry.Pyramid.User.insert(login="test")
-        self.Authorization.ensure_authorizations_exists(
+        self.Authorization.ensure_exists(
             None, resource="test", login="test"
         )
         self.Authorization.insert(resource="test 2", login="test")
         with pytest.raises(MultipleResultsFound):
-            self.Authorization.ensure_authorizations_exists(
+            self.Authorization.ensure_exists(
                 None, resource="test", login="test"
             )
 
     def test_no_code_provide(self):
         with pytest.raises(KeyError) as err:
-            self.registry.Pyramid.Role.ensure_role_exists(
+            self.registry.Pyramid.Role.ensure_exists(
                 "test",
                 [
                     {
@@ -84,7 +84,7 @@ class TestAuthorization:
 
     def test_ensure_role_insert(self):
         assert self.registry.Pyramid.Role.query().get("test") is None
-        self.registry.Pyramid.Role.ensure_role_exists(
+        self.registry.Pyramid.Role.ensure_exists(
             "test",
             [
                 {
@@ -107,7 +107,7 @@ class TestAuthorization:
 
     def test_update(self):
         count_before = self.Authorization.query().count()
-        self.registry.Pyramid.Role.ensure_role_exists(
+        self.registry.Pyramid.Role.ensure_exists(
             "test",
             [
                 {
@@ -126,7 +126,7 @@ class TestAuthorization:
             ],
         )
         assert self.Authorization.query().count() == count_before + 2
-        self.registry.Pyramid.Role.ensure_role_exists(
+        self.registry.Pyramid.Role.ensure_exists(
             "test",
             [
                 {
@@ -143,7 +143,7 @@ class TestAuthorization:
         self.assert_authz()
 
     def test_update2(self):
-        self.registry.Pyramid.Role.ensure_role_exists(
+        self.registry.Pyramid.Role.ensure_exists(
             "test",
             [
                 {
@@ -161,7 +161,7 @@ class TestAuthorization:
                 },
             ],
         )
-        self.registry.Pyramid.Role.ensure_role_exists(
+        self.registry.Pyramid.Role.ensure_exists(
             "test",
             [
                 {
