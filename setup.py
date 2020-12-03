@@ -9,7 +9,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from setuptools import setup, find_packages
 import os
-version = '1.1.1'
+version = '1.2.0'
 
 requires = [
     'anyblok>=0.9.0',
@@ -93,7 +93,10 @@ setup(
             'user-identity=anyblok_pyramid.bloks.user_identity:UserIdentity',
         ],
         'anyblok.model.plugin': [
-            'restrict_query_by_user=anyblok_pyramid.bloks.pyramid.restrict:RestrictQueryByUserIdPlugin',
+            (
+                'restrict_query_by_user=anyblok_pyramid.bloks.pyramid.'
+                'restrict:RestrictQueryByUserIdPlugin'
+            ),
         ],
         'test_bloks': [
             'test-pyramid1=anyblok_pyramid.test_bloks.test1:Test',

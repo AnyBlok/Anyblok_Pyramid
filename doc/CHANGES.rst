@@ -15,11 +15,12 @@
 CHANGELOG
 =========
 
-1.1.2 (unreleased)
+1.2.0 (2020-12-03)
 ------------------
 
 * Added **restrict_query_by_user** decorator in order to apply query filters
   related to a given user
+* Added utilities to setup roles and authorizations
 
 1.1.1 (2020-10-16)
 ------------------
