@@ -51,10 +51,32 @@ Installation will add the ``anyblok`` commands to the environment.
 Unit Test
 ---------
 
-Run the test with ``nose``::
 
-    pip install nose
-    nosetests anyblok_pyramid/tests
+To run framework tests with ``pytest``::
+
+    pip install pytest
+    ANYBLOK_DATABASE_DRIVER postgresql ANYBLOK_DATABASE_NAME test_anyblok py.test anyblok_pyramid/tests
+
+To run tests of all installed bloks::
+
+    dropdb test_anyblok
+    ANYBLOK_DATABASE_DRIVER postgresql ANYBLOK_DATABASE_NAME test_anyblok anyblok_createdb --install-bloks auth
+    ANYBLOK_DATABASE_DRIVER postgresql ANYBLOK_DATABASE_NAME test_anyblok py.test anyblok_pyramid/bloks/auth
+
+    dropdb test_anyblok
+    ANYBLOK_DATABASE_DRIVER postgresql ANYBLOK_DATABASE_NAME test_anyblok anyblok_createdb --install-bloks auth-password
+    ANYBLOK_DATABASE_DRIVER postgresql ANYBLOK_DATABASE_NAME test_anyblok py.test anyblok_pyramid/bloks/password
+
+    dropdb test_anyblok
+    ANYBLOK_DATABASE_DRIVER postgresql ANYBLOK_DATABASE_NAME test_anyblok anyblok_createdb --install-bloks authorization
+    ANYBLOK_DATABASE_DRIVER postgresql ANYBLOK_DATABASE_NAME test_anyblok py.test anyblok_pyramid/bloks/authorization
+
+    dropdb test_anyblok
+    ANYBLOK_DATABASE_DRIVER postgresql ANYBLOK_DATABASE_NAME test_anyblok anyblok_createdb --install-bloks user-identity
+    ANYBLOK_DATABASE_DRIVER postgresql ANYBLOK_DATABASE_NAME test_anyblok py.test anyblok_pyramid/bloks/user_identity
+
+AnyBlok is tested continuously using `Travis CI
+<https://travis-ci.org/AnyBlok/Anyblok_Pyramid>`_
 
 Dependencies
 ------------
@@ -89,6 +111,7 @@ Contributors
 `Sensee <http://sensee.com>`_ team:
 
 * Franck Bret
+* Jean-Sébastien Suzanne
 
 `ZeProfile <http://zeprofile.com>`_ team:
 

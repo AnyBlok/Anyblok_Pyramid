@@ -51,6 +51,8 @@ based authorization to your project.
 +-------------------+--------------+----------------------------------------------------------+
 | **authorization** | **auth**     | Add 'User.Authorization' model for managing permissions  |
 +-------------------+--------------+----------------------------------------------------------+
+| **user_identity** | **auth**     | Add some column on model **Model.Pyramid.User**          |
++-------------------+--------------+----------------------------------------------------------+
 
 AnyBlok / Pyramid is released under the terms of the `Mozilla Public License`.
 
