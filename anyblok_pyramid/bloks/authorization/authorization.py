@@ -1,6 +1,7 @@
 # This file is a part of the AnyBlok / Pyramid project
 #
 #    Copyright (C) 2018 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>
+#    Copyright (C) 2020 Pierre Verkest <pierreverkest84@gmail.com>
 #
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
@@ -23,6 +24,7 @@ class Authorization:
     Anyblok model or a Pyramid resource)"""
 
     id = Integer(primary_key=True)
+    code = String(nullable=True, unique=True, size=256)
     order = Integer(default=100, nullable=False)
 
     resource = String()
@@ -189,3 +191,105 @@ class Authorization:
             raise AuthorizationValidationException(
                 "Primary keys without model to apply in the authorization "
                 "(%s)" % self)
+
+    @classmethod
+    def ensure_exists(
+        cls, code, **kwargs
+    ):
+        """Ensure role's authorization is present
+
+        :param code: String, authorization code.
+        :param kwargs: authorization fields
+        """
+        if not kwargs:
+            kwargs = {}
+        # pv: at some point adding index on this criteria may boost things
+        # while setting authorizations
+        authz = (
+            cls.registry.Pyramid.Authorization.query()
+            .filter_by(
+                code=code,
+            )
+            .one_or_none()
+        )
+        if not authz:
+            authz = cls.registry.Pyramid.Authorization.insert(
+                code=code, **kwargs
+            )
+        else:
+            authz.update(**kwargs)
+            jsonfields = {"perms", "primary_keys", "filter"}
+            perms_related = {
+                "perm_create",
+                "perm_read",
+                "perm_update",
+                "perm_delete"
+            }
+
+            modified = (jsonfields | perms_related) & set(kwargs.keys())
+            if modified:
+                if perms_related & modified:
+                    modified = modified | {"perms"}
+                authz.flag_modified(*(jsonfields & modified))
+        return authz
+
+
+@Declarations.register(Pyramid)
+class Role:
+
+    @classmethod
+    def ensure_exists(
+        cls, name, authorizations, label=None
+    ):
+        """Create or update Pyramid.Role with related model's authorization.
+
+        :param name: str, Role name
+        :param authorizations: list, `Model.Pyramid.Authorization` data to
+            ensure that it exists::
+
+            [
+                {
+                    # if code is not provide it will raise an exception
+                    "code": "Uniq auth code by role",
+                    "model": "Model.Test",
+                    "perms": merge(
+                        PERM_WRITE,
+                        "whatever you needs": {"matched": True}
+                    },
+                    "order": 100,
+                    # Any other values present on Model.Pyramid.Authorization
+                },
+                {
+                    # if code is not provide it will raise an exception
+                    "code": "Uniq auth code by role",
+                    "resource": "a resource",
+                    "perms": {
+                        "hack_resource": {"matched": True},
+                    },
+                },
+                ...
+            ]
+
+        :param label: str, Role label used if role doesn't exits on insert.
+                      default: capitalized name.
+        :return: Created or updated role
+        """
+        Pyramid = cls.registry.Pyramid
+        role = Pyramid.Role.query().get(name)
+        if not role:
+            if not label:
+                label = name.capitalize()
+            role = Pyramid.Role.insert(name=name, label=label)
+
+        for authz in authorizations:
+            code = authz.pop("code", None)
+            if code is None:
+                raise KeyError(
+                    f"Missing `code` information to ensure "
+                    f"Model.Pyramid.Authorizatoin is present on role "
+                    f"{role.name}"
+                )
+            Pyramid.Authorization.ensure_exists(
+                code, role=role, **authz
+            )
+        return role
