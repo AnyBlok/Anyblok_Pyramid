@@ -76,7 +76,7 @@ class Pyramid:
     def check_user_exists(cls, login):
         user = cls.registry.Pyramid.User.query().get(login)
         if user is None:
-            raise KeyError('%s is not a valid login')
+            raise KeyError(f"{login} is not a valid login")
 
         return user
 

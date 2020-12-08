@@ -31,3 +31,14 @@ class TestUserAndRole:
         role2.children.append(self.role)
         with pytest.raises(RecursionRoleError):
             rollback_registry.flush()
+
+    def test_check_user_exists(self, rollback_registry):
+        Pyramid = rollback_registry.Pyramid
+        self.init_user(rollback_registry)
+        assert self.user is Pyramid.check_user_exists('user.1')
+
+    def test_check_user_exists(self, rollback_registry):
+        Pyramid = rollback_registry.Pyramid
+        with pytest.raises(KeyError) as err:
+            Pyramid.check_user_exists('user.1')
+        assert str(err.value) == "'user.1 is not a valid login'"
