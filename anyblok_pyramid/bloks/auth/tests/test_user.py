@@ -32,12 +32,12 @@ class TestUserAndRole:
         with pytest.raises(RecursionRoleError):
             rollback_registry.flush()
 
-    def test_check_user_exists(self, rollback_registry):
+    def test_check_user_exists_ok(self, rollback_registry):
         Pyramid = rollback_registry.Pyramid
         self.init_user(rollback_registry)
         assert self.user is Pyramid.check_user_exists('user.1')
 
-    def test_check_user_exists(self, rollback_registry):
+    def test_check_user_exists_ko(self, rollback_registry):
         Pyramid = rollback_registry.Pyramid
         with pytest.raises(KeyError) as err:
             Pyramid.check_user_exists('user.1')
