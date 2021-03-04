@@ -6,7 +6,6 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from anyblok.declarations import classmethod_cache
 from pyramid.httpexceptions import HTTPUnauthorized
 from anyblok import Declarations
 from pyramid.security import Allow, ALL_PERMISSIONS
@@ -93,7 +92,7 @@ class Pyramid:
         raise NotImplementedError()
 
     @classmethod
-    def _get_user(cls, user_id):
+    def get_user(cls, user_id):
         """Return user for a given `user_id`, to be overwrite in user bloks
         The method is called by `get_user` cached method to retreive user
         while restricting query by user.
@@ -108,13 +107,6 @@ class Pyramid:
             `user_id`
         """
         return user_id
-
-    @classmethod_cache()
-    def get_user(cls, user_id):
-        """Cached `_get_user` results in order to use it by
-        ``restrict_query_by_user`` decorators. Invalidate
-        cache has to be implemented by user who use it"""
-        return cls._get_user(user_id)
 
     @classmethod
     def restrict_query_by_user(
