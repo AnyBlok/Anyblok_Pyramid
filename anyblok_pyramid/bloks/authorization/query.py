@@ -63,7 +63,7 @@ def get_value_for_relationship(query, entry, keys):
         return query, res
 
     if hasattr(entry, '__registry_name__'):
-        Model = query.registry.get(entry.__registry_name__)
+        Model = query.anyblok.get(entry.__registry_name__)
         if entry is Model:
             query = query.join(res)
 

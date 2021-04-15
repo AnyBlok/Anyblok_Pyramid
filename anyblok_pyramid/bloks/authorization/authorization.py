@@ -11,7 +11,7 @@ from anyblok.column import Integer, String, Json
 from anyblok.relationship import Many2One
 from anyblok.field import JsonRelated
 from .exceptions import AuthorizationValidationException
-from pyramid.security import Allow, Deny, ALL_PERMISSIONS
+from pyramid.authorization import Allow, Deny, ALL_PERMISSIONS
 from sqlalchemy import or_
 
 
@@ -52,8 +52,8 @@ class Authorization:
     def get_acl_filter_model(cls):
         """Return the Model to use to check the permission"""
         return {
-            'User': cls.registry.Pyramid.User,
-            'Role': cls.registry.Pyramid.Role,
+            'User': cls.anyblok.Pyramid.User,
+            'Role': cls.anyblok.Pyramid.Role,
         }
 
     @classmethod
@@ -64,8 +64,8 @@ class Authorization:
         :param resource: str, name of the resource
         """
         # cache the method
-        User = cls.registry.Pyramid.User
-        Role = cls.registry.Pyramid.Role
+        User = cls.anyblok.Pyramid.User
+        Role = cls.anyblok.Pyramid.Role
 
         query = cls.query()
         query = query.filter(
@@ -123,8 +123,8 @@ class Authorization:
         :param type: str, name of the action
         """
         # cache the method
-        User = cls.registry.Pyramid.User
-        Role = cls.registry.Pyramid.Role
+        User = cls.anyblok.Pyramid.User
+        Role = cls.anyblok.Pyramid.Role
 
         query = cls.query()
         query = query.filter(
@@ -206,14 +206,14 @@ class Authorization:
         # pv: at some point adding index on this criteria may boost things
         # while setting authorizations
         authz = (
-            cls.registry.Pyramid.Authorization.query()
+            cls.anyblok.Pyramid.Authorization.query()
             .filter_by(
                 code=code,
             )
             .one_or_none()
         )
         if not authz:
-            authz = cls.registry.Pyramid.Authorization.insert(
+            authz = cls.anyblok.Pyramid.Authorization.insert(
                 code=code, **kwargs
             )
         else:
@@ -274,7 +274,7 @@ class Role:
                       default: capitalized name.
         :return: Created or updated role
         """
-        Pyramid = cls.registry.Pyramid
+        Pyramid = cls.anyblok.Pyramid
         role = Pyramid.Role.query().get(name)
         if not role:
             if not label:

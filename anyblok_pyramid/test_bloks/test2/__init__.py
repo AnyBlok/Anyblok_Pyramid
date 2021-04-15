@@ -64,7 +64,7 @@ class Test(Blok):
 
     def update(self, latest):
         if not latest:
-            self.registry.Pyramid.User.insert(login="admin")
-            self.registry.Pyramid.User.insert(login="viewer")
-            self.registry.Pyramid.User.insert(login="user@anyblok.org")
-            self.registry.Pyramid.User.insert(login="user2@anyblok.org")
+            self.anyblok.Pyramid.User.insert(login="admin")
+            self.anyblok.Pyramid.User.insert(login="viewer")
+            self.anyblok.Pyramid.User.insert(login="user@anyblok.org")
+            self.anyblok.Pyramid.User.insert(login="user2@anyblok.org")

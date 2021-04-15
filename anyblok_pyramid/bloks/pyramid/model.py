@@ -8,7 +8,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from pyramid.httpexceptions import HTTPUnauthorized
 from anyblok import Declarations
-from pyramid.security import Allow, ALL_PERMISSIONS
+from pyramid.authorization import Allow, ALL_PERMISSIONS
 
 
 @Declarations.register(Declarations.Model)
@@ -125,12 +125,12 @@ class Pyramid:
             have to manage or mind to cache invalidation while using this
             method.
         """
-        for method in cls.registry.restrict_query_by_user_methods.get(
+        for method in cls.anyblok.restrict_query_by_user_methods.get(
             query.Model, []
         ):
 
             query = getattr(
-                cls.registry.get(query.Model), method
+                cls.anyblok.get(query.Model), method
             )(query, cls.get_user(user_code))
 
         return query

@@ -9,7 +9,7 @@
 from pyramid.httpexceptions import HTTPUnauthorized
 from anyblok import Declarations
 from anyblok.column import String
-from pyramid.security import Allow, ALL_PERMISSIONS
+from pyramid.authorization import Allow, ALL_PERMISSIONS
 
 
 @Declarations.register(Declarations.Model)
@@ -22,7 +22,7 @@ class Pyramid:
         :param login: str, login attribute of the user
         :rtype: list of str (name of the roles)
         """
-        return cls.registry.Pyramid.User.get_roles(login)
+        return cls.anyblok.Pyramid.User.get_roles(login)
 
     @classmethod
     def get_acl(cls, login, resource, params=None):
@@ -38,7 +38,7 @@ class Pyramid:
         :param resource: str, name of a resource
         :param params: all options need to compute ACL
         """
-        return cls.registry.Pyramid.User.get_acl(
+        return cls.anyblok.Pyramid.User.get_acl(
             login, resource, params=params)
 
     @classmethod
@@ -53,7 +53,7 @@ class Pyramid:
         :param type: str, name of the action
         :param params: all options need to compute ACL
         """
-        return cls.registry.Pyramid.User.check_acl(
+        return cls.anyblok.Pyramid.User.check_acl(
             login, resource, type_)
 
     @classmethod
@@ -70,11 +70,11 @@ class Pyramid:
 
         :param kwargs: any options need to validate credential
         """
-        return cls.registry.Pyramid.User.check_login(**kwargs)
+        return cls.anyblok.Pyramid.User.check_login(**kwargs)
 
     @classmethod
     def check_user_exists(cls, login):
-        user = cls.registry.Pyramid.User.query().get(login)
+        user = cls.anyblok.Pyramid.User.query().get(login)
         if user is None:
             raise KeyError(f"{login} is not a valid login")
 
@@ -88,7 +88,7 @@ class Pyramid:
         invalidation in case of user modification that could impact
         restricted query by user id
         """
-        return cls.registry.Pyramid.User.query().get(user_id)
+        return cls.anyblok.Pyramid.User.query().get(user_id)
 
 
 @Declarations.register(Declarations.Model.Pyramid)

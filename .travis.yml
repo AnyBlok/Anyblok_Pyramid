@@ -6,12 +6,13 @@ python:
   - "3.6"
   - "3.7"
   - "3.8"
-  - "3.9-dev"
+  - "3.9"
+  - "3.10-dev"
   - "nightly"
 
 matrix:
   allow_failures:
-    - python: "3.9-dev"
+    - python: "3.10-dev"
     - python: "nightly"
 
 virtualenv:
@@ -34,18 +35,18 @@ env:
 script:
   - flake8 anyblok_pyramid
   - psql -c 'create database travis_ci_test;' -U postgres
-  - pytest --cov-report= --cov=anyblok_pyramid anyblok_pyramid/tests
+  - pytest --cov=anyblok_pyramid anyblok_pyramid/tests
   - psql -c 'drop database travis_ci_test;' -U postgres
   - anyblok_createdb --install-bloks auth
-  - pytest --cov-report= --cov=anyblok_pyramid anyblok_pyramid/bloks/auth
+  - pytest --cov-append --cov=anyblok_pyramid anyblok_pyramid/bloks/auth
   - psql -c 'drop database travis_ci_test;' -U postgres
   - anyblok_createdb --install-bloks auth-password
-  - pytest --cov-report= --cov=anyblok_pyramid anyblok_pyramid/bloks/password
+  - pytest --cov-append --cov=anyblok_pyramid anyblok_pyramid/bloks/password
   - psql -c 'drop database travis_ci_test;' -U postgres
   - anyblok_createdb --install-bloks authorization
-  - pytest --cov-report= --cov=anyblok_pyramid anyblok_pyramid/bloks/authorization
+  - pytest --cov-append --cov=anyblok_pyramid anyblok_pyramid/bloks/authorization
   - psql -c 'drop database travis_ci_test;' -U postgres
   - anyblok_createdb --install-bloks user-identity
-  - pytest --cov-report= --cov=anyblok_pyramid anyblok_pyramid/bloks/user_identity
+  - pytest --cov-append --cov=anyblok_pyramid anyblok_pyramid/bloks/user_identity
 
-after_success: coveralls --data_file=.coverage --config_file=.coveragerc
+after_success: coveralls
