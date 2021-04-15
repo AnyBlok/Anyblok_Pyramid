@@ -125,12 +125,12 @@ class Pyramid:
             have to manage or mind to cache invalidation while using this
             method.
         """
-        for method in cls.registry.restrict_query_by_user_methods.get(
+        for method in cls.anyblok.restrict_query_by_user_methods.get(
             query.Model, []
         ):
 
             query = getattr(
-                cls.registry.get(query.Model), method
+                cls.anyblok.get(query.Model), method
             )(query, cls.get_user(user_code))
 
         return query
