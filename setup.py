@@ -12,8 +12,8 @@ import os
 version = '1.2.0'
 
 requires = [
-    'anyblok>=0.9.0',
-    'pyramid',
+    'anyblok>=1.1.0',
+    'pyramid>=2.0.0',
     'pyramid_tm',
     'zope.sqlalchemy',
     'passlib',
