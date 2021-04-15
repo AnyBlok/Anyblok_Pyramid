@@ -9,7 +9,7 @@
 from pyramid.httpexceptions import HTTPUnauthorized
 from anyblok import Declarations
 from anyblok.column import String
-from pyramid.security import Allow, ALL_PERMISSIONS
+from pyramid.authorization import Allow, ALL_PERMISSIONS
 
 
 @Declarations.register(Declarations.Model)

@@ -6,7 +6,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 from pyramid.httpexceptions import HTTPUnauthorized
-from pyramid.security import Deny, Everyone, ALL_PERMISSIONS
+from pyramid.authorization import Deny, Everyone, ALL_PERMISSIONS
 
 
 def group_finder(userid, request):
