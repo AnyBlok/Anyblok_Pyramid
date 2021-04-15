@@ -9,10 +9,16 @@
 from anyblok.blok import Blok
 from anyblok_pyramid.security import AnyBlokResourceFactory
 from anyblok_pyramid.bloks.auth.views import login, logout
-from anyblok_pyramid.bloks.pyramid.oidc import (
-    login as oidc_login,
-    callback as oidc_callback,
-)
+
+
+try:
+    from anyblok_pyramid.bloks.pyramid.oidc import (
+        login as oidc_login,
+        callback as oidc_callback,
+    )
+    has_oidc = True
+except ImportError:
+    has_oidc = False
 
 
 class Test(Blok):
@@ -27,7 +33,6 @@ class Test(Blok):
     @classmethod
     def reload_declaration_module(cls, reload):
         from . import models
-
         reload(models)
 
     @classmethod
@@ -47,12 +52,13 @@ class Test(Blok):
         config.add_route("logout", "/logout", request_method="POST")
         config.add_view(view=logout, route_name="logout")
 
-        config.add_route("oidc_login", "/oidc_login", request_method="GET")
-        config.add_view(view=oidc_login, route_name="oidc_login")
-        config.add_route(
-            "oidc_callback", "/oidc_callback", request_method="GET"
-        )
-        config.add_view(view=oidc_callback, route_name="oidc_callback")
+        if has_oidc:
+            config.add_route("oidc_login", "/oidc_login", request_method="GET")
+            config.add_view(view=oidc_login, route_name="oidc_login")
+            config.add_route(
+                "oidc_callback", "/oidc_callback", request_method="GET"
+            )
+            config.add_view(view=oidc_callback, route_name="oidc_callback")
 
         config.scan(cls.__module__ + ".views")
 

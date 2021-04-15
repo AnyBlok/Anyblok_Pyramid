@@ -25,6 +25,11 @@ The Authorization Code Flow goes through the following steps:
   * RP validates the ID token and retrieves the End-User's Subject Identifier.
 
 """
+try:
+    import oic  # noqa
+except ImportError as e:
+    raise ImportError('%s => pip install oic' % str(e))
+
 from functools import lru_cache
 from anyblok.config import Configuration
 from oic import rndstr

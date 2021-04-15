@@ -10,8 +10,14 @@ import json
 import pytest
 from anyblok.config import Configuration
 from unittest import mock
-from anyblok_pyramid.bloks.pyramid import oidc
 from urllib.parse import urlparse, parse_qs
+
+
+try:
+    from anyblok_pyramid.bloks.pyramid import oidc
+    has_oidc = True
+except ImportError:
+    has_oidc = False
 
 
 class MockJsonResponse:
@@ -140,9 +146,11 @@ class TestPyramidBlok(TestPyramidBlokBase):
         webserver.get("/blok/auth", status=200, headers=headers)
         webserver.put("/blok/auth", {}, status=200, headers=headers)
 
+    @pytest.mark.skipif(not has_oidc, reason="oic is not installed")
     def test_no_issuer(self, registry_testblok, webserver):
         self.assert_missing_config(registry_testblok, "oidc_provider_issuer")
 
+    @pytest.mark.skipif(not has_oidc, reason="oic is not installed")
     def assert_missing_config(self, registry, config):
         registry.upgrade(install=("test-pyramid2",))
         with pytest.raises(ValueError) as ex:
@@ -151,12 +159,14 @@ class TestPyramidBlok(TestPyramidBlokBase):
             ex.value
         ), "if no oidc provider issuer is set an exception must raises"
 
+    @pytest.mark.skipif(not has_oidc, reason="oic is not installed")
     def test_no_client_id(self, registry_testblok, webserver):
         Configuration.set("oidc_provider_issuer", "http://fake")
         self.assert_missing_config(
             registry_testblok, "oidc_relying_party_client_id"
         )
 
+    @pytest.mark.skipif(not has_oidc, reason="oic is not installed")
     def test_no_secret_id(self, registry_testblok, webserver):
         Configuration.set("oidc_provider_issuer", "http://fake")
         Configuration.set("oidc_relying_party_client_id", "abc")
@@ -164,6 +174,7 @@ class TestPyramidBlok(TestPyramidBlokBase):
             registry_testblok, "oidc_relying_party_secret_id"
         )
 
+    @pytest.mark.skipif(not has_oidc, reason="oic is not installed")
     def test_no_rp_callback(self, registry_testblok, webserver):
         Configuration.set("oidc_provider_issuer", "http://fake")
         Configuration.set("oidc_relying_party_client_id", "abc")
@@ -198,6 +209,7 @@ class TestPyramidBlok(TestPyramidBlokBase):
         assert qs["nonce"][0]
         return qs
 
+    @pytest.mark.skipif(not has_oidc, reason="oic is not installed")
     @mock.patch("requests.request", side_effect=mock_request)
     def test_oidc_auth(self, mock_oidc, registry_testblok, webserver):
         qs = self.oidc_common(registry_testblok, webserver)
@@ -212,6 +224,7 @@ class TestPyramidBlok(TestPyramidBlokBase):
         assert webserver.cookies["None"] != curerent_cookie
         webserver.get("/bloks", status=200)
 
+    @pytest.mark.skipif(not has_oidc, reason="oic is not installed")
     @mock.patch("requests.request", side_effect=mock_request)
     def test_unkown_user_oidc_auth(
         self, mock_oidc, registry_testblok, webserver
