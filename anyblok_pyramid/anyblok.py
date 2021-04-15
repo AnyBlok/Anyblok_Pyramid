@@ -183,9 +183,10 @@ class AnyBlokZopeTransactionExtension(ZopeTransactionExtension):
         mark_changed(session, self.transaction_manager, self.keep_session)
 
     def before_commit(self, session):
-        assert (session.transaction.nested or  # noqa
-                self.transaction_manager.get().status == ZopeStatus.COMMITTING,
-                "Transaction must be committed using the transaction manager")
+        assert (
+            session.transaction.nested or  # noqa
+            self.transaction_manager.get().status == ZopeStatus.COMMITTING
+        ), "Transaction must be committed using the transaction manager"
 
 
 def register(session, initial_state=STATUS_ACTIVE,
