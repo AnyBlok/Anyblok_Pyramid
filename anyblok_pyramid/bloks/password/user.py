@@ -34,7 +34,7 @@ class User:
         :param password: str
         :exception: HTTPUnauthorized
         """
-        Credential = cls.registry.Pyramid.CredentialStore
+        Credential = cls.anyblok.Pyramid.CredentialStore
         credential = Credential.query().filter(
             Credential.login == login
         ).one_or_none()

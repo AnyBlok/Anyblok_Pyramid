@@ -16,7 +16,7 @@ class User:
 
     @classmethod
     def check_login(cls, login=None, password=None):
-        return cls.registry.Pyramid.User.query().get(login)
+        return cls.anyblok.Pyramid.User.query().get(login)
 
     @classmethod
     def get_acl(cls, login, resource, **params):
