@@ -11,7 +11,7 @@ from anyblok.column import Integer, String, Json
 from anyblok.relationship import Many2One
 from anyblok.field import JsonRelated
 from .exceptions import AuthorizationValidationException
-from pyramid.security import Allow, Deny, ALL_PERMISSIONS
+from pyramid.authorization import Allow, Deny, ALL_PERMISSIONS
 from sqlalchemy import or_
 
 

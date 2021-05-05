@@ -7,7 +7,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok import Declarations
-from pyramid.security import Allow, Authenticated
+from pyramid.authorization import Allow, Authenticated
 from anyblok_pyramid.bloks.pyramid.restrict import restrict_query_by_user
 
 
