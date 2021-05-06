@@ -8,7 +8,10 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from pyramid.httpexceptions import HTTPUnauthorized
 from anyblok import Declarations
-from pyramid.authorization import Allow, ALL_PERMISSIONS
+try:
+    from pyramid.authorization import Allow, ALL_PERMISSIONS
+except ImportError:
+    from pyramid.security import Allow, ALL_PERMISSIONS
 
 
 @Declarations.register(Declarations.Model)

@@ -6,7 +6,12 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok.blok import Blok
-from pyramid.authorization import ACLAuthorizationPolicy
+try:
+    from pyramid.authorization import ACLAuthorizationPolicy
+except ImportError:
+    from pyramid.security import ACLAuthorizationPolicy
+
+
 from anyblok_pyramid.security import RootFactory
 from .pyramid import getAuthenticationPolicy
 

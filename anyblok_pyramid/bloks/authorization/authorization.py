@@ -11,8 +11,11 @@ from anyblok.column import Integer, String, Json
 from anyblok.relationship import Many2One
 from anyblok.field import JsonRelated
 from .exceptions import AuthorizationValidationException
-from pyramid.authorization import Allow, Deny, ALL_PERMISSIONS
 from sqlalchemy import or_
+try:
+    from pyramid.authorization import Allow, Deny, ALL_PERMISSIONS
+except ImportError:
+    from pyramid.security import Allow, Deny, ALL_PERMISSIONS
 
 
 Pyramid = Declarations.Model.Pyramid
