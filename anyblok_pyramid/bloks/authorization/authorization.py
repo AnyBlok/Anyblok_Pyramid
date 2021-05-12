@@ -205,7 +205,8 @@ class Authorization:
         :param kwargs: authorization fields
         """
         if not kwargs:
-            kwargs = {}
+            kwargs = {}  # pragma: no cover
+
         # pv: at some point adding index on this criteria may boost things
         # while setting authorizations
         authz = (

@@ -23,7 +23,7 @@ def login(request):
         location = Pyramid.User.get_login_location_to(login, request)
         return HTTPFound(location=location, headers=headers)
 
-    return HTTPUnauthorized(comment='Login failed')
+    return HTTPUnauthorized(comment='Login failed')  # pragma: no cover
 
 
 def logout(request):

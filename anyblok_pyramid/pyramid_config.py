@@ -58,7 +58,7 @@ class NeedAnyBlokRegistryPredicate:
     def __call__(self, context, request):
         if self.need_anyblok_registry:
             if not request.anyblok:
-                return False
+                return False  # pragma: no cover
 
             if not request.anyblok.registry:
                 return False
@@ -79,10 +79,10 @@ class InstalledBlokPredicate:
 
     def __call__(self, context, request):
         if not request.anyblok:
-            return False
+            return False  # pragma: no cover
 
         if not request.anyblok.registry:
-            return False
+            return False  # pragma: no cover
 
         # use this method because she is cached
         return request.anyblok.registry.System.Blok.is_installed(
@@ -226,7 +226,7 @@ def static_paths(config):
     """
 
     for blok, cls in BlokManager.bloks.items():
-        if hasattr(cls, 'static_paths'):
+        if hasattr(cls, 'static_paths'):  # pragma: no cover
             paths = cls.static_paths
             if isinstance(paths, str):
                 paths = [paths]

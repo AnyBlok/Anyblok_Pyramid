@@ -9,7 +9,7 @@ from anyblok.blok import Blok
 try:
     from pyramid.authorization import ACLAuthorizationPolicy
 except ImportError:
-    from pyramid.security import ACLAuthorizationPolicy
+    from pyramid.security import ACLAuthorizationPolicy  # pragma: no cover
 
 
 from anyblok_pyramid.security import RootFactory

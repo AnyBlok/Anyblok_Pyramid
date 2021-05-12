@@ -52,7 +52,8 @@ def AnyBlokResourceFactory(resource):
     """
     def __acl__(self):
         if not hasattr(self, 'registry'):
-            raise HTTPUnauthorized("ACL have not get AnyBlok registry")
+            raise HTTPUnauthorized(  # pragma: no cover
+                "ACL have not get AnyBlok registry")
 
         userid = self.request.authenticated_userid
         if userid:
