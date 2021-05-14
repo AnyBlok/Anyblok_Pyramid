@@ -7,6 +7,7 @@
 ..    Copyright (C) 2019 Jean-Sebastien SUZANNE <js.suzanne@gmail.com>
 ..    Copyright (C) 2020 Jean-Sebastien SUZANNE <js.suzanne@gmail.com>
 ..    Copyright (C) 2020 Pierre Verkest <pierreverkest84@gmail.com>
+..    Copyright (C) 2021 Jean-Sebastien SUZANNE <js.suzanne@gmail.com>
 ..
 .. This Source Code Form is subject to the terms of the Mozilla Public License,
 .. v. 2.0. If a copy of the MPL was not distributed with this file,You can
@@ -15,8 +16,12 @@
 CHANGELOG
 =========
 
-1.3.0 (unreleased)
+1.2.1 (unreleased)
 ------------------
+
+* Forced Pyramid version before upgrade to 2.0
+* Refactored code to rename **registry** by **anyblok**
+* Improved coverage
 
 1.2.0 (2020-12-03)
 ------------------

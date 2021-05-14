@@ -9,7 +9,7 @@ from anyblok import Declarations
 from anyblok.column import String
 from anyblok.relationship import Many2Many
 from anyblok.field import Function
-from .exceptions import RecursionRoleError, MainException
+from .exceptions import RecursionRoleError
 
 
 Pyramid = Declarations.Model.Pyramid
@@ -31,7 +31,7 @@ class Role:
         names = [self.name]
         for child in self.children:
             if child.name in names:
-                continue
+                continue  # pragma: no cover
 
             names.extend(child.roles_name)
 
@@ -43,5 +43,5 @@ class Role:
         """
         try:
             target.get_all_roles_name()
-        except MainException:
+        except RecursionError:
             raise RecursionRoleError()

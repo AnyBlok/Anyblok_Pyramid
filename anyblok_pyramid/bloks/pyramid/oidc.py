@@ -27,7 +27,7 @@ The Authorization Code Flow goes through the following steps:
 """
 try:
     import oic  # noqa
-except ImportError as e:
+except ImportError as e:  # pragma: no cover
     raise ImportError('%s => pip install oic' % str(e))
 
 from functools import lru_cache
@@ -135,7 +135,7 @@ def prepare_auth_url(request):
     # Makes sure request.session is there what ever the implemented session
     # This should implements a Pyramid Idict interface
     if not getattr(request, "session", None):
-        raise RuntimeError(
+        raise RuntimeError(  # pragma: no cover
             "In order to use OIDC Relaying party utility, "
             "you must configure a Pyramid session "
             "object https://docs.pylonsproject.org/projects/pyramid/"
@@ -166,7 +166,7 @@ def validate_response(response):
     """
     if not isinstance(response, AuthorizationResponse):
         # it should be an ErrorResponse
-        raise ValueError(
+        raise ValueError(  # pragma: no cover
             "Something goes wrong on the OIDC Provider: {}".format(response)
         )
 
@@ -181,7 +181,7 @@ def validate_state(request, response):
     It is used to keep track of responses to outstanding requests (state).
     """
     if not response.get("state") == request.session.get("oic_state"):
-        raise ValueError(
+        raise ValueError(  # pragma: no cover
             "State must be the same between registration and callback"
         )
 
@@ -197,7 +197,8 @@ def get_access_token(response):
     )
     if not isinstance(atr, AccessTokenResponse):
         # it should be a TokenErrorResponse
-        raise ValueError("OIDC Access token is invalid: {}".format(atr))
+        raise ValueError(  # pragma: no cover
+            "OIDC Access token is invalid: {}".format(atr))
     return atr
 
 

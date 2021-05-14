@@ -2,8 +2,11 @@
 omit =
     # omit scripts file
     anyblok_pyramid/scripts.py
+    anyblok_pyramid/anyblok.py
+    anyblok_pyramid/testing.py
     anyblok_pyramid/wsgi.py
     anyblok_pyramid/gunicorn.py
+    anyblok_pyramid/bloks/pyramid/pyramid.py
     # omit anything in a tests directory anywhere
     */tests/*
     # omit anything in a test_bloks directory anywhere
@@ -12,5 +15,8 @@ omit =
 [report]
 # Regexes for lines to exclude from consideration
 exclude_lines =
+    pragma: no cover
     # unexecuting logger
     logger\.
+    # exclude all import error of unloaded module
+    except ImportError:

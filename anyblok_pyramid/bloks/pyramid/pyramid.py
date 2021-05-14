@@ -20,14 +20,14 @@ def getAuthenticationPolicy():
     method = Configuration.get('pyramid_authentication_method')
     if method is AuthTktAuthenticationPolicy:
         return getAuthTktAuthenticationPolicy()
-    if method is RemoteUserAuthenticationPolicy:
+    if method is RemoteUserAuthenticationPolicy:  # pragma: no cover
         return getRemoteUserAuthenticationPolicy()
-    if method is SessionAuthenticationPolicy:
+    if method is SessionAuthenticationPolicy:  # pragma: no cover
         return getSessionAuthenticationPolicy()
-    if method is BasicAuthAuthenticationPolicy:
+    if method is BasicAuthAuthenticationPolicy:  # pragma: no cover
         return getBasicAuthAuthenticationPolicy()
 
-    return method()
+    return method()  # pragma: no cover
 
 
 def getAuthTktAuthenticationPolicy():
@@ -46,7 +46,7 @@ def getAuthTktAuthenticationPolicy():
 
 def getRemoteUserAuthenticationPolicy():
     """Define the authentication policy for remote user server"""
-    return RemoteUserAuthenticationPolicy(
+    return RemoteUserAuthenticationPolicy(  # pragma: no cover
         environ_key=Configuration.get('pyramid_remoteuser_environ_key'),
         callback=Configuration.get('pyramid_authentication_callback'),
         debug=Configuration.get('pyramid_authentication_debug')
@@ -55,7 +55,7 @@ def getRemoteUserAuthenticationPolicy():
 
 def getSessionAuthenticationPolicy():
     """Define the session based authentication policy"""
-    return SessionAuthenticationPolicy(
+    return SessionAuthenticationPolicy(  # pragma: no cover
         prefix=Configuration.get('pyramid_session_prefix'),
         callback=Configuration.get('pyramid_authentication_callback'),
         debug=Configuration.get('pyramid_authentication_debug')
@@ -64,7 +64,7 @@ def getSessionAuthenticationPolicy():
 
 def getBasicAuthAuthenticationPolicy():
     """Define basic auth authentication policy"""
-    return BasicAuthAuthenticationPolicy(
+    return BasicAuthAuthenticationPolicy(  # pragma: no cover
         Configuration.get('pyramid_basicauth_check'),
         debug=Configuration.get('pyramid_authentication_debug')
     )

@@ -34,4 +34,4 @@ def current_blok():
         if filename.startswith(BlokManager.getPath(blok)):
             return blok
 
-    raise AnyBlokPyramidException("You are not in a Blok")
+    raise AnyBlokPyramidException("You are not in a Blok")  # pragma: no cover
