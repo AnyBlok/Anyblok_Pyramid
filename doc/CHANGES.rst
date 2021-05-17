@@ -16,7 +16,7 @@
 CHANGELOG
 =========
 
-1.2.1 (unreleased)
+1.2.1 (2021-05-17)
 ------------------
 
 * Forced Pyramid version before upgrade to 2.0
