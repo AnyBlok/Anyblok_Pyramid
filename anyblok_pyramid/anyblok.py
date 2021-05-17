@@ -185,7 +185,8 @@ class AnyBlokZopeTransactionExtension(ZopeTransactionExtension):
     def before_commit(self, session):
         assert (
             session.transaction.nested or  # noqa
-            self.transaction_manager.get().status == ZopeStatus.COMMITTING
+            self.transaction_manager.get().status in (
+                ZopeStatus.COMMITTING, ZopeStatus.ACTIVE)
         ), "Transaction must be committed using the transaction manager"
 
 

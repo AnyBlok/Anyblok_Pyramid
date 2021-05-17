@@ -16,6 +16,12 @@
 CHANGELOG
 =========
 
+1.2.2 (2021-05-17)
+------------------
+
+* Fixed before_commit SQLAlchemy event, the status of the transaction must be
+  COMMITING or ACTIVE
+
 1.2.1 (2021-05-17)
 ------------------
 
