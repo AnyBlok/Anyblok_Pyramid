@@ -9,6 +9,7 @@ from os.path import join
 from pyramid.config import Configurator as PConfigurator
 from anyblok.blok import BlokManager
 from anyblok.config import Configuration
+from anyblok.registry import Registry
 from pkg_resources import iter_entry_points
 from .common import get_registry_for
 from logging import getLogger
@@ -38,7 +39,7 @@ class AnyBlokRequest:
 
         """
         dbname = Configuration.get('get_db_name')(self.request)
-        if Configuration.get('Registry').db_exists(db_name=dbname):
+        if Registry.db_exists(db_name=dbname):
             return get_registry_for(dbname)
         else:
             return None

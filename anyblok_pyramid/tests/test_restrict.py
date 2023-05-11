@@ -83,7 +83,11 @@ def test_restrict_query_by_user_inheritance(setup_registry):
     query = registry.Pyramid.restrict_query_by_user(
         registry.RestrictedModel.query(), "test",
     )
-    assert get_filters_values(query.whereclause) == ["child", "mixin", "other"]
+    assert get_filters_values(
+        query.sql_statement.whereclause
+        if hasattr(query, 'sql_statement') else
+        query.whereclause
+    ) == ["child", "mixin", "other"]
 
 
 def test_restrict_query_by_user_inheritance_calling_parent(setup_registry):
@@ -93,6 +97,8 @@ def test_restrict_query_by_user_inheritance_calling_parent(setup_registry):
     query = registry.Pyramid.restrict_query_by_user(
         registry.RestrictedModel.query(), "test",
     )
-    assert get_filters_values(query.whereclause) == [
-        "base", "child", "mixin", "other",
-    ]
+    assert get_filters_values(
+        query.sql_statement.whereclause
+        if hasattr(query, 'sql_statement') else
+        query.whereclause
+    ) == ["base", "child", "mixin", "other"]

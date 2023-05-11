@@ -8,6 +8,8 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from pyramid.httpexceptions import HTTPUnauthorized
 from anyblok import Declarations
+from anyblok.mapper import ModelAdapter
+
 try:
     from pyramid.authorization import Allow, ALL_PERMISSIONS
 except ImportError:
@@ -128,12 +130,13 @@ class Pyramid:
             have to manage or mind to cache invalidation while using this
             method.
         """
+        model_name = ModelAdapter(query.Model).model_name
         for method in cls.anyblok.restrict_query_by_user_methods.get(
-            query.Model, []
+            model_name, []
         ):
 
             query = getattr(
-                cls.anyblok.get(query.Model), method
+                cls.anyblok.get(model_name), method
             )(query, cls.get_user(user_code))
 
         return query

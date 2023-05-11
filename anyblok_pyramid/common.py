@@ -11,7 +11,7 @@ from collections.abc import Mapping
 from copy import deepcopy
 from anyblok.config import Configuration
 from .anyblok import register
-from anyblok.registry import RegistryManager
+from anyblok.registry import Registry, RegistryManager
 from logging import getLogger
 
 
@@ -30,7 +30,6 @@ def get_registry_for(dbname, loadwithoutmigration=True, log_repeat=False):
 def preload_databases(loadwithoutmigration=True):
     dbnames = Configuration.get('db_names') or []
     dbname = Configuration.get('db_name')
-    Registry = Configuration.get('Registry')
     if dbname not in dbnames:
         dbnames.append(dbname)
 
