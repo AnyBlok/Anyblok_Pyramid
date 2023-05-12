@@ -72,7 +72,7 @@ jobs:
           ANYBLOK_DATABASE_HOST: localhost
           ANYBLOK_DATABASE_USER: postgres
           ANYBLOK_DATABASE_PASSWORD: postgres
-        run: anyblok_createdb --install-all-bloks auth
+        run: anyblok_createdb --install-bloks auth
       - name: Run bloks tests on auth
         env:
           ANYBLOK_DATABASE_DRIVER: postgresql
@@ -96,7 +96,7 @@ jobs:
           ANYBLOK_DATABASE_HOST: localhost
           ANYBLOK_DATABASE_USER: postgres
           ANYBLOK_DATABASE_PASSWORD: postgres
-        run: anyblok_createdb --install-all-bloks auth-password
+        run: anyblok_createdb --install-bloks auth-password
       - name: Run bloks tests on auth-password
         env:
           ANYBLOK_DATABASE_DRIVER: postgresql
@@ -120,7 +120,7 @@ jobs:
           ANYBLOK_DATABASE_HOST: localhost
           ANYBLOK_DATABASE_USER: postgres
           ANYBLOK_DATABASE_PASSWORD: postgres
-        run: anyblok_createdb --install-all-bloks authorization
+        run: anyblok_createdb --install-bloks authorization
       - name: Run bloks tests on authorization
         env:
           ANYBLOK_DATABASE_DRIVER: postgresql
@@ -144,7 +144,7 @@ jobs:
           ANYBLOK_DATABASE_HOST: localhost
           ANYBLOK_DATABASE_USER: postgres
           ANYBLOK_DATABASE_PASSWORD: postgres
-        run: anyblok_createdb --install-all-bloks user-identity
+        run: anyblok_createdb --install-bloks user-identity
       - name: Run bloks tests on user-identity
         env:
           ANYBLOK_DATABASE_DRIVER: postgresql
