@@ -10,15 +10,12 @@ import inspect
 
 from anyblok.blok import BlokManager
 
-from .common import PERM_C___  # noqa: F401
-from .common import (
-    PERM____D,
-    PERM___U_,
-    PERM__R__,
-    PERM_READ,
-    PERM_WRITE,
-    merge,
-)
+from .common import PERM_READ, PERM_WRITE, merge  # noqa: F401
+
+from .common import PERM_C___  # noqa isort:skip
+from .common import PERM__R__  # noqa isort:skip
+from .common import PERM___U_  # noqa isort:skip
+from .common import PERM____D  # noqa isort:skip
 
 
 def anyblok_init_config(unittest=False):
