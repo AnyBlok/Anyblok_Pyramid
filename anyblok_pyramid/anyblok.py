@@ -23,7 +23,8 @@ from sqlalchemy.orm.exc import ConcurrentModificationError
 from transaction._transaction import Status as ZopeStatus
 from transaction.interfaces import IDataManagerSavepoint
 from zope.interface import implementer
-from zope.sqlalchemy.datamanager import (
+
+from zope.sqlalchemy.datamanager import (  # noqa isort:skip
     _SESSION_STATE,
     NO_SAVEPOINT_SUPPORT,
     STATUS_ACTIVE,

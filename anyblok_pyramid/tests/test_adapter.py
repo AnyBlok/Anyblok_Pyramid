@@ -14,7 +14,9 @@ from uuid import UUID, uuid1
 import pytest
 from pyramid.renderers import JSON
 
-from anyblok_pyramid.adapter import (
+from anyblok_pyramid.testing import init_web_server
+
+from anyblok_pyramid.adapter import (  # noqa isort:skip
     TimeDeltaModes,
     bytes_adapter,
     date_adapter,
@@ -23,7 +25,6 @@ from anyblok_pyramid.adapter import (
     timedelta_adapter_factory,
     uuid_adapter,
 )
-from anyblok_pyramid.testing import init_web_server
 
 
 class TestAdapter:

@@ -8,7 +8,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok.tests.test_config import MockArgumentParser
 
-from anyblok_pyramid.config import (
+from anyblok_pyramid.config import (  # noqa isort:skip
     add_configuration_file,
     define_auth_option,
     define_wsgi_debug_option,
