@@ -10,11 +10,11 @@ import inspect
 
 from anyblok.blok import BlokManager
 
+from .common import PERM_C___  # noqa: F401
 from .common import (
     PERM____D,
     PERM___U_,
     PERM__R__,
-    PERM_C___,  # noqa: F401
     PERM_READ,
     PERM_WRITE,
     merge,
