@@ -38,7 +38,7 @@ constraint is defined between both.
 
 
 .. note::
-    
+
     The password use the **Password** column, the value is an encrypted string
     in database and can not be revealed during the execution of the application,
     you can only compare it.

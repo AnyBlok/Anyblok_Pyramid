@@ -6,21 +6,24 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from anyblok.blok import BlokManager
 import inspect
-from .common import (  # noqa: F401
-    merge,
+
+from anyblok.blok import BlokManager
+
+from .common import (
+    PERM____D,
+    PERM___U_,
+    PERM__R__,
+    PERM_C___,  # noqa: F401
     PERM_READ,
     PERM_WRITE,
-    PERM_C___,
-    PERM__R__,
-    PERM___U_,
-    PERM____D,
+    merge,
 )
 
 
 def anyblok_init_config(unittest=False):
     from anyblok import config  # noqa import anyblok.config
+
     from . import config  # noqa import config definition
 
 

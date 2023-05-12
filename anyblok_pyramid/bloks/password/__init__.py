@@ -11,7 +11,7 @@ from anyblok.blok import Blok
 class Password(Blok):
     version = "0.1.0"
     author = "Jean-Sébastien Suzanne"
-    required = ['auth']
+    required = ["auth"]
 
     @classmethod
     def import_declaration_module(cls):
@@ -20,4 +20,5 @@ class Password(Blok):
     @classmethod
     def reload_declaration_module(cls, reload):
         from . import user
+
         reload(user)

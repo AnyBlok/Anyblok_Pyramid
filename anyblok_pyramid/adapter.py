@@ -7,13 +7,13 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-import pytz
 import time
 from base64 import b64encode
-from decimal import Decimal
 from datetime import timedelta
-
+from decimal import Decimal
 from enum import Enum, unique
+
+import pytz
 
 
 def datetime_adapter(obj, request):
@@ -46,7 +46,7 @@ def datetime_adapter(obj, request):
 class TimeDeltaModes(Enum):
 
     """This enum is aimed at creating constants for setting the serialization
-       mode for timedelta adapter."""
+    mode for timedelta adapter."""
 
     MICROSECONDS = 1
     MILLISECONDS = 2
@@ -59,7 +59,6 @@ class TimeDeltaModes(Enum):
 
 def timedelta_adapter_factory(mode=TimeDeltaModes.SECONDS):
     def timedelta_adapter(obj, request):
-
         """Format the fields.TimeDelta to return String
 
         ::
@@ -118,8 +117,11 @@ def timedelta_adapter_factory(mode=TimeDeltaModes.SECONDS):
             return obj / timedelta(weeks=1)
         else:
             raise ValueError(
-                ("Provided mode for timedelta_adapter is not valid. Found '%s'"
-                 "." % mode))
+                (
+                    "Provided mode for timedelta_adapter is not valid. Found '%s'"
+                    "." % mode
+                )
+            )
 
     return timedelta_adapter
 
@@ -191,7 +193,7 @@ def decimal_adapter(obj, request):
     :param obj: Decimal
     :rtype: str
     """
-    return str(Decimal(obj).quantize(Decimal('1.00')))
+    return str(Decimal(obj).quantize(Decimal("1.00")))
 
 
 def enum_adapter(obj, request):

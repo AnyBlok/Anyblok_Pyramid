@@ -10,7 +10,6 @@ from anyblok import Declarations
 
 @Declarations.register(Declarations.Model.Pyramid)
 class User:
-
     @classmethod
     def get_acl(cls, login, resource, params=None):
         """Overwrite the method to return the ACL for the resource and user

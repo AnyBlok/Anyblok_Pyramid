@@ -7,22 +7,20 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok.blok import Blok
-from anyblok_pyramid.security import AnyBlokResourceFactory
-from anyblok_pyramid.bloks.auth.views import login, logout
 
+from anyblok_pyramid.bloks.auth.views import login, logout
+from anyblok_pyramid.security import AnyBlokResourceFactory
 
 try:
-    from anyblok_pyramid.bloks.pyramid.oidc import (
-        login as oidc_login,
-        callback as oidc_callback,
-    )
+    from anyblok_pyramid.bloks.pyramid.oidc import callback as oidc_callback
+    from anyblok_pyramid.bloks.pyramid.oidc import login as oidc_login
+
     has_oidc = True
 except ImportError:
     has_oidc = False
 
 
 class Test(Blok):
-
     version = "1.0.0"
     required = ["auth"]
 
@@ -33,6 +31,7 @@ class Test(Blok):
     @classmethod
     def reload_declaration_module(cls, reload):
         from . import models
+
         reload(models)
 
     @classmethod

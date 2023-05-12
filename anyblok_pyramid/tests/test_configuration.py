@@ -6,18 +6,18 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+from anyblok.tests.test_config import MockArgumentParser
+
 from anyblok_pyramid.config import (
-    define_wsgi_option,
+    add_configuration_file,
     define_auth_option,
     define_wsgi_debug_option,
-    add_configuration_file,
-    update_plugins
+    define_wsgi_option,
+    update_plugins,
 )
-from anyblok.tests.test_config import MockArgumentParser
 
 
 class TestArgsParseOption:
-
     def test_define_wsgi_option(self):
         parser = MockArgumentParser()
         define_wsgi_option(parser)

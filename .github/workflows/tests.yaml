@@ -1,0 +1,176 @@
+name: Tests
+on:
+  push:
+    paths-ignore:
+      - 'docs/**'
+    branches:
+      - main
+      - master
+    tags:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+jobs:
+  Postgres:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: anyblok_test
+        # Set health checks to wait until PostgreSQL has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Wheel
+        run: pip install -U pip wheel
+      - name: Install test dependencies
+        run: pip install -U -r requirements.test.txt
+      - name: Install zope.sqlalchemy on develop version
+        run: pip install -e git+http://git@github.com/seantis/zope.sqlalchemy.git@sqlalchemy-2.0#egg=zope.sqlalchemy
+      - name: Install pytest
+        run: pip install pytest pytest-cov mock coverage-lcov
+      - name: Install AnyBlok Pyramid
+        run: pip install .[oidc]
+      - name: Run framework tests
+        env:
+          ANYBLOK_DATABASE_DRIVER: postgresql
+          ANYBLOK_DATABASE_NAME: anyblok_test
+          ANYBLOK_DATABASE_PORT: 5432
+          ANYBLOK_DATABASE_HOST: localhost
+          ANYBLOK_DATABASE_USER: postgres
+          ANYBLOK_DATABASE_PASSWORD: postgres
+        run: pytest anyblok_io/tests
+      - name: Drop db
+        env:
+          PGHOST: localhost
+          PGPASSWORD: postgres
+          PGPORT: 5432
+        run: psql -U postgres -c 'DROP DATABASE anyblok_test;'
+      - name: Run anyblok_createdb with auth
+        env:
+          ANYBLOK_DATABASE_DRIVER: postgresql
+          ANYBLOK_DATABASE_NAME: anyblok_test
+          ANYBLOK_DATABASE_PORT: 5432
+          ANYBLOK_DATABASE_HOST: localhost
+          ANYBLOK_DATABASE_USER: postgres
+          ANYBLOK_DATABASE_PASSWORD: postgres
+        run: anyblok_createdb --install-all-bloks auth
+      - name: Run bloks tests on auth
+        env:
+          ANYBLOK_DATABASE_DRIVER: postgresql
+          ANYBLOK_DATABASE_NAME: anyblok_test
+          ANYBLOK_DATABASE_PORT: 5432
+          ANYBLOK_DATABASE_HOST: localhost
+          ANYBLOK_DATABASE_USER: postgres
+          ANYBLOK_DATABASE_PASSWORD: postgres
+        run: pytest --cov-append anyblok_pyramid/bloks/auth
+      - name: Drop db
+        env:
+          PGHOST: localhost
+          PGPASSWORD: postgres
+          PGPORT: 5432
+        run: psql -U postgres -c 'DROP DATABASE anyblok_test;'
+      - name: Run anyblok_createdb with auth-password
+        env:
+          ANYBLOK_DATABASE_DRIVER: postgresql
+          ANYBLOK_DATABASE_NAME: anyblok_test
+          ANYBLOK_DATABASE_PORT: 5432
+          ANYBLOK_DATABASE_HOST: localhost
+          ANYBLOK_DATABASE_USER: postgres
+          ANYBLOK_DATABASE_PASSWORD: postgres
+        run: anyblok_createdb --install-all-bloks auth-password
+      - name: Run bloks tests on auth-password
+        env:
+          ANYBLOK_DATABASE_DRIVER: postgresql
+          ANYBLOK_DATABASE_NAME: anyblok_test
+          ANYBLOK_DATABASE_PORT: 5432
+          ANYBLOK_DATABASE_HOST: localhost
+          ANYBLOK_DATABASE_USER: postgres
+          ANYBLOK_DATABASE_PASSWORD: postgres
+        run: pytest --cov-append anyblok_pyramid/bloks/password
+      - name: Drop db
+        env:
+          PGHOST: localhost
+          PGPASSWORD: postgres
+          PGPORT: 5432
+        run: psql -U postgres -c 'DROP DATABASE anyblok_test;'
+      - name: Run anyblok_createdb with authorization
+        env:
+          ANYBLOK_DATABASE_DRIVER: postgresql
+          ANYBLOK_DATABASE_NAME: anyblok_test
+          ANYBLOK_DATABASE_PORT: 5432
+          ANYBLOK_DATABASE_HOST: localhost
+          ANYBLOK_DATABASE_USER: postgres
+          ANYBLOK_DATABASE_PASSWORD: postgres
+        run: anyblok_createdb --install-all-bloks authorization
+      - name: Run bloks tests on authorization
+        env:
+          ANYBLOK_DATABASE_DRIVER: postgresql
+          ANYBLOK_DATABASE_NAME: anyblok_test
+          ANYBLOK_DATABASE_PORT: 5432
+          ANYBLOK_DATABASE_HOST: localhost
+          ANYBLOK_DATABASE_USER: postgres
+          ANYBLOK_DATABASE_PASSWORD: postgres
+        run: pytest --cov-append anyblok_pyramid/bloks/authorization
+      - name: Drop db
+        env:
+          PGHOST: localhost
+          PGPASSWORD: postgres
+          PGPORT: 5432
+        run: psql -U postgres -c 'DROP DATABASE anyblok_test;'
+      - name: Run anyblok_createdb with user identity
+        env:
+          ANYBLOK_DATABASE_DRIVER: postgresql
+          ANYBLOK_DATABASE_NAME: anyblok_test
+          ANYBLOK_DATABASE_PORT: 5432
+          ANYBLOK_DATABASE_HOST: localhost
+          ANYBLOK_DATABASE_USER: postgres
+          ANYBLOK_DATABASE_PASSWORD: postgres
+        run: anyblok_createdb --install-all-bloks user-identity
+      - name: Run bloks tests on user-identity
+        env:
+          ANYBLOK_DATABASE_DRIVER: postgresql
+          ANYBLOK_DATABASE_NAME: anyblok_test
+          ANYBLOK_DATABASE_PORT: 5432
+          ANYBLOK_DATABASE_HOST: localhost
+          ANYBLOK_DATABASE_USER: postgres
+          ANYBLOK_DATABASE_PASSWORD: postgres
+        run: pytest --cov-append anyblok_pyramid/bloks/user_identity
+      - name: Generate lcov
+        run: coverage-lcov
+      - name: Coveralls
+        uses: coverallsapp/github-action@1.1.3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel: true
+          flag-name: ${{ github.job }}
+          path-to-lcov: lcov.info
+
+  finish:
+    needs: [Postgres]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@1.1.3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
+          path-to-lcov: lcov.info

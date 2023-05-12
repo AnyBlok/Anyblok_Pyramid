@@ -10,8 +10,8 @@ from anyblok.blok import Blok
 
 
 def declarations(reload=None):
-    from . import user
-    from . import role
+    from . import role, user
+
     if reload:
         reload(user)
         reload(role)
@@ -20,7 +20,7 @@ def declarations(reload=None):
 class Auth(Blok):
     version = "0.1.0"
     author = "Jean-Sébastien Suzanne"
-    required = ['anyblok-core', 'pyramid']
+    required = ["anyblok-core", "pyramid"]
 
     @classmethod
     def import_declaration_module(cls):

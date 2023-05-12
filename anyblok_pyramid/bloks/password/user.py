@@ -5,26 +5,29 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from pyramid.httpexceptions import HTTPUnauthorized
 from anyblok import Declarations
-from anyblok.column import String, Password
+from anyblok.column import Password, String
+from pyramid.httpexceptions import HTTPUnauthorized
 
 
 @Declarations.register(Declarations.Model.Pyramid)
 class CredentialStore:
     """Simple login / password table"""
+
     login = String(
-        primary_key=True, nullable=False,
-        foreign_key=Declarations.Model.Pyramid.User.use('login').options(
-            ondelete='cascade')
+        primary_key=True,
+        nullable=False,
+        foreign_key=Declarations.Model.Pyramid.User.use("login").options(
+            ondelete="cascade"
+        ),
     )
     password = Password(
-        nullable=False, crypt_context={'schemes': ['md5_crypt']})
+        nullable=False, crypt_context={"schemes": ["md5_crypt"]}
+    )
 
 
 @Declarations.register(Declarations.Model.Pyramid)
 class User:
-
     @classmethod
     def check_login(cls, login=None, password=None, **kwargs):
         """Overwrite the initial method to check if the given login match with
@@ -35,9 +38,9 @@ class User:
         :exception: HTTPUnauthorized
         """
         Credential = cls.anyblok.Pyramid.CredentialStore
-        credential = Credential.query().filter(
-            Credential.login == login
-        ).one_or_none()
+        credential = (
+            Credential.query().filter(Credential.login == login).one_or_none()
+        )
         if credential:
             if credential.password == password:
                 return login

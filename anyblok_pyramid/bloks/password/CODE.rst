@@ -11,14 +11,14 @@
 
 .. automodule:: anyblok_pyramid.bloks.password.user
 
-.. autoanyblok-declaration:: CredentialStore                                                     
-    :members:                                                                   
-    :undoc-members:                                                             
+.. autoanyblok-declaration:: CredentialStore
+    :members:
+    :undoc-members:
     :show-inheritance:
     :noindex:
 
-.. autoanyblok-declaration:: User                                                     
-    :members:                                                                   
-    :undoc-members:                                                             
+.. autoanyblok-declaration:: User
+    :members:
+    :undoc-members:
     :show-inheritance:
     :noindex:

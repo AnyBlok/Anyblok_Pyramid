@@ -8,28 +8,29 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+import sys
+from logging import getLogger
 from wsgiref.simple_server import make_server
+
+import hupper
+from anyblok import (
+    configuration_post_load,
+    load_init_function_from_entry_points,
+)
 from anyblok.blok import BlokManager
 from anyblok.config import Configuration
-from .pyramid_config import Configurator
-import hupper
-import sys
-from anyblok import (
-    load_init_function_from_entry_points,
-    configuration_post_load,
-)
+
 from .common import preload_databases
-from logging import getLogger
+from .pyramid_config import Configurator
 
 logger = getLogger(__name__)
 
 
 def wsgi():
-    """Simple Pyramid wsgi server for development purpose
-    """
+    """Simple Pyramid wsgi server for development purpose"""
     load_init_function_from_entry_points()
     argv = [] + sys.argv
-    Configuration.load('pyramid')
+    Configuration.load("pyramid")
     sys.argv = argv
     configuration_post_load()
     BlokManager.load()
@@ -37,12 +38,12 @@ def wsgi():
     config.include_from_entry_point()
     config.load_config_bloks()
 
-    wsgi_host = Configuration.get('wsgi_host')
-    wsgi_port = int(Configuration.get('wsgi_port'))
+    wsgi_host = Configuration.get("wsgi_host")
+    wsgi_port = int(Configuration.get("wsgi_port"))
 
-    reload_at_change = Configuration.get('pyramid.reload_all', False)
+    reload_at_change = Configuration.get("pyramid.reload_all", False)
     if reload_at_change:
-        hupper.start_reloader('anyblok_pyramid.scripts.wsgi')
+        hupper.start_reloader("anyblok_pyramid.scripts.wsgi")
 
     app = config.make_wsgi_app()
     server = make_server(wsgi_host, wsgi_port, app)
@@ -50,13 +51,19 @@ def wsgi():
 
     try:
         from colorama import Fore, Style
-        start_msg = (
-            "Pyramid development server running at %shttp://%s:%s%s" % (
-                Fore.BLUE, wsgi_host, wsgi_port, Style.RESET_ALL))
+
+        start_msg = "Pyramid development server running at %shttp://%s:%s%s" % (
+            Fore.BLUE,
+            wsgi_host,
+            wsgi_port,
+            Style.RESET_ALL,
+        )
     except ImportError:
         logger.info("`pip install colorama` to get colored link")
         start_msg = "Pyramid development server running at http://%s:%s" % (
-            wsgi_host, wsgi_port)
+            wsgi_host,
+            wsgi_port,
+        )
 
     logger.info(start_msg)
     print(start_msg)
@@ -73,4 +80,5 @@ def gunicorn_wsgi():
         sys.exit(1)
 
     from .gunicorn import WSGIApplication
-    WSGIApplication('gunicorn').run()
+
+    WSGIApplication("gunicorn").run()

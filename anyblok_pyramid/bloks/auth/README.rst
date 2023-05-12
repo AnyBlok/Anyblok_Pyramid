@@ -12,7 +12,7 @@ How to use it
 This blok define a **User** model and add the basics of Pyramid Authentication
 and Authorization policy.
 It is required by the 'password' and 'authorization' bloks.
-Used alone it adds : 
+Used alone it adds :
 
 * **Pyramid.User** and **Pyramid.Role** models
 * **login** / **logout** extendable views (That will throw an exception until

@@ -8,14 +8,13 @@
 import pytest
 
 
-@pytest.mark.usefixtures('rollback_registry')
+@pytest.mark.usefixtures("rollback_registry")
 class TestUserIdentity:
-
     def test_user_identity(self, rollback_registry):
-
         registry = rollback_registry
 
         user = registry.Pyramid.User.insert(
-            login="johnny_dowey", first_name="John", last_name="Doe")
+            login="johnny_dowey", first_name="John", last_name="Doe"
+        )
 
         assert user.name == "John DOE"

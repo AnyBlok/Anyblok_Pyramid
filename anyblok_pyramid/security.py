@@ -6,10 +6,11 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 from pyramid.httpexceptions import HTTPUnauthorized
+
 try:
-    from pyramid.authorization import Deny, Everyone, ALL_PERMISSIONS
+    from pyramid.authorization import ALL_PERMISSIONS, Deny, Everyone
 except ImportError:
-    from pyramid.security import Deny, Everyone, ALL_PERMISSIONS
+    from pyramid.security import ALL_PERMISSIONS, Deny, Everyone
 
 
 def group_finder(userid, request):
@@ -18,7 +19,7 @@ def group_finder(userid, request):
     :param userid: the user id (login)
     :param request: request from pyramid
     """
-    if hasattr(request, 'anyblok') and request.anyblok:
+    if hasattr(request, "anyblok") and request.anyblok:
         return request.anyblok.registry.Pyramid.get_roles(userid)
 
     return userid
@@ -30,7 +31,7 @@ def check_user(userid, password, request):
     :param userid: the user id (login)
     :param request: request from pyramid
     """
-    if hasattr(request, 'anyblok') and request.anyblok:
+    if hasattr(request, "anyblok") and request.anyblok:
         return request.anyblok.registry.Pyramid.check_login(
             login=userid, password=password
         )
@@ -50,24 +51,29 @@ def AnyBlokResourceFactory(resource):
     :rtype: class, inherit RootFactory, with ACL in function
       of resource
     """
+
     def __acl__(self):
-        if not hasattr(self, 'registry'):
+        if not hasattr(self, "registry"):
             raise HTTPUnauthorized(  # pragma: no cover
-                "ACL have not get AnyBlok registry")
+                "ACL have not get AnyBlok registry"
+            )
 
         userid = self.request.authenticated_userid
         if userid:
             return self.registry.Pyramid.get_acl(
-                userid, self.__resource__,
-                params=dict(self.request.matchdict)
+                userid, self.__resource__, params=dict(self.request.matchdict)
             )
 
         return [(Deny, Everyone, ALL_PERMISSIONS)]
 
-    return type('ResourceFactory', (RootFactory,), {
-        '__acl__': __acl__,
-        '__resource__': resource,
-    })
+    return type(
+        "ResourceFactory",
+        (RootFactory,),
+        {
+            "__acl__": __acl__,
+            "__resource__": resource,
+        },
+    )
 
 
 class RootFactory:
@@ -76,7 +82,8 @@ class RootFactory:
     The goal of the root factory is to add the anyblok registry in the request
     for AnyBlokResourceFactory
     """
+
     def __init__(self, request):
         self.request = request
-        if hasattr(request, 'anyblok'):
+        if hasattr(request, "anyblok"):
             self.registry = request.anyblok.registry

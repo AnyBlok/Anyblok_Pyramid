@@ -11,9 +11,9 @@
 
 .. automodule:: anyblok_pyramid.bloks.authorization.user
 
-.. autoanyblok-declaration:: User                                                     
-    :members:                                                                   
-    :undoc-members:                                                             
+.. autoanyblok-declaration:: User
+    :members:
+    :undoc-members:
     :show-inheritance:
     :noindex:
 
@@ -22,9 +22,9 @@
 
 .. automodule:: anyblok_pyramid.bloks.authorization.authorization
 
-.. autoanyblok-declaration:: Authorization                                                     
-    :members:                                                                   
-    :undoc-members:                                                             
+.. autoanyblok-declaration:: Authorization
+    :members:
+    :undoc-members:
     :show-inheritance:
     :noindex:
 
@@ -34,7 +34,7 @@
 .. automodule:: anyblok_pyramid.bloks.authorization.exceptions
 
 .. autoanyblok-declaration:: AuthorizationValidationException
-    :members:                                                                   
-    :undoc-members:                                                             
+    :members:
+    :undoc-members:
     :show-inheritance:
     :noindex:

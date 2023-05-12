@@ -11,9 +11,9 @@
 
 .. automodule:: anyblok_pyramid.bloks.auth.user
 
-.. autoanyblok-declaration:: User                                                     
-    :members:                                                                   
-    :undoc-members:                                                             
+.. autoanyblok-declaration:: User
+    :members:
+    :undoc-members:
     :show-inheritance:
     :noindex:
 
@@ -22,9 +22,9 @@
 
 .. automodule:: anyblok_pyramid.bloks.auth.role
 
-.. autoanyblok-declaration:: Role                                                     
-    :members:                                                                   
-    :undoc-members:                                                             
+.. autoanyblok-declaration:: Role
+    :members:
+    :undoc-members:
     :show-inheritance:
     :noindex:
 
