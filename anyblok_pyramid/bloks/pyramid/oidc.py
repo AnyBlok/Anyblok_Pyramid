@@ -35,14 +35,15 @@ from functools import lru_cache
 from anyblok.config import Configuration
 from oic import rndstr
 from oic.oic import Client
-from oic.oic.message import (
+from oic.utils.authn.client import CLIENT_AUTHN_METHOD
+from pyramid.httpexceptions import HTTPFound, HTTPUnauthorized
+from pyramid.security import remember
+
+from oic.oic.message import (  # noqa isort:skip
     AccessTokenResponse,
     AuthorizationResponse,
     RegistrationResponse,
 )
-from oic.utils.authn.client import CLIENT_AUTHN_METHOD
-from pyramid.httpexceptions import HTTPFound, HTTPUnauthorized
-from pyramid.security import remember
 
 
 @lru_cache()

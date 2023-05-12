@@ -10,10 +10,6 @@ import argparse
 from logging import getLogger
 
 import six
-from anyblok import (
-    configuration_post_load,
-    load_init_function_from_entry_points,
-)
 from anyblok.blok import BlokManager
 from anyblok.config import Configuration, getParser
 from gunicorn import __version__
@@ -23,6 +19,12 @@ from gunicorn.config import Setting, validate_callable, validate_post_request
 
 from .common import preload_databases
 from .pyramid_config import Configurator
+
+from anyblok import (  # noqa isort:skip
+    configuration_post_load,
+    load_init_function_from_entry_points,
+)
+
 
 logger = getLogger(__name__)
 

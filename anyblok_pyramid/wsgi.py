@@ -9,10 +9,6 @@
 import sys
 from os import environ, path
 
-from anyblok import (
-    configuration_post_load,
-    load_init_function_from_entry_points,
-)
 from anyblok.blok import BlokManager
 from anyblok.config import Configuration
 from appdirs import AppDirs
@@ -20,6 +16,12 @@ from appdirs import AppDirs
 from anyblok_pyramid.pyramid_config import Configurator
 
 from .common import preload_databases
+
+from anyblok import (  # noqa isort:skip
+    configuration_post_load,
+    load_init_function_from_entry_points,
+)
+
 
 if BlokManager.bloks:
     # AnyBlok already load, the state are not sure, better to stop here
