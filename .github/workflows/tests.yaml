@@ -57,7 +57,7 @@ jobs:
           ANYBLOK_DATABASE_HOST: localhost
           ANYBLOK_DATABASE_USER: postgres
           ANYBLOK_DATABASE_PASSWORD: postgres
-        run: pytest anyblok_io/tests
+        run: pytest anyblok_pyramid/tests
       - name: Drop db
         env:
           PGHOST: localhost
