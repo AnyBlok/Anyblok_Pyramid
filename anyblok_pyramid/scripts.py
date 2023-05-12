@@ -13,15 +13,17 @@ from logging import getLogger
 from wsgiref.simple_server import make_server
 
 import hupper
-from anyblok import (
-    configuration_post_load,
-    load_init_function_from_entry_points,
-)
 from anyblok.blok import BlokManager
 from anyblok.config import Configuration
 
 from .common import preload_databases
 from .pyramid_config import Configurator
+
+from anyblok import (  # noqa isort:skip
+    configuration_post_load,
+    load_init_function_from_entry_points,
+)
+
 
 logger = getLogger(__name__)
 
