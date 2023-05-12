@@ -118,8 +118,8 @@ def timedelta_adapter_factory(mode=TimeDeltaModes.SECONDS):
         else:
             raise ValueError(
                 (
-                    "Provided mode for timedelta_adapter is not valid. Found '%s'"
-                    "." % mode
+                    "Provided mode for timedelta_adapter is not valid. "
+                    "Found '%s'." % mode
                 )
             )
 
