@@ -10,7 +10,7 @@ from anyblok.blok import Blok
 
 
 def declarations(reload=None):
-    from . import role, user
+    from . import user, role  # noqa isort:skip
 
     if reload:
         reload(user)
