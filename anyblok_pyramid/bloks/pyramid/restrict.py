@@ -20,7 +20,12 @@ class RestrictQueryByUserIdPlugin(ModelPluginBase):
         super().__init__(registry)
 
     def transform_base_attribute(
-        self, attr, method, namespace, base, transformation_properties,
+        self,
+        attr,
+        method,
+        namespace,
+        base,
+        transformation_properties,
         new_type_properties,
     ):
         """Find restricted methods in the base to save the

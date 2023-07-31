@@ -7,7 +7,9 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok import Declarations
+
 from anyblok_pyramid.bloks.pyramid.restrict import restrict_query_by_user
+
 try:
     from pyramid.authorization import Allow, Authenticated
 except ImportError:
@@ -16,7 +18,6 @@ except ImportError:
 
 @Declarations.register(Declarations.Model.Pyramid)
 class User:
-
     @classmethod
     def check_login(cls, login=None, password=None):
         return cls.anyblok.Pyramid.User.query().get(login)
@@ -24,8 +25,8 @@ class User:
     @classmethod
     def get_acl(cls, login, resource, **params):
         return [
-            (Allow, Authenticated, 'read'),
-            (Allow, 'admin', 'write'),
+            (Allow, Authenticated, "read"),
+            (Allow, "admin", "write"),
         ]
 
 
@@ -41,7 +42,6 @@ class Pyramid:
 
 @Declarations.register(Declarations.Model.System)
 class Blok:
-
     @restrict_query_by_user()
     def restrict_reading_this_blok_to_user2(cls, query, user):
         if user.login == "user2@anyblok.org":

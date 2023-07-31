@@ -14,20 +14,20 @@ Pyramid model
 -------------
 
 .. automodule:: anyblok_pyramid.bloks.pyramid.model
-    :members:                                                                   
-    :undoc-members:                                                             
+    :members:
+    :undoc-members:
     :show-inheritance:
     :noindex:
 
 .. automodule:: anyblok_pyramid.bloks.pyramid.restrict
-    :members:                                                                   
-    :undoc-members:                                                             
+    :members:
+    :undoc-members:
     :show-inheritance:
     :noindex:
 
-.. autoanyblok-declaration:: Pyramid                                                     
-    :members:                                                                   
-    :undoc-members:                                                             
+.. autoanyblok-declaration:: Pyramid
+    :members:
+    :undoc-members:
     :show-inheritance:
     :noindex:
 
@@ -37,7 +37,7 @@ OIDC utility
 
 
 .. automodule:: anyblok_pyramid.bloks.pyramid.oidc
-    :members:                                                                   
-    :undoc-members:                                                             
+    :members:
+    :undoc-members:
     :show-inheritance:
     :noindex:

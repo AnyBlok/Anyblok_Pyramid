@@ -7,10 +7,10 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok import Declarations
 from anyblok.column import String
-from anyblok.relationship import Many2Many
 from anyblok.field import Function
-from .exceptions import RecursionRoleError
+from anyblok.relationship import Many2Many
 
+from .exceptions import RecursionRoleError
 
 Pyramid = Declarations.Model.Pyramid
 
@@ -21,13 +21,12 @@ class Role:
 
     name = String(primary_key=True, nullable=False)
     label = String(nullable=False)
-    children = Many2Many(model='Model.Pyramid.Role', many2many="parents")
+    children = Many2Many(model="Model.Pyramid.Role", many2many="parents")
     users = Many2Many(model=Pyramid.User, many2many="roles")
     roles_name = Function(fget="get_all_roles_name")
 
     def get_all_roles_name(self):
-        """Return all the name of the roles self and dependencies
-        """
+        """Return all the name of the roles self and dependencies"""
         names = [self.name]
         for child in self.children:
             if child.name in names:
@@ -39,8 +38,7 @@ class Role:
 
     @classmethod
     def before_update_orm_event(cls, mapper, connection, target):
-        """Check if the role has not any cyclical dependencies
-        """
+        """Check if the role has not any cyclical dependencies"""
         try:
             target.get_all_roles_name()
         except RecursionError:

@@ -11,19 +11,22 @@ from anyblok.blok import Blok
 class Authorization(Blok):
     version = "0.1.0"
     author = "Jean-Sébastien Suzanne"
-    required = ['auth']
+    required = ["auth"]
 
     @classmethod
     def import_declaration_module(cls):
+        from . import authorization  # noqa
         from . import query  # noqa
         from . import user  # noqa
-        from . import authorization  # noqa
 
     @classmethod
     def reload_declaration_module(cls, reload):
         from . import query
+
         reload(query)
         from . import user
+
         reload(user)
         from . import authorization
+
         reload(authorization)

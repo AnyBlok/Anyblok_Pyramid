@@ -7,21 +7,21 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 import json
+from unittest import mock
+from urllib.parse import parse_qs, urlparse
+
 import pytest
 from anyblok.config import Configuration
-from unittest import mock
-from urllib.parse import urlparse, parse_qs
-
 
 try:
     from anyblok_pyramid.bloks.pyramid import oidc
+
     has_oidc = True
 except ImportError:
     has_oidc = False
 
 
 class MockJsonResponse:
-
     headers = {"content-type": "application/json"}
 
     def __init__(self, data, status_code):

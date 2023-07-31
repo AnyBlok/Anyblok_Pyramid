@@ -9,38 +9,43 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from collections.abc import Mapping
 from copy import deepcopy
-from anyblok.config import Configuration
-from .anyblok import register
-from anyblok.registry import Registry, RegistryManager
 from logging import getLogger
 
+from anyblok.config import Configuration
+from anyblok.registry import Registry, RegistryManager
+
+from .anyblok import register
 
 logger = getLogger(__name__)
 
 
 def get_registry_for(dbname, loadwithoutmigration=True, log_repeat=False):
     settings = {
-        'anyblok.session.event': [register],
+        "anyblok.session.event": [register],
     }
     return RegistryManager.get(
-        dbname, loadwithoutmigration=loadwithoutmigration,
-        log_repeat=log_repeat, **settings)
+        dbname,
+        loadwithoutmigration=loadwithoutmigration,
+        log_repeat=log_repeat,
+        **settings
+    )
 
 
 def preload_databases(loadwithoutmigration=True):
-    dbnames = Configuration.get('db_names') or []
-    dbname = Configuration.get('db_name')
+    dbnames = Configuration.get("db_names") or []
+    dbname = Configuration.get("db_name")
     if dbname not in dbnames:
         dbnames.append(dbname)
 
     # preload all db names
     dbnames = [x for x in dbnames if x]
-    logger.info("Preload the databases : %s", ', '.join(dbnames))
+    logger.info("Preload the databases : %s", ", ".join(dbnames))
     for dbname in dbnames:
         logger.info("Preload the database : %r", dbname)
         if Registry.db_exists(db_name=dbname):
-            registry = get_registry_for(dbname, loadwithoutmigration,
-                                        log_repeat=True)
+            registry = get_registry_for(
+                dbname, loadwithoutmigration, log_repeat=True
+            )
             registry.commit()
             registry.session.close()
             logger.info("The database %r is preloaded", dbname)

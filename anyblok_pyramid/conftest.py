@@ -7,6 +7,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 import pytest
 from anyblok.conftest import *  # noqa
+
 from .testing import init_web_server
 
 

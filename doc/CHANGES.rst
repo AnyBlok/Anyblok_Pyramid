@@ -69,7 +69,7 @@ CHANGELOG
 ------------------
 
 * Fixed #21 that `zope.sqlalchemy 1.2 <https://pypi.org/project/zope.sqlalchemy/#id1>`_ rename a class
-* [ADD] **user-identity** blok. Splitted anyblok_pyramid/auth blok to 
+* [ADD] **user-identity** blok. Splitted anyblok_pyramid/auth blok to
   separate authentication fields from user identity fields
 
 0.9.3 (2019-06-23)

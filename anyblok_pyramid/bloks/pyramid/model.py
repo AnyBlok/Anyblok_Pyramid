@@ -6,19 +6,18 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from pyramid.httpexceptions import HTTPUnauthorized
 from anyblok import Declarations
 from anyblok.mapper import ModelAdapter
+from pyramid.httpexceptions import HTTPUnauthorized
 
 try:
-    from pyramid.authorization import Allow, ALL_PERMISSIONS
+    from pyramid.authorization import ALL_PERMISSIONS, Allow
 except ImportError:
-    from pyramid.security import Allow, ALL_PERMISSIONS
+    from pyramid.security import ALL_PERMISSIONS, Allow
 
 
 @Declarations.register(Declarations.Model)
 class Pyramid:
-
     @classmethod
     def get_roles(cls, login):
         """Return the roles of an user
@@ -114,9 +113,7 @@ class Pyramid:
         return user_id
 
     @classmethod
-    def restrict_query_by_user(
-        cls, query, user_code
-    ):
+    def restrict_query_by_user(cls, query, user_code):
         """Call registered decorated method (by
         ``from anyblok_pyramid.bloks.pyramid.restrict.restrict_query_by_user``)
         to add filters on current query according the selected model.
@@ -134,9 +131,8 @@ class Pyramid:
         for method in cls.anyblok.restrict_query_by_user_methods.get(
             model_name, []
         ):
-
-            query = getattr(
-                cls.anyblok.get(model_name), method
-            )(query, cls.get_user(user_code))
+            query = getattr(cls.anyblok.get(model_name), method)(
+                query, cls.get_user(user_code)
+            )
 
         return query

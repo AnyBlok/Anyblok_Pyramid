@@ -8,9 +8,8 @@
 import pytest
 
 
-@pytest.mark.usefixtures('rollback_registry')
+@pytest.mark.usefixtures("rollback_registry")
 class TestQuery:
-
     @pytest.fixture(scope="function", autouse=True)
     def init_user(self, rollback_registry):
         self.registry = rollback_registry
@@ -22,41 +21,35 @@ class TestQuery:
     def test_equal_condition(self):
         query = self.registry.System.Blok.query().condition_filter(
             dict(
-                left_condition='Blok.name',
-                operator='==',
-                right_value='authorization',
+                left_condition="Blok.name",
+                operator="==",
+                right_value="authorization",
             ),
-            {
-                'Blok': self.registry.System.Blok
-            }
+            {"Blok": self.registry.System.Blok},
         )
         assert query.count() == 1
 
     def test_not_equal_contition(self):
         query = self.registry.System.Blok.query().condition_filter(
             dict(
-                left_condition='Blok.name',
-                operator='!=',
-                right_value='authorization',
+                left_condition="Blok.name",
+                operator="!=",
+                right_value="authorization",
             ),
-            {
-                'Blok': self.registry.System.Blok
-            }
+            {"Blok": self.registry.System.Blok},
         )
         assert self.registry.System.Blok.query().count() - 1 == query.count()
 
     def test_not_equal_contition_2(self):
         query = self.registry.System.Blok.query().condition_filter(
             {
-                'not': dict(
-                    left_condition='Blok.name',
-                    operator='==',
-                    right_value='authorization',
+                "not": dict(
+                    left_condition="Blok.name",
+                    operator="==",
+                    right_value="authorization",
                 )
             },
-            {
-                'Blok': self.registry.System.Blok
-            }
+            {"Blok": self.registry.System.Blok},
         )
         assert self.registry.System.Blok.query().count() - 1 == query.count()
 
@@ -64,43 +57,41 @@ class TestQuery:
         Blok = self.registry.System.Blok
         query = self.registry.System.Blok.query().condition_filter(
             dict(
-                left_condition='Blok.name',
-                operator='like',
-                right_value='%auth%',
+                left_condition="Blok.name",
+                operator="like",
+                right_value="%auth%",
             ),
-            {
-                'Blok': Blok
-            }
+            {"Blok": Blok},
         )
-        assert Blok.query().filter(Blok.name.like(
-            '%auth%')).count() == query.count()
+        assert (
+            Blok.query().filter(Blok.name.like("%auth%")).count()
+            == query.count()
+        )
 
     def test_ilike_condition(self):
         Blok = self.registry.System.Blok
         query = self.registry.System.Blok.query().condition_filter(
             dict(
-                left_condition='Blok.name',
-                operator='ilike',
-                right_value='auth',
+                left_condition="Blok.name",
+                operator="ilike",
+                right_value="auth",
             ),
-            {
-                'Blok': Blok
-            }
+            {"Blok": Blok},
         )
-        assert Blok.query().filter(Blok.name.ilike(
-            'auth')).count() == query.count()
+        assert (
+            Blok.query().filter(Blok.name.ilike("auth")).count()
+            == query.count()
+        )
 
     def test_lt_condition(self):
         Blok = self.registry.System.Blok
         query = self.registry.System.Blok.query().condition_filter(
             dict(
-                left_condition='Blok.order',
-                operator='<',
+                left_condition="Blok.order",
+                operator="<",
                 right_value=2,
             ),
-            {
-                'Blok': Blok
-            }
+            {"Blok": Blok},
         )
         assert Blok.query().filter(Blok.order < 2).count() == query.count()
 
@@ -108,13 +99,11 @@ class TestQuery:
         Blok = self.registry.System.Blok
         query = self.registry.System.Blok.query().condition_filter(
             dict(
-                left_condition='Blok.order',
-                operator='<=',
+                left_condition="Blok.order",
+                operator="<=",
                 right_value=2,
             ),
-            {
-                'Blok': Blok
-            }
+            {"Blok": Blok},
         )
         assert Blok.query().filter(Blok.order <= 2).count() == query.count()
 
@@ -122,13 +111,11 @@ class TestQuery:
         Blok = self.registry.System.Blok
         query = self.registry.System.Blok.query().condition_filter(
             dict(
-                left_condition='Blok.order',
-                operator='>',
+                left_condition="Blok.order",
+                operator=">",
                 right_value=2,
             ),
-            {
-                'Blok': Blok
-            }
+            {"Blok": Blok},
         )
         assert Blok.query().filter(Blok.order > 2).count() == query.count()
 
@@ -136,110 +123,99 @@ class TestQuery:
         Blok = self.registry.System.Blok
         query = self.registry.System.Blok.query().condition_filter(
             dict(
-                left_condition='Blok.order',
-                operator='>=',
+                left_condition="Blok.order",
+                operator=">=",
                 right_value=2,
             ),
-            {
-                'Blok': Blok
-            }
+            {"Blok": Blok},
         )
         assert Blok.query().filter(Blok.order >= 2).count() == query.count()
 
     def test_or_condition(self):
         query = self.registry.System.Blok.query().condition_filter(
             {
-                'or': [
+                "or": [
                     dict(
-                        left_condition='Blok.name',
-                        operator='==',
-                        right_value='authorization',
+                        left_condition="Blok.name",
+                        operator="==",
+                        right_value="authorization",
                     ),
                     dict(
-                        left_condition='Blok.name',
-                        operator='==',
-                        right_value='auth',
-                    )
+                        left_condition="Blok.name",
+                        operator="==",
+                        right_value="auth",
+                    ),
                 ],
             },
-            {
-                'Blok': self.registry.System.Blok
-            }
+            {"Blok": self.registry.System.Blok},
         )
         assert query.count() == 2
 
     def test_and_condition_1(self):
         query = self.registry.System.Blok.query().condition_filter(
             {
-                'and': [
+                "and": [
                     dict(
-                        left_condition='Blok.name',
-                        operator='==',
-                        right_value='authorization',
+                        left_condition="Blok.name",
+                        operator="==",
+                        right_value="authorization",
                     ),
                     dict(
-                        left_condition='Blok.order',
-                        operator='==',
+                        left_condition="Blok.order",
+                        operator="==",
                         right_value=0,
-                    )
+                    ),
                 ],
             },
-            {
-                'Blok': self.registry.System.Blok
-            }
+            {"Blok": self.registry.System.Blok},
         )
         assert not query.count()
 
     def test_and_condition_2(self):
         query = self.registry.System.Blok.query().condition_filter(
             {
-                'and': [
+                "and": [
                     dict(
-                        left_condition='Blok.name',
-                        operator='==',
-                        right_value='authorization',
+                        left_condition="Blok.name",
+                        operator="==",
+                        right_value="authorization",
                     ),
                     dict(
-                        left_condition='Blok.order',
-                        operator='!=',
+                        left_condition="Blok.order",
+                        operator="!=",
                         right_value=0,
-                    )
+                    ),
                 ],
             },
-            {
-                'Blok': self.registry.System.Blok
-            }
+            {"Blok": self.registry.System.Blok},
         )
         assert query.count()
 
     def test_in_condition(self):
         query = self.registry.System.Blok.query().condition_filter(
             dict(
-                left_condition='Blok.name',
-                operator='in',
-                right_value=['auth', 'authorization'],
+                left_condition="Blok.name",
+                operator="in",
+                right_value=["auth", "authorization"],
             ),
-            {
-                'Blok': self.registry.System.Blok
-            }
+            {"Blok": self.registry.System.Blok},
         )
         assert query.count() == 2
 
     def test_with_relationship(self):
         user = self.registry.Pyramid.User.insert(login="jssuzanne")
-        role = self.registry.Pyramid.Role.insert(name='admin', label="Admin")
+        role = self.registry.Pyramid.Role.insert(name="admin", label="Admin")
         role.users.append(user)
         authorization = self.registry.Pyramid.Authorization.insert(
-            resource='test', role=role)
+            resource="test", role=role
+        )
         query = self.registry.Pyramid.Authorization.query().condition_filter(
             dict(
-                left_condition='Authorization.role.users.name',
-                operator='=',
-                right_value='jssuzanne',
+                left_condition="Authorization.role.users.name",
+                operator="=",
+                right_value="jssuzanne",
             ),
-            {
-                'Authorization': self.registry.Pyramid.Authorization
-            }
+            {"Authorization": self.registry.Pyramid.Authorization},
         )
         assert query.count() == 1
         assert query.one() is authorization

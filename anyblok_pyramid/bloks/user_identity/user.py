@@ -16,8 +16,8 @@ class User:
 
     first_name = String(nullable=False)
     last_name = String(nullable=False)
-    name = Function(fget='get_name')
+    name = Function(fget="get_name")
 
     def get_name(self):
         """Return the name of the user"""
-        return self.first_name + ' ' + self.last_name.upper()
+        return self.first_name + " " + self.last_name.upper()

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # This file is a part of the AnyBlok / Pyramid project
 #
 #    Copyright (C) 2016 Jean-Sebastien SUZANNE <jssuzanne@anybox.fr>

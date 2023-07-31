@@ -6,41 +6,46 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from gunicorn.config import (Config as GunicornConfig,
-                             Setting, validate_callable, validate_post_request)
-from gunicorn.app.base import Application
-from gunicorn import __version__
-from anyblok.config import Configuration, getParser
-from anyblok.blok import BlokManager
-from .pyramid_config import Configurator
 import argparse
-import six
-from anyblok import (
-    load_init_function_from_entry_points,
-    configuration_post_load,
-)
-from .common import preload_databases
 from logging import getLogger
+
+import six
+from anyblok.blok import BlokManager
+from anyblok.config import Configuration, getParser
+from gunicorn import __version__
+from gunicorn.app.base import Application
+from gunicorn.config import Config as GunicornConfig
+from gunicorn.config import Setting, validate_callable, validate_post_request
+
+from .common import preload_databases
+from .pyramid_config import Configurator
+
+from anyblok import (  # noqa isort:skip
+    configuration_post_load,
+    load_init_function_from_entry_points,
+)
+
+
 logger = getLogger(__name__)
 
 
 class Config(GunicornConfig):
-
     def __init__(self, usage=None, prog=None, application=None):
         super(Config, self).__init__(usage=usage, prog=prog)
         self.application = application
 
     def parser(self):
         # Don't call super to user the Parser of anyblok
-        kwargs = {
-            "usage": self.usage,
-            "prog": self.prog
-        }
+        kwargs = {"usage": self.usage, "prog": self.prog}
         parser = getParser(**kwargs)
-        parser.add_argument("-v", "--version",
-                            action="version", default=argparse.SUPPRESS,
-                            version="%(prog)s (version " + __version__ + ")\n",
-                            help="show program's version number and exit")
+        parser.add_argument(
+            "-v",
+            "--version",
+            action="version",
+            default=argparse.SUPPRESS,
+            version="%(prog)s (version " + __version__ + ")\n",
+            help="show program's version number and exit",
+        )
         parser.add_argument("args", nargs="*", help=argparse.SUPPRESS)
 
         keys = sorted(self.settings, key=self.settings.__getitem__)
@@ -51,12 +56,13 @@ class Config(GunicornConfig):
         if self.application in Configuration.applications:
             description.update(Configuration.applications[self.application])
         else:
-            description.update(Configuration.applications['default'])
+            description.update(Configuration.applications["default"])
 
-        configuration_groups = description.pop('configuration_groups',
-                                               ['gunicorn', 'database'])
-        if 'plugins' not in configuration_groups:
-            configuration_groups.append('plugins')
+        configuration_groups = description.pop(
+            "configuration_groups", ["gunicorn", "database"]
+        )
+        if "plugins" not in configuration_groups:
+            configuration_groups.append("plugins")
 
         Configuration._load(parser, configuration_groups)
         return parser
@@ -69,18 +75,18 @@ class Config(GunicornConfig):
 
 
 class WSGIApplication(Application):
-
     def __init__(self, application):
         load_init_function_from_entry_points()
         conf = Configuration.applications.get(application, {})
-        usage = conf.get('usage')
-        prog = conf.get('prog')
+        usage = conf.get("usage")
+        prog = conf.get("prog")
         self.application = application
         super(WSGIApplication, self).__init__(usage=usage, prog=prog)
 
     def load_default_config(self):
-        self.cfg = Config(self.usage, prog=self.prog,
-                          application=self.application)
+        self.cfg = Config(
+            self.usage, prog=self.prog, application=self.application
+        )
 
     def init(self, parser, opts, args):
         Configuration.parse_options(opts)
@@ -129,8 +135,9 @@ class PostRequest(Setting):
     type = six.callable
 
     def post_request(worker, req, environ, resp):
-        logger.info("POST-REQUEST => %s %s | %r" % (
-            req.method, req.path, resp.status))
+        logger.info(
+            "POST-REQUEST => %s %s | %r" % (req.method, req.path, resp.status)
+        )
 
     default = staticmethod(post_request)
     desc = """\
