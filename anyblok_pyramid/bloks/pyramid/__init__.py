@@ -6,18 +6,20 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok.blok import Blok
+
 try:
     from pyramid.authorization import ACLAuthorizationPolicy
 except ImportError:
     from pyramid.security import ACLAuthorizationPolicy  # pragma: no cover
 
-
 from anyblok_pyramid.security import RootFactory
+
 from .pyramid import getAuthenticationPolicy
 
 
 def declarations(reload=None):
     from . import model
+
     if reload:
         reload(model)
 
@@ -25,7 +27,7 @@ def declarations(reload=None):
 class Pyramid(Blok):
     version = "0.1.0"
     author = "Jean-Sébastien Suzanne"
-    required = ['anyblok-core']
+    required = ["anyblok-core"]
 
     @classmethod
     def import_declaration_module(cls):

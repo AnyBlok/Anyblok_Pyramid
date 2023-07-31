@@ -6,6 +6,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 from pyramid.view import view_config, view_defaults
+
 from anyblok_pyramid import current_blok
 
 
@@ -15,26 +16,43 @@ class Bloks:
         self.request = request
         self.registry = request.anyblok.registry
 
-    @view_config(route_name='bloks', renderer="json",
-                 request_method='GET', permission="read")
+    @view_config(
+        route_name="bloks",
+        renderer="json",
+        request_method="GET",
+        permission="read",
+    )
     def get_all(self):
         query = self.registry.Pyramid.restrict_query_by_user(
-            self.registry.System.Blok.query(),
-            self.request.authenticated_userid
+            self.registry.System.Blok.query(), self.request.authenticated_userid
         )
         bloks = query.all()
-        return bloks.to_dict('name', 'author', 'version')
+        return bloks.to_dict("name", "author", "version")
 
-    @view_config(route_name='blok', renderer="json",
-                 request_method='GET', permission="read")
+    @view_config(
+        route_name="blok",
+        renderer="json",
+        request_method="GET",
+        permission="read",
+    )
     def get_one(self):
-        blok = self.registry.System.Blok.query().filter_by(
-            name=self.request.matchdict['name']).one()
-        return blok.to_dict('name', 'author', 'version')
+        blok = (
+            self.registry.System.Blok.query()
+            .filter_by(name=self.request.matchdict["name"])
+            .one()
+        )
+        return blok.to_dict("name", "author", "version")
 
-    @view_config(route_name='blok', renderer="json",
-                 request_method='PUT', permission="write")
+    @view_config(
+        route_name="blok",
+        renderer="json",
+        request_method="PUT",
+        permission="write",
+    )
     def put_one(self):
-        blok = self.registry.System.Blok.query().filter_by(
-            name=self.request.matchdict['name']).one()
-        return blok.to_dict('name', 'author', 'version')
+        blok = (
+            self.registry.System.Blok.query()
+            .filter_by(name=self.request.matchdict["name"])
+            .one()
+        )
+        return blok.to_dict("name", "author", "version")

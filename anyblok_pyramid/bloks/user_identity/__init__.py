@@ -12,7 +12,7 @@ from anyblok.blok import Blok
 class UserIdentity(Blok):
     version = "0.1.0"
     author = "Jean-Sébastien Suzanne, Alexis Tourneux"
-    required = ['anyblok-core', 'auth']
+    required = ["anyblok-core", "auth"]
 
     @classmethod
     def import_declaration_module(cls):
@@ -21,4 +21,5 @@ class UserIdentity(Blok):
     @classmethod
     def reload_declaration_module(cls, reload):
         from . import user
+
         reload(user)

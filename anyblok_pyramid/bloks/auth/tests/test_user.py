@@ -6,18 +6,17 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 import pytest
+
 from ..exceptions import RecursionRoleError
 
 
-@pytest.mark.usefixtures('rollback_registry')
+@pytest.mark.usefixtures("rollback_registry")
 class TestUserAndRole:
-
     def init_user(self, registry):
         self.User = registry.Pyramid.User
         self.Role = registry.Pyramid.Role
-        self.user = self.User.insert(
-            login='user.1')
-        self.role = self.Role.insert(name='admin', label="Administrator")
+        self.user = self.User.insert(login="user.1")
+        self.role = self.Role.insert(name="admin", label="Administrator")
         self.role.users.append(self.user)
 
     def test_role_name_in_user_roles(self, rollback_registry):
@@ -26,7 +25,7 @@ class TestUserAndRole:
 
     def test_rec_roles(self, rollback_registry):
         self.init_user(rollback_registry)
-        role2 = self.Role.insert(name='g2', label="G2")
+        role2 = self.Role.insert(name="g2", label="G2")
         self.role.children.append(role2)
         role2.children.append(self.role)
         with pytest.raises(RecursionRoleError):
@@ -35,10 +34,10 @@ class TestUserAndRole:
     def test_check_user_exists_ok(self, rollback_registry):
         Pyramid = rollback_registry.Pyramid
         self.init_user(rollback_registry)
-        assert self.user is Pyramid.check_user_exists('user.1')
+        assert self.user is Pyramid.check_user_exists("user.1")
 
     def test_check_user_exists_ko(self, rollback_registry):
         Pyramid = rollback_registry.Pyramid
         with pytest.raises(KeyError) as err:
-            Pyramid.check_user_exists('user.1')
+            Pyramid.check_user_exists("user.1")
         assert str(err.value) == "'user.1 is not a valid login'"

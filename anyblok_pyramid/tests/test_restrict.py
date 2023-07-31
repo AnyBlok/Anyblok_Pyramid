@@ -6,11 +6,10 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 import pytest
-from sqlalchemy.sql.elements import BooleanClauseList
-
 from anyblok.column import String
 from anyblok.declarations import Declarations
 from anyblok.tests.conftest import init_registry_with_bloks
+from sqlalchemy.sql.elements import BooleanClauseList
 
 from anyblok_pyramid.bloks.pyramid.restrict import restrict_query_by_user
 
@@ -42,7 +41,6 @@ def add_in_registry_inherited(with_super=False):
 
     @register(Model)
     class RestrictedModel(Mixin.MTest):
-
         name = String(primary_key=True, nullable=False)
 
         @restrict_query_by_user()
@@ -81,12 +79,13 @@ def test_restrict_query_by_user_inheritance(setup_registry):
         with_super=False,
     )
     query = registry.Pyramid.restrict_query_by_user(
-        registry.RestrictedModel.query(), "test",
+        registry.RestrictedModel.query(),
+        "test",
     )
     assert get_filters_values(
         query.sql_statement.whereclause
-        if hasattr(query, 'sql_statement') else
-        query.whereclause
+        if hasattr(query, "sql_statement")
+        else query.whereclause
     ) == ["child", "mixin", "other"]
 
 
@@ -95,10 +94,11 @@ def test_restrict_query_by_user_inheritance_calling_parent(setup_registry):
         ["pyramid", "anyblok-test"], add_in_registry_inherited, with_super=True
     )
     query = registry.Pyramid.restrict_query_by_user(
-        registry.RestrictedModel.query(), "test",
+        registry.RestrictedModel.query(),
+        "test",
     )
     assert get_filters_values(
         query.sql_statement.whereclause
-        if hasattr(query, 'sql_statement') else
-        query.whereclause
+        if hasattr(query, "sql_statement")
+        else query.whereclause
     ) == ["base", "child", "mixin", "other"]

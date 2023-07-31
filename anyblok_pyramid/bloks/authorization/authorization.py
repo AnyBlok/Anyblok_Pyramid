@@ -7,15 +7,17 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 from anyblok import Declarations
-from anyblok.column import Integer, String, Json
-from anyblok.relationship import Many2One
+from anyblok.column import Integer, Json, String
 from anyblok.field import JsonRelated
-from .exceptions import AuthorizationValidationException
+from anyblok.relationship import Many2One
 from sqlalchemy import or_
+
+from .exceptions import AuthorizationValidationException
+
 try:
-    from pyramid.authorization import Allow, Deny, ALL_PERMISSIONS
+    from pyramid.authorization import ALL_PERMISSIONS, Allow, Deny
 except ImportError:
-    from pyramid.security import Allow, Deny, ALL_PERMISSIONS
+    from pyramid.security import ALL_PERMISSIONS, Allow, Deny
 
 
 Pyramid = Declarations.Model.Pyramid
@@ -32,31 +34,34 @@ class Authorization:
 
     resource = String()
     model = String(
-        foreign_key=Declarations.Model.System.Model.use('name').options(
-            ondelete="cascade"),
+        foreign_key=Declarations.Model.System.Model.use("name").options(
+            ondelete="cascade"
+        ),
         size=256,
     )
     primary_keys = Json(default={})
     filter = Json(default={})  # next step
 
     role = Many2One(
-        model=Pyramid.Role, foreign_key_options={'ondelete': 'cascade'})
+        model=Pyramid.Role, foreign_key_options={"ondelete": "cascade"}
+    )
     login = String(
-        foreign_key=Pyramid.User.use('login').options(ondelete="cascade"))
+        foreign_key=Pyramid.User.use("login").options(ondelete="cascade")
+    )
     user = Many2One(model=Pyramid.User)
     perms = Json(default={})
 
-    perm_create = JsonRelated(json_column='perms', keys=['create'])
-    perm_read = JsonRelated(json_column='perms', keys=['read'])
-    perm_update = JsonRelated(json_column='perms', keys=['update'])
-    perm_delete = JsonRelated(json_column='perms', keys=['delete'])
+    perm_create = JsonRelated(json_column="perms", keys=["create"])
+    perm_read = JsonRelated(json_column="perms", keys=["read"])
+    perm_update = JsonRelated(json_column="perms", keys=["update"])
+    perm_delete = JsonRelated(json_column="perms", keys=["delete"])
 
     @classmethod
     def get_acl_filter_model(cls):
         """Return the Model to use to check the permission"""
         return {
-            'User': cls.anyblok.Pyramid.User,
-            'Role': cls.anyblok.Pyramid.Role,
+            "User": cls.anyblok.Pyramid.User,
+            "Role": cls.anyblok.Pyramid.Role,
         }
 
     @classmethod
@@ -72,7 +77,8 @@ class Authorization:
 
         query = cls.query()
         query = query.filter(
-            or_(cls.resource == resource, cls.model == resource))
+            or_(cls.resource == resource, cls.model == resource)
+        )
         query = query.order_by(cls.order)
         Q1 = query.filter(cls.login == login)
         Q2 = query.join(cls.role).filter(Role.name.in_(User.get_roles(login)))
@@ -90,21 +96,19 @@ class Authorization:
                     query = query.join(User.roles)
                     if self.filter:
                         query = query.condition_filter(
-                            self.filter,
-                            cls.get_acl_filter_model()
+                            self.filter, cls.get_acl_filter_model()
                         )
 
-                    if 'condition' in p:
+                    if "condition" in p:
                         query = query.condition_filter(
-                            p['condition'],
-                            cls.get_acl_filter_model()
+                            p["condition"], cls.get_acl_filter_model()
                         )
 
                     ismatched = True if query.count() else False
-                    if p.get('matched' if ismatched else 'unmatched') is True:
+                    if p.get("matched" if ismatched else "unmatched") is True:
                         allow_perms.append(perm)
                     elif (
-                        p.get('matched' if ismatched else 'unmatched') is False
+                        p.get("matched" if ismatched else "unmatched") is False
                     ):
                         deny_perms.append(perm)
 
@@ -131,7 +135,8 @@ class Authorization:
 
         query = cls.query()
         query = query.filter(
-            or_(cls.resource == resource, cls.model == resource))
+            or_(cls.resource == resource, cls.model == resource)
+        )
         query = query.order_by(cls.order)
         Q1 = query.filter(cls.login == login)
         Q2 = query.join(cls.role).filter(Role.name.in_(User.get_roles(login)))
@@ -147,22 +152,18 @@ class Authorization:
                 query = query.join(User.roles, isouter=True)
                 if self.filter:
                     query = query.condition_filter(
-                        self.filter,
-                        cls.get_acl_filter_model()
+                        self.filter, cls.get_acl_filter_model()
                     )
 
-                if 'condition' in p:
+                if "condition" in p:
                     query = query.condition_filter(
-                        p['condition'],
-                        cls.get_acl_filter_model()
+                        p["condition"], cls.get_acl_filter_model()
                     )
 
                 ismatched = True if query.count() else False
-                if p.get('matched' if ismatched else 'unmatched') is True:
+                if p.get("matched" if ismatched else "unmatched") is True:
                     return True
-                elif (
-                    p.get('matched' if ismatched else 'unmatched') is False
-                ):
+                elif p.get("matched" if ismatched else "unmatched") is False:
                     return False
 
         return False
@@ -183,22 +184,23 @@ class Authorization:
         """
         if not (self.role or self.login or self.user or self.role_name):
             raise AuthorizationValidationException(
-                "No role and login to apply in the authorization (%s)" % self)
+                "No role and login to apply in the authorization (%s)" % self
+            )
 
         if not (self.resource or self.model):
             raise AuthorizationValidationException(
-                "No resource and model to apply in the authorization (%s)" %
-                self)
+                "No resource and model to apply in the authorization (%s)"
+                % self
+            )
 
         if not self.model and self.primary_keys:
             raise AuthorizationValidationException(
                 "Primary keys without model to apply in the authorization "
-                "(%s)" % self)
+                "(%s)" % self
+            )
 
     @classmethod
-    def ensure_exists(
-        cls, code, **kwargs
-    ):
+    def ensure_exists(cls, code, **kwargs):
         """Ensure role's authorization is present
 
         :param code: String, authorization code.
@@ -227,7 +229,7 @@ class Authorization:
                 "perm_create",
                 "perm_read",
                 "perm_update",
-                "perm_delete"
+                "perm_delete",
             }
 
             modified = (jsonfields | perms_related) & set(kwargs.keys())
@@ -240,11 +242,8 @@ class Authorization:
 
 @Declarations.register(Pyramid)
 class Role:
-
     @classmethod
-    def ensure_exists(
-        cls, name, authorizations, label=None
-    ):
+    def ensure_exists(cls, name, authorizations, label=None):
         """Create or update Pyramid.Role with related model's authorization.
 
         :param name: str, Role name
@@ -293,7 +292,5 @@ class Role:
                     f"Model.Pyramid.Authorizatoin is present on role "
                     f"{role.name}"
                 )
-            Pyramid.Authorization.ensure_exists(
-                code, role=role, **authz
-            )
+            Pyramid.Authorization.ensure_exists(code, role=role, **authz)
         return role

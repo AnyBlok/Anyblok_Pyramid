@@ -6,17 +6,22 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from anyblok.blok import BlokManager
-from .common import preload_databases
 import sys
-from anyblok_pyramid.pyramid_config import Configurator
-from anyblok.config import Configuration
 from os import environ, path
+
+from anyblok.blok import BlokManager
+from anyblok.config import Configuration
 from appdirs import AppDirs
-from anyblok import (
-    load_init_function_from_entry_points,
+
+from anyblok_pyramid.pyramid_config import Configurator
+
+from .common import preload_databases
+
+from anyblok import (  # noqa isort:skip
     configuration_post_load,
+    load_init_function_from_entry_points,
 )
+
 
 if BlokManager.bloks:
     # AnyBlok already load, the state are not sure, better to stop here
@@ -25,17 +30,17 @@ if BlokManager.bloks:
 
 load_init_function_from_entry_points()
 # load default files
-ad = AppDirs('AnyBlok')
+ad = AppDirs("AnyBlok")
 # load the global configuration file
-Configuration.parse_configfile(path.join(ad.site_config_dir, 'conf.cfg'), ())
+Configuration.parse_configfile(path.join(ad.site_config_dir, "conf.cfg"), ())
 # load the user configuration file
-Configuration.parse_configfile(path.join(ad.user_config_dir, 'conf.cfg'), ())
+Configuration.parse_configfile(path.join(ad.user_config_dir, "conf.cfg"), ())
 # load config file in environment variable
-configfile = environ.get('ANYBLOK_CONFIGFILE')
+configfile = environ.get("ANYBLOK_CONFIGFILE")
 if configfile:
     Configuration.parse_configfile(configfile)
 
-if 'logging_level' in Configuration.configuration:
+if "logging_level" in Configuration.configuration:
     Configuration.initialize_logging()
 
 configuration_post_load()

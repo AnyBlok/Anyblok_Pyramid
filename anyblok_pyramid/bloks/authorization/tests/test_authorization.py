@@ -6,8 +6,9 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 import pytest
-from anyblok_pyramid import merge, PERM_READ, PERM_WRITE
 from sqlalchemy.orm.exc import MultipleResultsFound
+
+from anyblok_pyramid import PERM_READ, PERM_WRITE, merge
 
 
 @pytest.mark.usefixtures("rollback_registry")
@@ -47,9 +48,7 @@ class TestAuthorization:
 
     def test_ensure_role_without_code(self):
         self.registry.Pyramid.User.insert(login="test")
-        self.Authorization.ensure_exists(
-            None, resource="test", login="test"
-        )
+        self.Authorization.ensure_exists(None, resource="test", login="test")
         self.Authorization.insert(resource="test 2", login="test")
         with pytest.raises(MultipleResultsFound):
             self.Authorization.ensure_exists(

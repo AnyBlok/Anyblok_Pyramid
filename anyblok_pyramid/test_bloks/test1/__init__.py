@@ -9,10 +9,9 @@ from anyblok.blok import Blok
 
 
 class Test(Blok):
-
-    version = '1.0.0'
+    version = "1.0.0"
 
     @classmethod
     def pyramid_load_config(cls, config):
-        config.add_route('hello', '/hello/{name}/')
-        config.scan(cls.__module__ + '.views')
+        config.add_route("hello", "/hello/{name}/")
+        config.scan(cls.__module__ + ".views")

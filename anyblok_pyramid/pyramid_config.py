@@ -5,30 +5,34 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+from logging import getLogger
 from os.path import join
-from pyramid.config import Configurator as PConfigurator
+
 from anyblok.blok import BlokManager
 from anyblok.config import Configuration
 from anyblok.registry import Registry
 from pkg_resources import iter_entry_points
+from pyramid.config import Configurator as PConfigurator
+
 from .common import get_registry_for
-from logging import getLogger
+
 logger = getLogger(__name__)
 
 
 class AnyBlokRequest:
-    """ Add anyblok properties in the request
+    """Add anyblok properties in the request
     ::
 
         request.anyblok
 
     """
+
     def __init__(self, request):
         self.request = request
 
     @property
     def registry(self):
-        """ Add the property registry
+        """Add the property registry
         ::
 
             registry = request.anyblok.registry
@@ -38,7 +42,7 @@ class AnyBlokRequest:
             The db_name must be defined
 
         """
-        dbname = Configuration.get('get_db_name')(self.request)
+        dbname = Configuration.get("get_db_name")(self.request)
         if Registry.db_exists(db_name=dbname):
             return get_registry_for(dbname)
         else:
@@ -46,13 +50,13 @@ class AnyBlokRequest:
 
 
 class NeedAnyBlokRegistryPredicate:
-    """ Predicate ``need_anyblok_registry`` """
+    """Predicate ``need_anyblok_registry``"""
 
     def __init__(self, need_anyblok_registry, config):
         self.need_anyblok_registry = need_anyblok_registry
 
     def text(self):
-        return 'Need AnyBlok registry = %s' % str(self.need_anyblok_registry)
+        return "Need AnyBlok registry = %s" % str(self.need_anyblok_registry)
 
     phash = text
 
@@ -68,13 +72,13 @@ class NeedAnyBlokRegistryPredicate:
 
 
 class InstalledBlokPredicate:
-    """ Predicate ``installed_blok`` """
+    """Predicate ``installed_blok``"""
 
     def __init__(self, blok_name, config):
         self.blok_name = blok_name
 
     def text(self):
-        return 'installed blok = %s' % self.blok_name
+        return "installed blok = %s" % self.blok_name
 
     phash = text
 
@@ -86,8 +90,7 @@ class InstalledBlokPredicate:
             return False  # pragma: no cover
 
         # use this method because she is cached
-        return request.anyblok.registry.System.Blok.is_installed(
-            self.blok_name)
+        return request.anyblok.registry.System.Blok.is_installed(self.blok_name)
 
 
 class Configurator(PConfigurator):
@@ -98,8 +101,8 @@ class Configurator(PConfigurator):
         super(Configurator, self).__init__(*args, **kwargs)
 
     def default_kwargs(self, **kwargs):
-        if 'settings' not in kwargs:
-            kwargs['settings'] = self.default_setting()
+        if "settings" not in kwargs:
+            kwargs["settings"] = self.default_setting()
 
         return kwargs
 
@@ -128,8 +131,8 @@ class Configurator(PConfigurator):
 
         """
         settings = {}
-        for i in iter_entry_points('anyblok_pyramid.settings'):
-            logger.debug('Load settings: %r' % i.name)
+        for i in iter_entry_points("anyblok_pyramid.settings"):
+            logger.debug("Load settings: %r" % i.name)
             i.load()(settings)
 
         return settings
@@ -159,19 +162,21 @@ class Configurator(PConfigurator):
 
 
         """
-        self.add_request_method(AnyBlokRequest, 'anyblok', reify=True)
-        self.add_route_predicate('installed_blok', InstalledBlokPredicate)
-        self.add_view_predicate('installed_blok', InstalledBlokPredicate)
-        self.add_route_predicate('need_anyblok_registry',
-                                 NeedAnyBlokRegistryPredicate)
-        self.add_view_predicate('need_anyblok_registry',
-                                NeedAnyBlokRegistryPredicate)
-        for i in iter_entry_points('anyblok_pyramid.includeme'):
-            logger.debug('Load includeme: %r' % i.name)
+        self.add_request_method(AnyBlokRequest, "anyblok", reify=True)
+        self.add_route_predicate("installed_blok", InstalledBlokPredicate)
+        self.add_view_predicate("installed_blok", InstalledBlokPredicate)
+        self.add_route_predicate(
+            "need_anyblok_registry", NeedAnyBlokRegistryPredicate
+        )
+        self.add_view_predicate(
+            "need_anyblok_registry", NeedAnyBlokRegistryPredicate
+        )
+        for i in iter_entry_points("anyblok_pyramid.includeme"):
+            logger.debug("Load includeme: %r" % i.name)
             i.load()(self)
 
     def load_config_bloks(self):
-        """ loop on each blok, keep the order of the blok to load the
+        """loop on each blok, keep the order of the blok to load the
         pyramid config. The blok must declare the meth
         ``pyramid_load_config``::
 
@@ -183,8 +188,8 @@ class Configurator(PConfigurator):
         self.commit()
         for blok_name in BlokManager.ordered_bloks:
             blok = BlokManager.get(blok_name)
-            if hasattr(blok, 'pyramid_load_config'):
-                logger.debug('Load configuration from: %r' % blok_name)
+            if hasattr(blok, "pyramid_load_config"):
+                logger.debug("Load configuration from: %r" % blok_name)
                 blok.pyramid_load_config(self)
                 self.commit()
 
@@ -194,21 +199,28 @@ def pyramid_settings(settings):
 
     :param settings: dict of the existing settings
     """
-    settings.update({
-        'pyramid.reload_templates': Configuration.get(
-            'pyramid.reload_templates'),
-        'pyramid.reload_assets': Configuration.get('pyramid.reload_assets'),
-        'pyramid.debug_notfound': Configuration.get(
-            'pyramid.debug_notfound'),
-        'pyramid.debug_routematch': Configuration.get(
-            'pyramid.debug_routematch'),
-        'pyramid.prevent_http_cache': Configuration.get(
-            'pyramid.prevent_http_cache'),
-        'pyramid.debug_all': Configuration.get('pyramid.debug_all'),
-        'pyramid.reload_all': Configuration.get('pyramid.reload_all'),
-        'pyramid.default_locale_name': Configuration.get(
-            'pyramid.default_locale_name'),
-    })
+    settings.update(
+        {
+            "pyramid.reload_templates": Configuration.get(
+                "pyramid.reload_templates"
+            ),
+            "pyramid.reload_assets": Configuration.get("pyramid.reload_assets"),
+            "pyramid.debug_notfound": Configuration.get(
+                "pyramid.debug_notfound"
+            ),
+            "pyramid.debug_routematch": Configuration.get(
+                "pyramid.debug_routematch"
+            ),
+            "pyramid.prevent_http_cache": Configuration.get(
+                "pyramid.prevent_http_cache"
+            ),
+            "pyramid.debug_all": Configuration.get("pyramid.debug_all"),
+            "pyramid.reload_all": Configuration.get("pyramid.reload_all"),
+            "pyramid.default_locale_name": Configuration.get(
+                "pyramid.default_locale_name"
+            ),
+        }
+    )
 
 
 def pyramid_tm(config):
@@ -217,7 +229,7 @@ def pyramid_tm(config):
     :param config: Pyramid configurator instance
     """
 
-    config.include('pyramid_tm')
+    config.include("pyramid_tm")
 
 
 def static_paths(config):
@@ -227,15 +239,16 @@ def static_paths(config):
     """
 
     for blok, cls in BlokManager.bloks.items():
-        if hasattr(cls, 'static_paths'):  # pragma: no cover
+        if hasattr(cls, "static_paths"):  # pragma: no cover
             paths = cls.static_paths
             if isinstance(paths, str):
                 paths = [paths]
         else:
-            paths = ['static']
+            paths = ["static"]
 
         blok_path = BlokManager.getPath(blok)
-        cache_max_age = Configuration.get('pyramid_cache_max_age', 3600)
+        cache_max_age = Configuration.get("pyramid_cache_max_age", 3600)
         for p in paths:
-            config.add_static_view(join(blok, p), join(blok_path, p),
-                                   cache_max_age=cache_max_age)
+            config.add_static_view(
+                join(blok, p), join(blok_path, p), cache_max_age=cache_max_age
+            )

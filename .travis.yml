@@ -24,6 +24,7 @@ services:
 install:
   - pip install -U pip wheel
   - pip install -U -r requirements.test.txt
+  - pip install -e git+http://git@github.com/seantis/zope.sqlalchemy.git@sqlalchemy-2.0#egg=zope.sqlalchemy
   - pip install .[oidc]
 
 env:

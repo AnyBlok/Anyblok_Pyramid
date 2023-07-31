@@ -6,18 +6,18 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-from pyramid.httpexceptions import HTTPUnauthorized
 from anyblok import Declarations
 from anyblok.column import String
+from pyramid.httpexceptions import HTTPUnauthorized
+
 try:
-    from pyramid.authorization import Allow, ALL_PERMISSIONS
+    from pyramid.authorization import ALL_PERMISSIONS, Allow
 except ImportError:
-    from pyramid.security import Allow, ALL_PERMISSIONS
+    from pyramid.security import ALL_PERMISSIONS, Allow
 
 
 @Declarations.register(Declarations.Model)
 class Pyramid:
-
     @classmethod
     def get_roles(cls, login):
         """Return the roles of an user
@@ -41,8 +41,7 @@ class Pyramid:
         :param resource: str, name of a resource
         :param params: all options need to compute ACL
         """
-        return cls.anyblok.Pyramid.User.get_acl(
-            login, resource, params=params)
+        return cls.anyblok.Pyramid.User.get_acl(login, resource, params=params)
 
     @classmethod
     def check_acl(cls, login, resource, type_):
@@ -56,8 +55,7 @@ class Pyramid:
         :param type: str, name of the action
         :param params: all options need to compute ACL
         """
-        return cls.anyblok.Pyramid.User.check_acl(
-            login, resource, type_)
+        return cls.anyblok.Pyramid.User.check_acl(login, resource, type_)
 
     @classmethod
     def check_login(cls, **kwargs):
@@ -164,9 +162,9 @@ class User:
     @classmethod
     def get_login_location_to(cls, login, request):
         """Return the default path after the login"""
-        return '/'
+        return "/"
 
     @classmethod
     def get_logout_location_to(cls, request):
         """Return the default path after the logout"""
-        return '/'
+        return "/"

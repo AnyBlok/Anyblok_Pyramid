@@ -28,21 +28,22 @@ The Authorization Code Flow goes through the following steps:
 try:
     import oic  # noqa
 except ImportError as e:  # pragma: no cover
-    raise ImportError('%s => pip install oic' % str(e))
+    raise ImportError("%s => pip install oic" % str(e))
 
 from functools import lru_cache
+
 from anyblok.config import Configuration
 from oic import rndstr
 from oic.oic import Client
-from oic.oic.message import (
+from oic.utils.authn.client import CLIENT_AUTHN_METHOD
+from pyramid.httpexceptions import HTTPFound, HTTPUnauthorized
+from pyramid.security import remember
+
+from oic.oic.message import (  # noqa isort:skip
     AccessTokenResponse,
     AuthorizationResponse,
     RegistrationResponse,
 )
-
-from oic.utils.authn.client import CLIENT_AUTHN_METHOD
-from pyramid.httpexceptions import HTTPFound, HTTPUnauthorized
-from pyramid.security import remember
 
 
 @lru_cache()
@@ -187,8 +188,7 @@ def validate_state(request, response):
 
 
 def get_access_token(response):
-    """Request an access token to retreive user info on OIDC server side
-    """
+    """Request an access token to retreive user info on OIDC server side"""
     args = {"code": response["code"]}
     atr = get_client().do_access_token_request(
         state=response["state"],
@@ -198,14 +198,17 @@ def get_access_token(response):
     if not isinstance(atr, AccessTokenResponse):
         # it should be a TokenErrorResponse
         raise ValueError(  # pragma: no cover
-            "OIDC Access token is invalid: {}".format(atr))
+            "OIDC Access token is invalid: {}".format(atr)
+        )
     return atr
 
 
 def get_token(request):
     """Get a token in order to retreive data from the OIDC provider"""
     response = get_client().parse_response(
-        AuthorizationResponse, info=request.query_string, sformat="urlencoded",
+        AuthorizationResponse,
+        info=request.query_string,
+        sformat="urlencoded",
     )
     validate_response(response)
     validate_state(request, response)
@@ -246,7 +249,7 @@ def log_user(request):
 
 def login(request):
     """Default OIDC login route to prepare redirection to OIDC Provider to
-    let user authenticate against. """
+    let user authenticate against."""
     return HTTPFound(location=prepare_auth_url(request))
 
 
