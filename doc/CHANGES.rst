@@ -16,6 +16,11 @@
 CHANGELOG
 =========
 
+1.2.3 (unreleased)
+------------------
+
+* Fixed can used AnyBlok > 2 and Pyramid > 2
+
 1.2.2 (2021-05-17)
 ------------------
 
