@@ -135,7 +135,7 @@ def prepare_auth_url(request):
     """
     # Makes sure request.session is there what ever the implemented session
     # This should implements a Pyramid Idict interface
-    if not getattr(request, "session", None):
+    if getattr(request, "session", None) is None:
         raise RuntimeError(  # pragma: no cover
             "In order to use OIDC Relaying party utility, "
             "you must configure a Pyramid session "

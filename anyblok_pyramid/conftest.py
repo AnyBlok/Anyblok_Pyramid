@@ -7,6 +7,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 import pytest
 from anyblok.conftest import *  # noqa
+from pyramid.session import SignedCookieSessionFactory
 
 from .testing import init_web_server
 
@@ -14,3 +15,12 @@ from .testing import init_web_server
 @pytest.fixture(scope="class")
 def webserver(request, configuration_loaded):
     return init_web_server()
+
+
+@pytest.fixture()
+def webserver_with_session(request, configuration_loaded):
+    def includeme(config):
+        my_session_factory = SignedCookieSessionFactory("itsaseekreet")
+        config.set_session_factory(my_session_factory)
+
+    return init_web_server(includeme)

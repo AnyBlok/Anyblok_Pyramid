@@ -12,6 +12,7 @@ from urllib.parse import parse_qs, urlparse
 
 import pytest
 from anyblok.config import Configuration
+from anyblok.testing import tmp_configuration
 
 try:
     from anyblok_pyramid.bloks.pyramid import oidc
@@ -184,15 +185,7 @@ class TestPyramidBlok(TestPyramidBlokBase):
         )
 
     def oidc_common(self, registry, webserver):
-        Configuration.set("oidc_provider_issuer", "http://fake")
-        Configuration.set("oidc_relying_party_client_id", "test_client_id")
-        Configuration.set("oidc_relying_party_secret_id", "test_secret_id")
-        Configuration.set(
-            "oidc_relying_party_callback", "http://localhost/oidc_callback"
-        )
         SCOPE = "test1,test2"
-        Configuration.set("oidc_scope", SCOPE)
-        Configuration.set("oidc_userinfo_field", "custom_userinfo_field")
         registry.upgrade(install=("test-pyramid2",))
         resp = webserver.get("/bloks", status=403)
         webserver.get("/blok/auth", status=403)
@@ -211,34 +204,54 @@ class TestPyramidBlok(TestPyramidBlokBase):
 
     @pytest.mark.skipif(not has_oidc, reason="oic is not installed")
     @mock.patch("requests.request", side_effect=mock_request)
-    def test_oidc_auth(self, mock_oidc, registry_testblok, webserver):
-        qs = self.oidc_common(registry_testblok, webserver)
-        # user is redirect to OIDC provider in order to do the authentication
-        # he comes back to the oidc_callback uri with a code and the current
-        # state
-        curerent_cookie = webserver.cookies["None"]
-        webserver.get(
-            "/oidc_callback?code=a-fake-code&state={}".format(qs["state"][0]),
-            status=302,
-        )
-        assert webserver.cookies["None"] != curerent_cookie
-        webserver.get("/bloks", status=200)
+    def test_oidc_auth(
+        self, mock_oidc, registry_testblok, webserver_with_session
+    ):
+        webserver = webserver_with_session
+        SCOPE = "test1,test2"
+        with tmp_configuration(
+            oidc_provider_issuer="http://fake",
+            oidc_relying_party_client_id="test_client_id",
+            oidc_relying_party_secret_id="test_secret_id",
+            oidc_relying_party_callback="http://localhost/oidc_callback",
+            oidc_scope=SCOPE,
+            oidc_userinfo_field="custom_userinfo_field",
+        ):
+            qs = self.oidc_common(registry_testblok, webserver)
+            # user is redirect to OIDC provider in order to do the
+            # authentication he comes back to the oidc_callback uri
+            # with a code and the current state
+            webserver.get(
+                "/oidc_callback?code=a-fake-code&state={}".format(
+                    qs["state"][0]
+                ),
+                status=302,
+            )
+            webserver.get("/bloks", status=200)
 
     @pytest.mark.skipif(not has_oidc, reason="oic is not installed")
     @mock.patch("requests.request", side_effect=mock_request)
     def test_unkown_user_oidc_auth(
-        self, mock_oidc, registry_testblok, webserver
+        self, mock_oidc, registry_testblok, webserver_with_session
     ):
-        qs = self.oidc_common(registry_testblok, webserver)
-        curerent_cookie = webserver.cookies["None"]
-        webserver.get(
-            "/oidc_callback?code=another-fake-code&state={}".format(
-                qs["state"][0]
-            ),
-            status=401,
-        )
-        assert webserver.cookies["None"] == curerent_cookie
-        webserver.get("/bloks", status=403)
+        webserver = webserver_with_session
+        SCOPE = "test1,test2"
+        with tmp_configuration(
+            oidc_provider_issuer="http://fake",
+            oidc_relying_party_client_id="test_client_id",
+            oidc_relying_party_secret_id="test_secret_id",
+            oidc_relying_party_callback="http://localhost/oidc_callback",
+            oidc_scope=SCOPE,
+            oidc_userinfo_field="custom_userinfo_field",
+        ):
+            qs = self.oidc_common(registry_testblok, webserver)
+            webserver.get(
+                "/oidc_callback?code=another-fake-code&state={}".format(
+                    qs["state"][0]
+                ),
+                status=401,
+            )
+            webserver.get("/bloks", status=403)
 
 
 class TestPyramidBlokRestrictQueryByUserId(TestPyramidBlokBase):

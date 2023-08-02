@@ -1,5 +1,4 @@
 anyblok
-anyblok-pyramid-beaker
 coveralls
 flake8
 psycopg2
