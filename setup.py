@@ -16,7 +16,7 @@ version = "1.2.2"
 
 requires = [
     "anyblok>=1.1.0",
-    "pyramid>=2.0.0",
+    "pyramid",
     "pyramid_tm",
     "zope.sqlalchemy",
     "passlib",
