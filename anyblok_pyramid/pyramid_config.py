@@ -14,6 +14,7 @@ from anyblok.registry import Registry
 from pkg_resources import iter_entry_points
 from pyramid.config import Configurator as PConfigurator
 
+from anyblok.config import get_db_name as gdb
 from .common import get_registry_for
 
 logger = getLogger(__name__)
@@ -42,7 +43,11 @@ class AnyBlokRequest:
             The db_name must be defined
 
         """
-        dbname = Configuration.get("get_db_name")(self.request)
+        dbname = Configuration.get("get_db_name")
+        if dbname:
+            dbname=dbname(self.request)
+        else:
+            dbname = gdb()
         if Registry.db_exists(db_name=dbname):
             return get_registry_for(dbname)
         else:
@@ -88,7 +93,6 @@ class InstalledBlokPredicate:
 
         if not request.anyblok.registry:
             return False  # pragma: no cover
-
         # use this method because she is cached
         return request.anyblok.registry.System.Blok.is_installed(self.blok_name)
 

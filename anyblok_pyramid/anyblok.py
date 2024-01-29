@@ -24,6 +24,7 @@ from transaction._transaction import Status as ZopeStatus
 from transaction.interfaces import IDataManagerSavepoint
 from zope.interface import implementer
 
+
 from zope.sqlalchemy.datamanager import (  # noqa isort:skip
     _SESSION_STATE,
     NO_SAVEPOINT_SUPPORT,
@@ -40,8 +41,8 @@ class AnyBlokSessionDataManager:
         self, session, status, transaction_manager, keep_session=False
     ):
         self.transaction_manager = transaction_manager
-        self.registry = session._query_cls.registry
-        self.transaction = self.registry.session.transaction
+        self.session = session
+        self.transaction = self.session._transaction
         transaction_manager.get().join(self)
         _SESSION_STATE[session] = status
         self.state = "init"
@@ -49,14 +50,14 @@ class AnyBlokSessionDataManager:
 
     def _finish(self, final_state):
         assert self.transaction is not None
-        del _SESSION_STATE[self.registry.session]
-        registry = self.registry
-        self.transaction = self.registry = None
+        del _SESSION_STATE[self.session]
+        session = self.session
+        self.transaction = self.session = None
         self.state = final_state
         if not self.keep_session:
-            registry.session.close()
+            session.close()
         else:
-            registry.session.expire_all()
+            session.expire_all()
 
         EnvironmentManager.set("_precommit_hook", [])
 
@@ -65,18 +66,18 @@ class AnyBlokSessionDataManager:
             self._finish("aborted")
 
     def tpc_begin(self, trans):
-        self.registry.session.flush()
+        self.session.flush()
 
     def commit(self, trans):
-        status = _SESSION_STATE[self.registry.session]
+        status = _SESSION_STATE[self.session]
         if status is not STATUS_INVALIDATED:
-            if self.registry.session.expire_on_commit:
-                self.registry.session.expire_all()
+            if self.session.expire_on_commit:
+                self.session.expire_all()
             self._finish("no work")
 
     def tpc_vote(self, trans):
         if self.transaction is not None:
-            self.registry.commit()
+            self.commit()
             self._finish("committed")
 
     def tpc_finish(self, trans):
@@ -98,9 +99,9 @@ class AnyBlokSessionDataManager:
             raise AttributeError("savepoint")
         return self._savepoint
 
-    def _savepoint(self):
-        self.registry.System.Cache.clear_invalidate_cache()
-        return AnyBlokSessionSavepoint(self.registry)
+    # def _savepoint(self):
+    #     self.registry.System.Cache.clear_invalidate_cache()
+    #     return AnyBlokSessionSavepoint(self.registry)
 
     def should_retry(self, error):
         if isinstance(error, ConcurrentModificationError):
@@ -204,7 +205,7 @@ class AnyBlokZopeTransactionExtension(ZopeTransactionExtension):
 
     def before_commit(self, session):
         assert (
-            session.transaction.nested
+            session._transaction.nested
             or self.transaction_manager.get().status  # noqa
             in (ZopeStatus.COMMITTING, ZopeStatus.ACTIVE)
         ), ("Transaction must be committed using the transaction manager")
